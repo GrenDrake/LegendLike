@@ -1,0 +1,35 @@
+.export move_info
+
+;struct move_def { 14words
+;    ident,     power,      accuracy,       cost,   type,   priority,
+;    atk_stat,  def_stat,   statusChance,   status, stat,   statshift,
+;    special, flags         name[string/16]
+;}
+
+move_info:
+    .word   1       40      100     10      4       0
+    .word   0       1       0       0       0       0
+    .word   0       0
+    .string_pad 16 "Tackle"
+
+    .word   2       80      75      10      4       0
+    .word   0       1       0       0       0       0
+    .word   0       0
+    .string_pad 16 "Charge"
+
+    .word   3       40      100     10      4       0
+    .word   0       0       0       0       0       -1
+    .word   0       0
+    .string_pad 16 "Growl"
+
+    .word   4       40      100     10      4       0
+    .word   0       0       0       0       1       -1
+    .word   0       0
+    .string_pad 16 "Grovel"
+
+    .word   5       40      20     10      4       0
+    .word   0       0       60       0       0       -1
+    .word   0       0
+    .string_pad 16 "Poison"
+
+    .word -1

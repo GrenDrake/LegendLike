@@ -1,0 +1,14 @@
+game
+assemble
+tiled
+typed
+beastgen
+game.dat
+beasts.dat
+beasts.txt
+labels.txt
+*.o
+.DS_Store
+unused
+.vscode
+game.log

@@ -1,0 +1,88 @@
+.export beast_info
+
+beast_info:
+    ; evolution info
+    ; (type, arg1, next form) x 3
+    ; type  name    arg
+    ; 0     none    NA
+    ; 1     level   level number
+
+    .word       8631                                ; catalog numbe
+    .string_pad 32 "Beast 8631"                     ; name
+    ;           poison/electric
+    .byte       11  5   -1                          ; types
+    .short      23  54  22  37  29  9   42  35      ; level 0 stats
+    .short      272 628 193 388 312 93  449 357     ; level 100 stats
+    .byte       1           ; first evolution branch
+    .word       35  8632
+    .byte       0           ; second evolution branch
+    .word       0   0
+    .byte       0           ; third evolution branch
+    .word       0   0
+    .word       beast8631_moves ; moveset table
+
+    .word       8632                                ; catalog numbe
+    .string_pad 32 "Beast 8632"                     ; name
+    ;           poison/electric/water
+    .byte       11  5   3                           ; types
+    .short      55  42  84  55  43  15  30  39      ; level 0 stats
+    .short      464 377 920 554 386 163 348 395     ; level 100 stats
+    .byte       0           ; first evolution branch
+    .word       0   0
+    .byte       0           ; second evolution branch
+    .word       0   0
+    .byte       0           ; third evolution branch
+    .word       0   0
+    .word       beast8631_moves                                   ; moveset table
+
+
+    .word       9147
+    .string_pad 32 "Beast 9147"
+    .byte       1 -1 -1
+    .short      36   42   47   39   10   31   24   33
+    .short      350  389  394  340  105  279  239  347
+    .byte       1           ; first evolution branch
+    .word       38  9148
+    .byte       0           ; second evolution branch
+    .word       0   0
+    .byte       0           ; third evolution branch
+    .word       0   0
+    .word       beast9147_moves
+
+    .word       9148
+    .string_pad 32 "Beast 9148"
+    .byte       1 -1 -1
+    .short      54   44   61   15   17   46   35   39
+    .short      499  445  677  132  189  523  398  344
+    .byte       0           ; first evolution branch
+    .word       0   0
+    .byte       0           ; second evolution branch
+    .word       0   0
+    .byte       0           ; third evolution branch
+    .word       0   0
+    .word       beast8631_moves
+
+    ; end of beast info marker
+    .word       -1
+
+beast8631_moves:
+    .short  1 ; level
+    .word   1 ; move id
+    .short  2 ; level
+    .word   2 ; move id
+    .short  3 ; level
+    .word   3 ; move id
+    .short  4 ; level
+    .word   4 ; move id
+    .short  5 ; level
+    .word   5 ; move id
+    .short -1 ; end of list
+
+beast9147_moves:
+    .short  1 ; level
+    .word   1 ; move id
+    .short  3 ; level
+    .word   3 ; move id
+    .short  5 ; level
+    .word   4 ; move id
+    .short -1 ; end of list
