@@ -22,10 +22,10 @@ const int aiPaceBox         = 4;
 const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
 
-const int statCount = 8;
+const int statCount = 7;
 enum class Stat {
-    Attack, Defense, Mind, Will,
-    Speed, Health, Energy, XP
+    Health, Energy, Accuracy, Evasion,
+    DR,     DB,     Speed,
 };
 
 namespace TypeInfo {
@@ -80,7 +80,7 @@ public:
     std::string name;
     int artIndex;
     int type[3];
-    int stats[statCount][2];
+    int stats[statCount];
     Morph morphs[3];
     int movesetAddr;
     std::vector<MovesetRow> moveset;

@@ -40,8 +40,8 @@ map1_build:
     @mf_vertline    30 25 33 tileWindow
     .push_count     tileWater
     @mf_fillrand    30 43 23 34
-    @mf_addactor    aiRandom 25 37 71 0 map1_str_octopus 0
-    @mf_addactor    aiRandom 27 41 71 0 map1_str_octopus 0
+    @mf_addactor    aiRandom 25 37 9147 0 map1_str_octopus 0
+    @mf_addactor    aiRandom 27 41 9147 0 map1_str_octopus 0
 
     ret
 

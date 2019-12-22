@@ -184,7 +184,7 @@ bool System::load() {
             log.error("Failed to load beast info.");
             return false;
         }
-        const int beastSize = 102;
+        const int beastSize = 54;
         int baseAddress = beasts.getExport("beast_info");
         if (baseAddress == -1) {
             log.error("Could not find beast_info in beasts.dat");
@@ -194,35 +194,11 @@ bool System::load() {
                 CreatureType type;
                 type.ident = ident;
                 type.name = beasts.readString(baseAddress + 4);
-                type.type[0] = beasts.readByte(baseAddress + 36);
-                type.artIndex = type.type[0];
-                type.type[1] = beasts.readByte(baseAddress + 37);
-                type.type[2] = beasts.readByte(baseAddress + 38);
-                int offset = baseAddress + 39;
-                for (int i = 0; i < 2; ++i) {
-                    for (int j = 0; j < statCount; ++j) {
-                        type.stats[j][i] = beasts.readShort(offset);
-                        offset += 2;
-                    }
-                }
-                for (int i = 0; i < 3; ++i) {
-                    type.morphs[i].type   = beasts.readByte(offset);
-                    type.morphs[i].arg    = beasts.readWord(offset + 1);
-                    type.morphs[i].target = beasts.readWord(offset + 5);
-                    offset += 9;
-                }
-                type.movesetAddr = beasts.readWord(offset);
-
-                if (type.movesetAddr != 0) {
-                    offset = type.movesetAddr;
-                    int level = beasts.readShort(offset);
-                    while (level >= 0) {
-                        int moveId = beasts.readWord(offset + 2);
-                        type.moveset.push_back(MovesetRow{level, moveId});
-                        offset += 6;
-                        level = beasts.readShort(offset);
-                    }
-                    log.info("Beast " + std::to_string(type.ident) + " has " + std::to_string(type.moveset.size()) + " moves");
+                type.artIndex = beasts.readWord(baseAddress + 36);
+                int offset = baseAddress + 42;
+                for (int j = 0; j < statCount; ++j) {
+                    type.stats[j] = beasts.readShort(offset);
+                    offset += 2;
                 }
 
                 CreatureType::add(type);

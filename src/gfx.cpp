@@ -17,7 +17,7 @@
 
 void repaint(System &state, bool callPresent) {
     const int sidebarWidth = 30 * state.smallFont->getCharWidth();
-
+    const int sidebarX = screenWidth - sidebarWidth;
     const int mapOffsetX = tileWidth / 3 * 2;
     const int mapOffsetY = tileHeight / 3 * 2;
     const int mapWidthPixels = screenWidth - sidebarWidth;
@@ -76,6 +76,22 @@ void repaint(System &state, bool callPresent) {
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
+
+    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
+    //  PLAYER INFO
+    int yPos = 0;
+    int xPos = sidebarX + 8;
+    int lineHeight = state.smallFont->getLineHeight();
+    Creature *player = state.game->getPlayer();
+    state.smallFont->out(xPos, yPos, player->name);
+    yPos += lineHeight * 2;
+    for (int i = 0; i < statCount; ++i) {
+        Stat stat = static_cast<Stat>(i);
+        std::stringstream line;
+        line << stat << ": " << player->getStat(stat);
+        state.smallFont->out(xPos, yPos, line.str());
+        yPos += lineHeight;
+    }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO

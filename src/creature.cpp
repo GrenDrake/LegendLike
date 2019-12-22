@@ -100,9 +100,7 @@ std::string Creature::getName() const {
 
 int Creature::getStat(Stat stat) const {
     int statNumber = static_cast<int>(stat);
-    int l0 = typeInfo->stats[statNumber][0];
-    int l100 = typeInfo->stats[statNumber][1];
-    return interp(0, l0, 100, l100, level);
+    return typeInfo->stats[statNumber];
 }
 
 void Creature::reset() {
@@ -126,14 +124,13 @@ void Creature::autolevel(int toLevel, Random &rng) {
 
 std::ostream& operator<<(std::ostream &out, const Stat &stat) {
     switch(stat) {
-        case Stat::Attack:  out << "attack"; break;
-        case Stat::Defense: out << "defense"; break;
-        case Stat::Mind:    out << "mind"; break;
-        case Stat::Will:    out << "will"; break;
-        case Stat::Speed:   out << "speed"; break;
-        case Stat::Health:  out << "health"; break;
-        case Stat::Energy:  out << "energy"; break;
-        case Stat::XP:      out << "experience requirement"; break;
+        case Stat::Speed:       out << "speed"; break;
+        case Stat::Health:      out << "health"; break;
+        case Stat::Energy:      out << "energy"; break;
+        case Stat::Accuracy:    out << "accuracy"; break;
+        case Stat::Evasion:     out << "evasion"; break;
+        case Stat::DR:          out << "damage reduction"; break;
+        case Stat::DB:          out << "damage bonus"; break;
     }
     return out;
 }
