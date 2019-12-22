@@ -53,15 +53,10 @@ enum opcode {
     op_mf_makemaze,
     op_mf_makefoes,
 
-    op_p_add,
-    op_p_size,
-    op_p_name,
-    op_p_type,
     op_p_stat,
     op_p_reset,
     op_p_damage,
 
-    op_combat,
     op_warpto,
 
     op_bad = -1

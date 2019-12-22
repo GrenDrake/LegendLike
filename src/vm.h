@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 
-class CombatInfo;
 struct System;
 
 class VMError : public std::runtime_error {
@@ -43,7 +42,6 @@ public:
     void storeShort(unsigned address, unsigned value);
     void storeByte(unsigned address, unsigned value);
     void storeString(unsigned address, const std::string &text, unsigned maxLength);
-    CombatInfo readCombatInfo(int offset);
 
 private:
     struct Frame {

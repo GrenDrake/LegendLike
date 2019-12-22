@@ -1,7 +1,7 @@
 #include "board.h"
+#include "creature.h"
 #include "logger.h"
 #include "random.h"
-#include "mapactor.h"
 
 const int MAX_ITERATIONS = 10000;
 
@@ -25,7 +25,11 @@ void mapRandomEnemies(Board *board, Random &rng, const RandomFoeInfo &info) {
 
         int rowId = rng.next32() % info.rows.size();
         const RandomFoeRow &row = info.rows[rowId];
-        MapActor *actor = new MapActor(row.name, row.art, row.ai, 0, -1, row.fightInfo);
+        Creature *actor = new Creature(1);
+        actor->name = row.name;
+        actor->aiType = row.ai;
+        actor->aiArg = 0;
+        actor->talkFunc = -1;
         board->addActor(actor, here);
     }
 }

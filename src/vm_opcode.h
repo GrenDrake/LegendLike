@@ -55,15 +55,10 @@ enum class Opcode {
     mf_makemaze,
     mf_makefoes,
 
-    p_add,
-    p_size,
-    p_name,
-    p_type,
     p_stat,
     p_reset,
     p_damage,
 
-    combat,
     warpto,
 
     bad = -1

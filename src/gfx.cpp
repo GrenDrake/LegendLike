@@ -6,10 +6,9 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
 
-#include "beast.h"
+#include "creature.h"
 #include "gfx.h"
 #include "board.h"
-#include "mapactor.h"
 #include "game.h"
 #include "point.h"
 #include "gamestate.h"
@@ -66,9 +65,9 @@ void repaint(System &state, bool callPresent) {
             }
 
             if (visible) {
-                MapActor *creature = state.game->getBoard()->actorAt(here);
+                Creature *creature = state.game->getBoard()->actorAt(here);
                 if (creature) {
-                    SDL_Texture *tile = state.getTile(creature->artIndex);
+                    SDL_Texture *tile = state.getTile(creature->typeInfo->artIndex);
                     if (tile) {
                         SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                     }
@@ -77,42 +76,6 @@ void repaint(System &state, bool callPresent) {
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
-
-    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
-    // PARTY INFO
-    if (state.party.size() == 0) {
-        state.smallFont->out(mapWidthPixels + 10, 10, "You have no beasties.");
-    } else {
-        const int beastInfoWidth = screenWidth - mapWidthPixels - 10;
-        const int lineHeight = state.smallFont->getLineHeight();
-        const int barHeight = state.smallFont->getCharHeight();
-        const int maxNameLength = beastInfoWidth / state.smallFont->getCharWidth();
-        int xPos = mapWidthPixels + 10;
-        int yPos = 10;
-        for (int i = 0; i < GameState::PARTY_SIZE; ++i) {
-            Beast *b = state.party.at(i);
-
-            if (b) {
-                const int barX = xPos + 9 * state.smallFont->getCharWidth();
-                double healthPercent = static_cast<double>(b->curHealth) / b->getStat(Stat::Health);
-                double energyPercent = static_cast<double>(b->curEnergy) / b->getStat(Stat::Energy);
-                std::stringstream hpLine, enLine, lvlLine;
-                hpLine << std::setw(4) << b->curHealth << "/" << b->getStat(Stat::Health);
-                lvlLine << "Lv: " << b->level;
-                enLine << std::setw(4) << b->curEnergy << "/" << b->getStat(Stat::Energy);
-                state.smallFont->out(xPos, yPos, b->getName().substr(0, maxNameLength));
-                yPos += lineHeight;
-                state.smallFont->out(xPos, yPos, lvlLine.str().c_str());
-                yPos += lineHeight + lineHeight / 4;
-                state.smallFont->out(xPos, yPos, hpLine.str());
-                gfx_DrawBar(state, barX, yPos, beastInfoWidth - (barX-xPos) - 10, barHeight, healthPercent, Color{63, 192, 63});
-                yPos += lineHeight;
-                state.smallFont->out(xPos, yPos, enLine.str());
-                gfx_DrawBar(state, barX, yPos, beastInfoWidth - (barX-xPos) - 10, barHeight, energyPercent, Color{63, 63, 192});
-                yPos += lineHeight * 2;
-            }
-        }
-    }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO
@@ -128,7 +91,7 @@ void repaint(System &state, bool callPresent) {
             int tileHere = state.game->getBoard()->getTile(Point(tileX,tileY));
             if (tileHere != tileOutOfBounds) {
                 Point here(tileX, tileY);
-                MapActor *creature = state.game->getBoard()->actorAt(here);
+                Creature *creature = state.game->getBoard()->actorAt(here);
                 if (creature) {
                     ss << creature->name << "   ";
                 }

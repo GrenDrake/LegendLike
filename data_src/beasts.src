@@ -7,7 +7,7 @@ beast_info:
     ; 0     none    NA
     ; 1     level   level number
 
-    .word       8631                                ; catalog numbe
+    .word       1                                ; catalog numbe
     .string_pad 32 "Beast 8631"                     ; name
     ;           poison/electric
     .byte       11  5   -1                          ; types
@@ -24,7 +24,7 @@ beast_info:
     .word       8632                                ; catalog numbe
     .string_pad 32 "Beast 8632"                     ; name
     ;           poison/electric/water
-    .byte       11  5   3                           ; types
+    .byte       12  5   3                           ; types
     .short      55  42  84  55  43  15  30  39      ; level 0 stats
     .short      464 377 920 554 386 163 348 395     ; level 100 stats
     .byte       0           ; first evolution branch

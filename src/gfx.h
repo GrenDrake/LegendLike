@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "beastparty.h"
-
 class Random;
 class GameState;
 struct SDL_Renderer;
@@ -57,7 +55,6 @@ struct System {
     SDL_Renderer *renderer;
     Random &coreRNG;
     GameState *game;
-    BeastParty party;
     SDL_Texture *tileset;
     Font *smallFont;
     Font *tinyFont;
@@ -115,7 +112,6 @@ const int symbolQuestion = 2;
 void repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);
 void showFullMap(System &renderState);
-void gfx_partyScreen(System &system, int &curBeast);
 void doPartyScreen(System &system);
 
 void doGameMenu(System &state);

@@ -5,10 +5,22 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
+#include "point.h"
 
+
+class Board;
 struct System;
 class Random;
 struct SDL_Texture;
+
+const int aiPlayer          = 99;
+const int aiStill           = 0;
+const int aiRandom          = 1;
+const int aiPaceHorz        = 2;
+const int aiPaceVert        = 3;
+const int aiPaceBox         = 4;
+const int aiAvoidPlayer     = 5;
+const int aiFollowPlayer    = 6;
 
 const int statCount = 8;
 enum class Stat {
@@ -54,10 +66,10 @@ struct MovesetRow {
     int moveId;
 };
 
-class BeastType {
+class CreatureType {
 public:
-    static void add(const BeastType &type);
-    static const BeastType& get(int ident);
+    static void add(const CreatureType &type);
+    static const CreatureType& get(int ident);
     static int typeCount();
 
     struct Morph {
@@ -66,32 +78,41 @@ public:
 
     int ident;
     std::string name;
-    int frontArt, backArt;
+    int artIndex;
     int type[3];
     int stats[statCount][2];
     Morph morphs[3];
     int movesetAddr;
     std::vector<MovesetRow> moveset;
 private:
-    static std::vector<BeastType> types;
+    static std::vector<CreatureType> types;
 };
 
-struct Beast {
-    static const int MAX_MOVES = 4;
+struct Creature {
+    Creature(int type);
 
-    Beast(int type);
     std::string name;
+    Point position;
     int typeIdent;
     int level, xp;
     int curHealth, curEnergy;
-    int move[MAX_MOVES];
+
     int nextAction;
+    bool isPlayer;
 
-    bool inParty;
-
-    const BeastType *typeInfo;
+    const CreatureType *typeInfo;
     SDL_Texture *art;
 
+    int aiType;
+    int aiArg;
+    int talkFunc;
+    int talkArg;
+
+    Dir ai_lastDir;
+
+
+    void ai(Board *board);
+    bool tryMove(Board *board, Dir direction);
     std::string getName() const;
     int getStat(Stat stat) const;
     void reset();

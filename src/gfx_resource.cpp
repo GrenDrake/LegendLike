@@ -19,7 +19,6 @@ System::System(SDL_Renderer *renderer, Random &rng)
 { ; }
 
 System::~System() {
-    party.deleteAll();
 }
 
 

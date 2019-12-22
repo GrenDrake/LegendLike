@@ -8,9 +8,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 
-#include "mapactor.h"
 #include "board.h"
-#include "beast.h"
+#include "creature.h"
 #include "vm.h"
 #include "physfs.h"
 #include "logger.h"
@@ -192,10 +191,11 @@ bool System::load() {
         } else {
             int ident = beasts.readWord(baseAddress);
             while (ident > 0) {
-                BeastType type;
+                CreatureType type;
                 type.ident = ident;
                 type.name = beasts.readString(baseAddress + 4);
                 type.type[0] = beasts.readByte(baseAddress + 36);
+                type.artIndex = type.type[0];
                 type.type[1] = beasts.readByte(baseAddress + 37);
                 type.type[2] = beasts.readByte(baseAddress + 38);
                 int offset = baseAddress + 39;
@@ -225,13 +225,13 @@ bool System::load() {
                     log.info("Beast " + std::to_string(type.ident) + " has " + std::to_string(type.moveset.size()) + " moves");
                 }
 
-                BeastType::add(type);
+                CreatureType::add(type);
 
                 baseAddress += beastSize;
                 ident = beasts.readWord(baseAddress);
             }
         }
-        log.info(std::string("Loaded ") + std::to_string(BeastType::typeCount()) + " beasts.");
+        log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " beasts.");
 
         // LOAD MOVE TYPES
         VM moves;

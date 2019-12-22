@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_framerate.h>
 
-#include "mapactor.h"
+#include "creature.h"
 #include "board.h"
 #include "game.h"
 #include "gamestate.h"
@@ -53,7 +53,7 @@ void showFullMap(System &renderState) {
                 SDL_RenderFillRect(renderState.renderer, &texturePosition);
 
                 if (visible) {
-                    MapActor *creatureHere = board->actorAt(here);
+                    Creature *creatureHere = board->actorAt(here);
                     if (creatureHere) {
                         SDL_Rect objectPosition = {
                             texturePosition.x + 1, texturePosition.y + 1,

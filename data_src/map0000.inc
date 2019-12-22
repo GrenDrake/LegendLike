@@ -31,9 +31,6 @@ map0_gotfirst_flag:
     .byte 0
 
 map0_talk_professor:
-    p_size
-    push            map0_talk_professor_nobeasts
-    jz
     @saystr         map0_str_professor_talk
     @textbox        0 0 0
     @p_reset        -1
@@ -52,7 +49,6 @@ map0_talk_archdean:
     jnz
     @saystr         map0_str_archdean_givebeast
     @textbox        0 0 0
-    @p_add          8631 5
     @storeb         1 map0_gotfirst_flag
     ret
 map0_talk_archdean_alreadyhave:
@@ -61,9 +57,6 @@ map0_talk_archdean_alreadyhave:
     ret
 
 map0_talk_gateguard:
-    p_size
-    push            map0_talk_gateguard_havebeast
-    jnz
     @saystr         map0_str_gateguard_nopass
     @textbox        0 0 0
     ret
@@ -76,41 +69,13 @@ map0_str_giftparty:
     .string "I am the stablemaster. Here, have some beasts."
 
 map0_test_giveparty:
-    @p_add          8631 5
-    @p_add          8632 5
-    @p_add          9147 5
-    @p_add          9148 5
     @saystr         map0_str_giftparty
     @textbox        0 0 0
     ret
 
 map0_test_fight:
-    p_size
-    push            map0_test_fight_nobeasts
-    jz
-map0_test_fight_start:
-    @combat         testfight
-    stkdup
-    push            map0_test_fight_flee
-    jlz
-    push            map0_test_fight_lost
-    jz
-    @saystr         map0_str_wonTestFight
-    @textbox        0 0 0
-    ret
-map0_test_fight_lost:
-    @saystr         map0_str_lostTestFight
-    @textbox        0 0 0
-    ret
-map0_test_fight_flee:
     @saystr         map0_str_fledTestFight
     @textbox        0 0 0
-    ret
-
-map0_test_fight_nobeasts:
-    @p_add          8631 5
-    @saystr         map0_str_test_fight_givebeast
-    @textbox        0 0 map0_test_fight_start
     ret
 
 map0_str_test_fight_givebeast:
@@ -172,7 +137,7 @@ map0_build:
     @mf_settile     14 39 tileWindow
     @mf_settile     17 41 tileLabSignLeft
     @mf_settile     17 42 tileLabSignRight
-    @mf_addactor    aiStill 14 46 11 map0_talk_professor map0_str_professor 0
+    @mf_addactor    aiStill         14 46 8632 map0_talk_professor map0_str_professor 0
 
     ; the academy
     @mf_drawbox     28 54 20 48 tileWall
@@ -183,9 +148,9 @@ map0_build:
     @mf_settile     26 48 tileWindow
     @mf_settile     25 47 tileSign
     @mf_addevent    24 50 map0_downToAcademyCellar eventManual
-    @mf_addactor    aiPaceBox 21 51 11 map0_talk_archdean map0_str_archdean 0
-    @mf_addactor    aiAvoidPlayer 23 51 10 0 map0_strActor 0
-    @mf_addactor    aiStill 25 47 -1 map0_talk_academysign map0_str_sign 0
+    @mf_addactor    aiPaceBox       21 51 1 map0_talk_archdean map0_str_archdean 0
+    @mf_addactor    aiAvoidPlayer   23 51 1 0 map0_strActor 0
+    @mf_addactor    aiStill         25 47 1 map0_talk_academysign map0_str_sign 0
 
     ; your home
     @mf_drawbox     25 19 20 13 tileWall
@@ -207,18 +172,18 @@ map0_build:
     ; beast pens
     @mf_drawbox     17 36 10 27 tileFence
     @mf_settile     14 22 tileSkull
-    @mf_addactor    aiPaceHorz     11 19 10 0 map0_strActor 0
-    @mf_addactor    aiPaceVert     14 24 10 0 map0_strActor 0
+    @mf_addactor    aiPaceHorz     11 19 1 0 map0_strActor 0
+    @mf_addactor    aiPaceVert     14 24 1 0 map0_strActor 0
 
     @mf_drawbox     17 27 10 17 tileFence
     @mf_settile     14 31 tileLargeSkull
-    @mf_addactor    aiRandom       15 30 11 0 map0_strActor 0
-    @mf_addactor    aiFollowPlayer 13 33 10 0 map0_strActor 0
+    @mf_addactor    aiRandom       15 30 1 0 map0_strActor 0
+    @mf_addactor    aiFollowPlayer 13 33 1 0 map0_strActor 0
 
     ; party gifter tester
-    @mf_addactor    aiStill 18 27 10 map0_test_giveparty map0_str_partygifter 0
+    @mf_addactor    aiStill 18 27 1 map0_test_giveparty map0_str_partygifter 0
     ; combat tester
-    @mf_addactor    aiStill 21 28 10 map0_test_fight map0_str_combatdemoguy 0
+    @mf_addactor    aiStill 21 28 1 map0_test_fight map0_str_combatdemoguy 0
 
     ; dungeon guard house
     @mf_drawbox     32 31 26 25 tileWall
@@ -228,14 +193,14 @@ map0_build:
     @mf_settile     26 27 tileFence
     @mf_settile     26 28 tileClosedGate
     @mf_settile     26 29 tileFence
-    @mf_addactor    aiStill 25 29 10 map0_talk_gateguard map0_str_gateguard 0
+    @mf_addactor    aiStill 25 29 1 map0_talk_gateguard map0_str_gateguard 0
 
     ; village green
     .push_count     tileGrass tileGrass tileGrass2 tileGrass3
     @mf_fillrand    30 43 23 34
     @mf_settile     26 40 tileWell
     @mf_settile     28 36 tileFire
-    @mf_addactor    aiStill 25 37 12 map0_talkScorpian map0_strScorpian 0
+    @mf_addactor    aiStill 25 37 1 map0_talkScorpian map0_strScorpian 0
 
     ; draw roads
     @mf_vertline    40 18 44 tileNSRoad
@@ -248,7 +213,7 @@ map0_build:
     @mf_settile     32 44 tileNESRoad
     @mf_settile     22 28 tileESWRoad
     @mf_settile     32 56 tileClosedGate
-    @mf_addactor    aiStill 31 55 10 map0_talk_gateguard map0_str_gateguard 0
+    @mf_addactor    aiStill 31 55 1 map0_talk_gateguard map0_str_gateguard 0
 
     ; event demo
     @mf_fillbox     43 51 37 45 tileWall

@@ -3,7 +3,7 @@
 
 #include "fov.h"
 #include "board.h"
-#include "mapactor.h"
+#include "creature.h"
 
 
 std::vector<TileInfo> TileInfo::types;
@@ -45,25 +45,25 @@ Board::Board(int width, int height, const std::string &name)
 }
 Board::~Board() {
     delete[] tiles;
-    for (MapActor *actor : creatures) {
+    for (Creature *actor : creatures) {
         delete actor;
     }
 }
 
-MapActor* Board::actorAt(const Point &where) {
-    for (MapActor *creature : creatures) {
+Creature* Board::actorAt(const Point &where) {
+    for (Creature *creature : creatures) {
         if (creature->position == where) {
             return creature;
         }
     }
     return nullptr;
 }
-void Board::addActor(MapActor *creature, const Point &where) {
+void Board::addActor(Creature *creature, const Point &where) {
     creature->position = where;
     creatures.push_back(creature);
 }
 
-void Board::removeActor(MapActor *creature) {
+void Board::removeActor(Creature *creature) {
     for (auto iter = creatures.begin(); iter != creatures.end();) {
         if (*iter == creature) {
             iter = creatures.erase(iter);
@@ -83,8 +83,8 @@ void Board::removeActor(const Point &p) {
     }
 }
 
-MapActor* Board::getPlayer() {
-    for (MapActor *who : creatures) {
+Creature* Board::getPlayer() {
+    for (Creature *who : creatures) {
         if (who->aiType == aiPlayer) {
             return who;
         }
@@ -194,7 +194,7 @@ const Board::Event* Board::eventAt(const Point &where) const {
 }
 
 void Board::tick() {
-    for (MapActor *who : creatures) {
+    for (Creature *who : creatures) {
         who->ai(this);
     }
 

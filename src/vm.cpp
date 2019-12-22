@@ -4,9 +4,8 @@
 
 #include "physfs.h"
 
-#include "beast.h"
+#include "creature.h"
 #include "board.h"
-#include "mapactor.h"
 #include "gamestate.h"
 #include "gfx.h"
 #include "vm.h"
@@ -198,33 +197,6 @@ void VM::minStack(int minimumSize) const {
     if (stackSize() < minimumSize) {
         throw VMError("Stack underflow.");
     }
-}
-
-CombatInfo VM::readCombatInfo(int offset) {
-    CombatInfo info;
-    info.foes.clear();
-    for (int i = 0; i < GameState::PARTY_SIZE; ++i) {
-        int type = readWord(offset);
-        if (type > 0) {
-            Beast *b = new Beast(type);
-            int level = readWord(offset+4);
-            int m1 = readWord(offset+8);
-            int m2 = readWord(offset+12);
-            int m3 = readWord(offset+16);
-            int m4 = readWord(offset+20);
-            b->autolevel(level, state->coreRNG);
-            b->reset();
-            if (m1 >= 0) b->move[0] = m1;
-            if (m2 >= 0) b->move[1] = m2;
-            if (m3 >= 0) b->move[2] = m3;
-            if (m4 >= 0) b->move[3] = m4;
-            info.foes.add(b);
-        }
-        offset += 24;
-    }
-    info.type = static_cast<CombatType>(readWord(offset));
-    info.background = readWord(offset+4);
-    return info;
 }
 
 bool VM::run(unsigned address) {
@@ -535,13 +507,19 @@ bool VM::run(unsigned address) {
                 int specialValue = pop();
                 int nameAddr = pop();
                 int talkFunc = pop();
-                int artIndex = pop();
+                int typeId = pop();
                 int x = pop();
                 int y = pop();
                 int aiType = pop();
                 if (board) {
                     std::string name = nameAddr ? readString(nameAddr) : "actor";
-                    board->addActor(new MapActor(name, artIndex, aiType, 0, talkFunc, specialValue), Point(x, y));
+                    Creature *creature = new Creature(typeId);
+                    board->addActor(creature, Point(x, y));
+                    creature->name = name;
+                    creature->aiType = aiType;
+                    creature->aiArg = 0;
+                    creature->talkFunc = talkFunc;
+                    creature->talkArg = specialValue;
                 }
                 break; }
             case Opcode::mf_addevent: {
@@ -579,90 +557,19 @@ bool VM::run(unsigned address) {
                 mapRandomEnemies(state->game->getBoard(), state->coreRNG, info);
                 break; }
 
-            case Opcode::p_add: {
-                int lvl = pop();
-                int type = pop();
-                Beast *beast = new Beast(type);
-                beast->autolevel(lvl, state->coreRNG);
-                beast->reset();
-                beast->inParty = true;
-                state->party.add(beast);
-                break; }
-            case Opcode::p_size:
-                push(state->party.size());
-                break;
-            case Opcode::p_name: {
-                int pos = pop();
-                int nameAddr = pop();
-                Beast *b = state->party.at(pos);
-                if (!b) {
-                    storeString(nameAddr, "", 32);
-                } else {
-                    storeString(nameAddr, b->getName(), 32);
-                }
-                break; }
-            case Opcode::p_type: {
-                int pos = pop();
-                Beast *b = state->party.at(pos);
-                if (!b) {
-                    push(0);
-                } else {
-                    push(b->typeIdent);
-                }
-                break; }
             case Opcode::p_stat: {
                 int pos = pop();
                 int stat = pop();
-                Beast *b = state->party.at(pos);
-                if (!b) {
-                    push(0);
-                } else {
-                    push(b->getStat(static_cast<Stat>(stat)));
-                }
+                push(0);
                 break; }
             case Opcode::p_reset: {
                 int pos = pop();
-                if (pos >= 0) {
-                    Beast *b = state->party.at(pos);
-                    if (b) b->reset();
-                } else {
-                    for (int i = 0; i < GameState::PARTY_SIZE; ++i) {
-                        Beast *b = state->party.at(i);
-                        if (b) b->reset();
-                    }
-                }
                 break; }
             case Opcode::p_damage: {
                 int amnt = pop();
                 int pos = pop();
-                if (pos >= 0) {
-                    Beast *b = state->party.at(pos);
-                    if (b) b->takeDamage(amnt);
-                } else {
-                    for (int i = 0; i < GameState::PARTY_SIZE; ++i) {
-                        Beast *b = state->party.at(i);
-                        if (b) b->takeDamage(amnt);
-                    }
-                }
                 break; }
 
-            case Opcode::combat: {
-                int data = pop();
-                if (!state || !data) break;
-                CombatInfo info = readCombatInfo(data);
-                CombatResult cr = doCombat(*state, info);
-                info.foes.deleteAll();
-                switch(cr) {
-                    case CombatResult::Victory: push(1);    break;
-                    case CombatResult::Defeat:  push(0);    break;
-                    case CombatResult::QuitGame:
-                    case CombatResult::Retreat: push(-1);    break;
-                    // this shouldn't be able to occur, but the compiler gives
-                    // a warning if it isn't included. (Gotta have all the enum
-                    // values!)
-                    case CombatResult::None:    push(0);
-                }
-                break; }
             case Opcode::warpto: {
                 int map = pop();
                 int x = pop();

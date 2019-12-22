@@ -70,15 +70,10 @@ struct mnemonic mnemonics[] = {
     {   op_mf_makemaze, "mf_makemaze",  0 },
     {   op_mf_makefoes, "mf_makefoes",  0 },
 
-    {   op_p_add,       "p_add",        0 },
-    {   op_p_size,      "p_size",       0 },
-    {   op_p_name,      "p_name",       0 },
-    {   op_p_type,      "p_type",       0 },
     {   op_p_stat,      "p_stat",       0 },
     {   op_p_reset,     "p_reset",      0 },
     {   op_p_damage,    "p_damage",     0 },
 
-    {   op_combat,      "combat",       0 },
     {   op_warpto,      "warpto",       0 },
 
     {   op_bad,     NULL,       0 }

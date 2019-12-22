@@ -6,7 +6,7 @@
 #include <vector>
 #include "point.h"
 
-class MapActor;
+class Creature;
 class Random;
 
 struct TileInfo {
@@ -100,11 +100,11 @@ public:
         return coord(where) >= 0;
     }
 
-    MapActor* actorAt(const Point &where);
-    void addActor(MapActor *creature, const Point &where);
-    void removeActor(MapActor *creature);
+    Creature* actorAt(const Point &where);
+    void addActor(Creature *creature, const Point &where);
+    void removeActor(Creature *creature);
     void removeActor(const Point &p);
-    MapActor* getPlayer();
+    Creature* getPlayer();
 
     void clearTo(int tile);
     void setTile(const Point &where, int tile);
@@ -129,7 +129,7 @@ private:
 
     int mWidth, mHeight;
     Tile *tiles;
-    std::vector<MapActor*> creatures;
+    std::vector<Creature*> creatures;
     std::vector<Event> events;
     std::string name;
     bool dbgDisableFOV;

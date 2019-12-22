@@ -1,7 +1,6 @@
-#include "beast.h"
+#include "creature.h"
 #include "gamestate.h"
 #include "board.h"
-#include "mapactor.h"
 #include "vm.h"
 #include "gfx.h"
 
@@ -9,8 +8,13 @@
 GameState::GameState(Random &rng, VM &vm)
 : wantsTick(false), rng(rng), vm(vm), mTurnNumber(1), mDepth(0), mCurrentBoard(nullptr)
 {
-    mPlayer = new MapActor("player", 41, aiPlayer, 0, 0, 0);
+    mPlayer = new Creature(1);
+    mPlayer->name = "player";
+    mPlayer->isPlayer = true;
+    mPlayer->aiType = aiPlayer;
+    mPlayer->talkFunc = 0;
 }
+
 GameState::~GameState() {
     for (auto boardIter : mBoards) {
         delete boardIter.second;

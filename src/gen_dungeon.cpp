@@ -2,7 +2,6 @@
 #include <deque>
 #include <vector>
 
-#include "mapactor.h"
 #include "board.h"
 #include "point.h"
 

@@ -7,8 +7,7 @@
 #include <vector>
 
 class Board;
-struct Beast;
-class MapActor;
+struct Creature;
 class VM;
 class Random;
 struct System;
@@ -32,7 +31,7 @@ public:
     Board* getBoard() {
         return mCurrentBoard;
     }
-    MapActor* getPlayer() {
+    Creature* getPlayer() {
         return mPlayer;
     }
     unsigned getTurn() const {
@@ -82,7 +81,7 @@ private:
     unsigned mTurnNumber;
     int mDepth;
     Board *mCurrentBoard;
-    MapActor *mPlayer;
+    Creature *mPlayer;
     std::vector<MessageBox> mMessages;
     std::map<int, Board*> mBoards;
 };

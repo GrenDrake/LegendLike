@@ -8,9 +8,8 @@
 #include <SDL2/SDL2_framerate.h>
 
 #include "command.h"
-#include "beast.h"
+#include "creature.h"
 #include "board.h"
-#include "mapactor.h"
 #include "game.h"
 #include "point.h"
 #include "vm.h"
@@ -19,29 +18,12 @@
 #include "gfx.h"
 
 
-bool tryRandomCombat(System &system, MapActor *actor) {
-    if (!actor) return true;
-
-    int offset = actor->talkArg;
-    CombatInfo info = system.vm->readCombatInfo(offset);
-    CombatResult cr = doCombat(system, info);
-    info.foes.deleteAll();
-    if (cr == CombatResult::Victory) {
-        system.game->getBoard()->removeActor(actor);
-        delete actor;
-        return true;
-    } else {
-        return false;
-    }
-}
 
 bool tryInteract(System &renderState, const Point &target) {
-    MapActor *actor = renderState.game->getBoard()->actorAt(target);
+    Creature *actor = renderState.game->getBoard()->actorAt(target);
     const Board::Event *event = renderState.game->getBoard()->eventAt(target);
     if (actor && actor != renderState.game->getPlayer()) {
-        if (actor->talkFunc == -1) {
-            tryRandomCombat(renderState, actor);
-        } else if (actor->talkFunc) {
+        if (actor->talkFunc) {
             renderState.game->getVM().run(actor->talkFunc);
         } else {
             renderState.game->pushMessage(GameState::MessageBox{"They have nothing to say.", "", 0});
@@ -148,9 +130,6 @@ void gameloop(System &renderState) {
                     break;
                 case Command::ShowMap:
                     showFullMap(renderState);
-                    break;
-                case Command::PartyInfo:
-                    doPartyScreen(renderState);
                     break;
 
                 case Command::Debug_Reveal:
