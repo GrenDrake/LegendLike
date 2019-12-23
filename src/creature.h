@@ -124,6 +124,8 @@ public:
     int getEmptyMove();
 };
 
+const char* getAbbrev(const Stat &stat);
+const char* getAbbrev(const DamageType &stat);
 std::ostream& operator<<(std::ostream &out, const Stat &stat);
 std::ostream& operator<<(std::ostream &out, const DamageType &stat);
 

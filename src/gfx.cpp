@@ -81,28 +81,40 @@ void repaint(System &state, bool callPresent) {
     //  PLAYER INFO
     int yPos = 0;
     int xPos = sidebarX + 8;
-    int lineHeight = state.smallFont->getLineHeight();
+    const int lineHeight = state.smallFont->getLineHeight();
+    const int tinyLineHeight = state.tinyFont->getLineHeight();
+    const int barHeight = lineHeight / 2;
     Creature *player = state.game->getPlayer();
+    const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->getStat(Stat::Health));
+    const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->getStat(Stat::Energy));
+
     state.smallFont->out(xPos, yPos, player->name);
     yPos += lineHeight;
-    state.smallFont->out(xPos, yPos, std::to_string(player->curHealth));
-    yPos += lineHeight;
-    state.smallFont->out(xPos, yPos, std::to_string(player->curEnergy));
-    yPos += lineHeight * 2;
-    for (int i = 0; i < statCount; ++i) {
+    gfx_DrawBar(state, xPos, yPos, sidebarWidth - 16, barHeight, healthPercent, Color{127,255,127});
+    yPos += barHeight;
+    gfx_DrawBar(state, xPos, yPos, sidebarWidth - 16, barHeight, energyPercent, Color{127,127,255});
+    yPos += barHeight * 2;
+
+    state.tinyFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->getStat(Stat::Health)));
+    state.tinyFont->out(xPos + sidebarWidth / 2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
+    yPos += tinyLineHeight;
+    const int statTop = yPos;
+    for (int i = 2; i < statCount; ++i) {
         Stat stat = static_cast<Stat>(i);
         std::stringstream line;
-        line << stat << ": " << player->getStat(stat);
-        state.smallFont->out(xPos, yPos, line.str());
-        yPos += lineHeight;
+        line << getAbbrev(stat) << ": " << player->getStat(stat);
+        state.tinyFont->out(xPos, yPos, line.str());
+        yPos += tinyLineHeight;
     }
+    yPos = statTop;
+    xPos += sidebarWidth / 2;
     for (int i = 0; i < damageTypeCount; ++i) {
         DamageType damageType = static_cast<DamageType>(i);
         std::stringstream line;
         line << std::fixed << std::setprecision(3);
-        line << damageType << ": " << player->getResist(damageType);
-        state.smallFont->out(xPos, yPos, line.str());
-        yPos += lineHeight;
+        line << getAbbrev(damageType) << ": " << player->getResist(damageType);
+        state.tinyFont->out(xPos, yPos, line.str());
+        yPos += tinyLineHeight;
     }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////

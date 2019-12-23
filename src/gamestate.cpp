@@ -13,6 +13,7 @@ GameState::GameState(VM &vm)
     mPlayer->isPlayer = true;
     mPlayer->aiType = aiPlayer;
     mPlayer->talkFunc = 0;
+    mPlayer->reset();
 }
 
 GameState::~GameState() {

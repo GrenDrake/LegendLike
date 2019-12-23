@@ -127,6 +127,32 @@ void Creature::autolevel(int toLevel, Random &rng) {
     level = toLevel;
 }
 
+const char* getAbbrev(const Stat &stat) {
+    switch (stat) {
+        case Stat::Health:  return "HP";
+        case Stat::Energy:  return "EN";
+        case Stat::DR:      return "DR";
+        case Stat::DB:      return "DB";
+        case Stat::Accuracy:return "AC";
+        case Stat::Evasion: return "EV";
+        case Stat::Speed:   return "SP";
+    }
+    return "??";
+}
+
+const char* getAbbrev(const DamageType &stat) {
+    switch(stat) {
+        case DamageType::Physical:  return "P";
+        case DamageType::Fire:      return "F";
+        case DamageType::Cold:      return "C";
+        case DamageType::Electric:  return "E";
+        case DamageType::Divine:    return "D";
+        case DamageType::Infernal:  return "I";
+        case DamageType::Void:      return "V";
+        case DamageType::Toxic:     return "T";
+    }
+    return "?";
+}
 
 std::ostream& operator<<(std::ostream &out, const Stat &stat) {
     switch(stat) {
