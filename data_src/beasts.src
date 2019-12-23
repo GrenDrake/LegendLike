@@ -4,26 +4,38 @@ beast_info:
     .word       1               ; catalog number
     .string_pad 32 "Beast 8631" ; name
     .word       11              ; art index
-    .short      23  54  22  37  ; stats: health, energy, accuracy, evasion
-    .short      29  9   42      ; stats: dr, db, speed
+    .word       1               ; default move
+    .short      10  10  0   5   ; stats: health, energy, accuracy, evasion
+    .short      0   0   100     ; stats: dr, db, speed
+    .byte       100 50  100 100 ; resist: Physical, Cold,   Fire,     Electric,
+    .byte       100 125 100 100 ; resist: Toxic,    Divine, Infernal, Void,
 
     .word       8632                                ; catalog numbe
     .string_pad 32 "Beast 8632"                     ; name
     .word       12      ; art index
-    .short      23  54  22  37  ; stats: health, energy, accuracy, evasion
-    .short      29  9   42      ; stats: dr, db, speed
+    .word       1               ; default move
+    .short      10  10  0   5   ; stats: health, energy, accuracy, evasion
+    .short      0   0   100     ; stats: dr, db, speed
+    .byte       100 100 100 100 ; resist: Physical, Cold,   Fire,     Electric,
+    .byte       100 100 100 100 ; resist: Toxic,    Divine, Infernal, Void,
 
     .word       9147
     .string_pad 32 "Beast 9147"
     .word       71      ; art index
-    .short      23  54  22  37  ; stats: health, energy, accuracy, evasion
-    .short      29  9   42      ; stats: dr, db, speed
+    .word       1               ; default move
+    .short      10  10  0   5   ; stats: health, energy, accuracy, evasion
+    .short      0   0   100     ; stats: dr, db, speed
+    .byte       100 100 100 100 ; resist: Physical, Cold,   Fire,     Electric,
+    .byte       100 100 100 100 ; resist: Toxic,    Divine, Infernal, Void,
 
     .word       9148
     .string_pad 32 "Beast 9148"
     .word       11      ; art index
-    .short      23  54  22  37  ; stats: health, energy, accuracy, evasion
-    .short      29  9   42      ; stats: dr, db, speed
+    .word       1               ; default move
+    .short      10  10  0   5   ; stats: health, energy, accuracy, evasion
+    .short      0   0   100     ; stats: dr, db, speed
+    .byte       100 100 100 100 ; resist: Physical, Cold,   Fire,     Electric,
+    .byte       100 100 100 100 ; resist: Toxic,    Divine, Infernal, Void,
 
     ; end of beast info marker
     .word       -1

@@ -15,7 +15,6 @@ class VM;
 class ResourceManager;
 struct Mix_Chunk;
 class Config;
-struct CombatInfo;
 
 
 struct Color {
@@ -29,7 +28,8 @@ struct TrackInfo {
     std::string artist;
 };
 
-struct System {
+class System {
+public:
     System(SDL_Renderer *renderer, Random &rng);
     ~System();
 
@@ -60,7 +60,6 @@ struct System {
     Font *tinyFont;
     VM *vm;
     Config *config;
-    CombatInfo *combatInfo;
     // we declared this as a void* to avoid needing to include the often
     // unneccesary header file or dealing with the typedef FPSManager
     void *fpsManager;

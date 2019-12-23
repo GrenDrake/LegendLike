@@ -9,7 +9,7 @@
 
 
 class Board;
-struct System;
+class System;
 class Random;
 struct SDL_Texture;
 
@@ -21,6 +21,12 @@ const int aiPaceVert        = 3;
 const int aiPaceBox         = 4;
 const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
+
+const int damageTypeCount = 8;
+enum class DamageType {
+    Physical, Cold,   Fire,     Electric,
+    Toxic,    Divine, Infernal, Void,
+};
 
 const int statCount = 7;
 enum class Stat {
@@ -72,23 +78,18 @@ public:
     static const CreatureType& get(int ident);
     static int typeCount();
 
-    struct Morph {
-        int type, arg, target;
-    };
-
     int ident;
     std::string name;
     int artIndex;
-    int type[3];
     int stats[statCount];
-    Morph morphs[3];
-    int movesetAddr;
-    std::vector<MovesetRow> moveset;
+    double resistances[damageTypeCount];
+    int defaultMove;
 private:
     static std::vector<CreatureType> types;
 };
 
-struct Creature {
+class Creature {
+public:
     Creature(int type);
 
     std::string name;
@@ -115,6 +116,7 @@ struct Creature {
     bool tryMove(Board *board, Dir direction);
     std::string getName() const;
     int getStat(Stat stat) const;
+    double getResist(DamageType stat) const;
     void reset();
     void takeDamage(int amount);
     bool isKOed() const;
@@ -123,5 +125,6 @@ struct Creature {
 };
 
 std::ostream& operator<<(std::ostream &out, const Stat &stat);
+std::ostream& operator<<(std::ostream &out, const DamageType &stat);
 
 #endif

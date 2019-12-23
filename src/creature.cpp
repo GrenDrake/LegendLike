@@ -103,6 +103,11 @@ int Creature::getStat(Stat stat) const {
     return typeInfo->stats[statNumber];
 }
 
+double Creature::getResist(DamageType stat) const {
+    int statNumber = static_cast<int>(stat);
+    return typeInfo->resistances[statNumber];
+}
+
 void Creature::reset() {
     curHealth = getStat(Stat::Health);
     curEnergy = getStat(Stat::Energy);
@@ -131,6 +136,20 @@ std::ostream& operator<<(std::ostream &out, const Stat &stat) {
         case Stat::Evasion:     out << "evasion"; break;
         case Stat::DR:          out << "damage reduction"; break;
         case Stat::DB:          out << "damage bonus"; break;
+    }
+    return out;
+}
+
+std::ostream& operator<<(std::ostream &out, const DamageType &stat) {
+    switch(stat) {
+        case DamageType::Physical:  out << "physical"; break;
+        case DamageType::Fire:      out << "fire"; break;
+        case DamageType::Cold:      out << "cold"; break;
+        case DamageType::Electric:  out << "electric"; break;
+        case DamageType::Divine:    out << "divine"; break;
+        case DamageType::Infernal:  out << "infernal"; break;
+        case DamageType::Void:      out << "void"; break;
+        case DamageType::Toxic:     out << "toxic"; break;
     }
     return out;
 }

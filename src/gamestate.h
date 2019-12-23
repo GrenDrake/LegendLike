@@ -7,10 +7,10 @@
 #include <vector>
 
 class Board;
-struct Creature;
+class Creature;
 class VM;
 class Random;
-struct System;
+class System;
 
 class GameState {
 public:
@@ -25,7 +25,7 @@ public:
     static const unsigned BOARD_WIDTH = 95;
     static const unsigned BOARD_HEIGHT = 95;
 
-    GameState(Random &rng, VM &vm);
+    GameState(VM &vm);
     ~GameState();
 
     Board* getBoard() {
@@ -76,7 +76,6 @@ private:
     bool build(int forIndex);
 
     bool wantsTick;
-    Random &rng;
     VM &vm;
     unsigned mTurnNumber;
     int mDepth;

@@ -13,7 +13,7 @@
 const int screenWidth = 960;
 const int screenHeight = 540;
 
-struct System;
+class System;
 class VM;
 
 class GameError : public std::runtime_error {

@@ -5,8 +5,8 @@
 #include "gfx.h"
 
 
-GameState::GameState(Random &rng, VM &vm)
-: wantsTick(false), rng(rng), vm(vm), mTurnNumber(1), mDepth(0), mCurrentBoard(nullptr)
+GameState::GameState(VM &vm)
+: wantsTick(false), vm(vm), mTurnNumber(1), mDepth(0), mCurrentBoard(nullptr)
 {
     mPlayer = new Creature(1);
     mPlayer->name = "player";

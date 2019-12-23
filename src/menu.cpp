@@ -58,7 +58,7 @@ void doGameMenu(System &state) {
                 mainMenu[4].type = MenuType::Choice;
                 defOpt = 4;
                 if (gameState) delete gameState;
-                gameState = new GameState(state.coreRNG, *state.vm);
+                gameState = new GameState(*state.vm);
                 gameState->system = &state;
                 state.game = gameState;
                 gameState->getVM().runFunction("start");

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-struct System;
+class System;
 
 const int menuQuit = -1;
 const int menuEnd = -2;

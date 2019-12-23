@@ -92,6 +92,14 @@ void repaint(System &state, bool callPresent) {
         state.smallFont->out(xPos, yPos, line.str());
         yPos += lineHeight;
     }
+    for (int i = 0; i < damageTypeCount; ++i) {
+        DamageType damageType = static_cast<DamageType>(i);
+        std::stringstream line;
+        line << std::fixed << std::setprecision(3);
+        line << damageType << ": " << player->getResist(damageType);
+        state.smallFont->out(xPos, yPos, line.str());
+        yPos += lineHeight;
+    }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO

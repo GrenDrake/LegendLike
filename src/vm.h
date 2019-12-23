@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-struct System;
+class System;
 
 class VMError : public std::runtime_error {
 public:

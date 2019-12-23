@@ -184,7 +184,7 @@ bool System::load() {
             log.error("Failed to load beast info.");
             return false;
         }
-        const int beastSize = 54;
+        const int beastSize = 66;
         int baseAddress = beasts.getExport("beast_info");
         if (baseAddress == -1) {
             log.error("Could not find beast_info in beasts.dat");
@@ -195,10 +195,16 @@ bool System::load() {
                 type.ident = ident;
                 type.name = beasts.readString(baseAddress + 4);
                 type.artIndex = beasts.readWord(baseAddress + 36);
-                int offset = baseAddress + 42;
+                type.defaultMove = beasts.readWord(baseAddress + 40);
+                int offset = baseAddress + 44;
                 for (int j = 0; j < statCount; ++j) {
                     type.stats[j] = beasts.readShort(offset);
                     offset += 2;
+                }
+                for (int j = 0; j < damageTypeCount; ++j) {
+                    int value = beasts.readByte(offset);
+                    type.resistances[j] = value / 100.0;
+                    offset += 1;
                 }
 
                 CreatureType::add(type);
