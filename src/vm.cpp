@@ -563,11 +563,16 @@ bool VM::run(unsigned address) {
                 push(0);
                 break; }
             case Opcode::p_reset: {
-                int pos = pop();
+                if (board) {
+                    state->game->getPlayer()->reset();
+                }
                 break; }
             case Opcode::p_damage: {
                 int amnt = pop();
-                int pos = pop();
+                int type = pop();
+                if (board) {
+                    state->game->getPlayer()->takeDamage(amnt, static_cast<DamageType>(type));
+                }
                 break; }
 
             case Opcode::warpto: {

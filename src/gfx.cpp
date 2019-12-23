@@ -84,6 +84,10 @@ void repaint(System &state, bool callPresent) {
     int lineHeight = state.smallFont->getLineHeight();
     Creature *player = state.game->getPlayer();
     state.smallFont->out(xPos, yPos, player->name);
+    yPos += lineHeight;
+    state.smallFont->out(xPos, yPos, std::to_string(player->curHealth));
+    yPos += lineHeight;
+    state.smallFont->out(xPos, yPos, std::to_string(player->curEnergy));
     yPos += lineHeight * 2;
     for (int i = 0; i < statCount; ++i) {
         Stat stat = static_cast<Stat>(i);

@@ -33,17 +33,15 @@ map0_gotfirst_flag:
 map0_talk_professor:
     @saystr         map0_str_professor_talk
     @textbox        0 0 0
-    @p_reset        -1
+    p_reset
     ret
-map0_talk_professor_nobeasts:
-    @saystr         map0_str_professor_talk_nobeasts
-    @textbox        0 0 0
-    ret
+
 map0_talk_academysign:
     @saystr         map0_str_academysign_text
     @textbox        0 0 0
     ret
 map0_talk_archdean:
+    @p_damage       1 10
     @readb          map0_gotfirst_flag
     push            map0_talk_archdean_alreadyhave
     jnz

@@ -118,7 +118,7 @@ public:
     int getStat(Stat stat) const;
     double getResist(DamageType stat) const;
     void reset();
-    void takeDamage(int amount);
+    void takeDamage(int amount, DamageType type);
     bool isKOed() const;
     void autolevel(int toLevel, Random &rng);
     int getEmptyMove();

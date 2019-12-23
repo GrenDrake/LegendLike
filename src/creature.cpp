@@ -113,7 +113,8 @@ void Creature::reset() {
     curEnergy = getStat(Stat::Energy);
 }
 
-void Creature::takeDamage(int amount) {
+void Creature::takeDamage(int amount, DamageType type) {
+    amount *= getResist(type);
     if (amount >= curHealth)    curHealth = 0;
     else                        curHealth -= amount;
 }
