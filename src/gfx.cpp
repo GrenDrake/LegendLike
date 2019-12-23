@@ -13,6 +13,7 @@
 #include "point.h"
 #include "gamestate.h"
 #include "command.h"
+#include "textutil.h"
 
 
 void repaint(System &state, bool callPresent) {
@@ -84,6 +85,7 @@ void repaint(System &state, bool callPresent) {
     const int lineHeight = state.smallFont->getLineHeight();
     const int tinyLineHeight = state.tinyFont->getLineHeight();
     const int barHeight = lineHeight / 2;
+    const int column2 = xPos + sidebarWidth / 2;
     Creature *player = state.game->getPlayer();
     const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->getStat(Stat::Health));
     const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->getStat(Stat::Energy));
@@ -96,7 +98,7 @@ void repaint(System &state, bool callPresent) {
     yPos += barHeight * 2;
 
     state.tinyFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->getStat(Stat::Health)));
-    state.tinyFont->out(xPos + sidebarWidth / 2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
+    state.tinyFont->out(column2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
     yPos += tinyLineHeight;
     const int statTop = yPos;
     for (int i = 2; i < statCount; ++i) {
@@ -107,14 +109,36 @@ void repaint(System &state, bool callPresent) {
         yPos += tinyLineHeight;
     }
     yPos = statTop;
-    xPos += sidebarWidth / 2;
     for (int i = 0; i < damageTypeCount; ++i) {
         DamageType damageType = static_cast<DamageType>(i);
         std::stringstream line;
         line << std::fixed << std::setprecision(3);
         line << getAbbrev(damageType) << ": " << player->getResist(damageType);
-        state.tinyFont->out(xPos, yPos, line.str());
+        state.tinyFont->out(column2, yPos, line.str());
         yPos += tinyLineHeight;
+    }
+
+    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
+    //  MESSAGE LOG
+    const int logTop = yPos + tinyLineHeight;
+    const int wrapWidth = (sidebarWidth - 8) / state.tinyFont->getCharWidth() - 2;
+    yPos = screenHeight - tinyLineHeight;
+    hlineRGBA(state.renderer, sidebarX, screenWidth, logTop, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    for (int i = state.messages.size() - 1; i >= 0; --i) {
+        std::string m = state.messages[i];
+        std::vector<std::string> lines;
+        wordwrap(m, wrapWidth, lines);
+        for (int j = lines.size() - 1; j >= 0; --j) {
+            const std::string &line = lines[j];
+            if (j == 0) {
+                state.tinyFont->out(xPos, yPos, line);
+            } else {
+                state.tinyFont->out(xPos, yPos, "  " + line);
+            }
+            yPos -= tinyLineHeight;
+            if (yPos < logTop) break;
+        }
+        if (yPos < logTop) break;
     }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////

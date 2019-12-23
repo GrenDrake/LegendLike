@@ -67,6 +67,7 @@ public:
     bool wantsToQuit;
     bool showInfo;
     bool showFPS;
+    std::vector<std::string> messages;
 
     std::map<int, SDL_Texture*> mTiles;
     std::map<int, TrackInfo> mTracks;
