@@ -328,13 +328,8 @@ bool VM::run(unsigned address) {
                 currentText << readString(pop());
                 break;
             case Opcode::textbox: {
-                int runAfter = pop();
-                int porAddr = pop();
-                int porSide = pop();
                 if (state) {
-                    std::string por;
-                    if (porAddr) por = readString(porAddr);
-                    state->game->pushMessage(GameState::MessageBox{currentText.str(), por, porSide, runAfter});
+                    state->messages.push_back(currentText.str());
                     currentText.clear();
                     currentText.str("");
                 }

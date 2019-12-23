@@ -26,7 +26,7 @@ bool tryInteract(System &renderState, const Point &target) {
         if (actor->talkFunc) {
             renderState.game->getVM().run(actor->talkFunc);
         } else {
-            renderState.game->pushMessage(GameState::MessageBox{"They have nothing to say.", "", 0});
+            renderState.messages.push_back("They have nothing to say.");
         }
         renderState.game->requestTick();
         return true;
@@ -55,16 +55,6 @@ void gameloop(System &renderState) {
     Dir runDirection = Dir::None;
 
     while (!renderState.wantsToQuit) {
-        if (state.hasMessages()) {
-            while (state.hasMessages()) {
-                GameState::MessageBox box = state.popMessage();
-                gfx_MessageBox(renderState, box.message, box.portrait, box.portraitSide);
-                if (box.runAfter) {
-                    state.getVM().run(box.runAfter);
-                }
-            }
-        }
-
         if (runDirection != Dir::None) {
             bool hitWall = false;
             do {
@@ -80,7 +70,7 @@ void gameloop(System &renderState) {
                     state.tick();
                     gfx_frameDelay(renderState);
                 }
-            } while (!hitWall && !state.hasMessages());
+            } while (!hitWall);
             runDirection = Dir::None;
             continue;
         }

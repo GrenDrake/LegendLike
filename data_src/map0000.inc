@@ -13,54 +13,42 @@ map0_str_archdean:
 map0_str_sign:
     .string "sign"
 map0_str_academysign_text:
-    .string "Demon Beast Academy (Under Renovation)"
+    .string "Sign: \"Demon Beast Academy (Under Renovation)\""
 map0_str_gateguard_nopass:
-    .string "It is not safe beyond the gate; you must claim a beast from the academy before you may depart."
+    .string "Guard: \"It is not safe beyond the gate; you must claim a beast from the academy before you may depart.\""
 map0_str_gateguard_allowpass:
-    .string "I see you have a beast with you. You may pass."
+    .string "Guard: \"I see you have a beast with you. You may pass.\""
 map0_str_archdean_givebeast:
-    .string "Unfortunately, with the work being done on the academy, are usual arrangements are not available. Thus, please, take this beast to get you started."
-map0_str_archdean_alreadygavebeast:
-    .string "New graduates are only entitled to one beast from the academy to help them get started. If you want more, you'll need to catch them yourself."
+    .string "Archdean: \"Unfortunately, with the work being done on the academy, are usual arrangements are not available. Thus, please, take this beast to get you started.\""
 map0_str_professor_talk:
-    .string "Are your beasts hurt? If they are, allow me to heal them."
-map0_str_professor_talk_nobeasts:
-    .string "If your beasts become hurt, I can heal them."
+    .string "Professor: \"Are your beasts hurt? If they are, allow me to heal them.\""
 
 map0_gotfirst_flag:
     .byte 0
 
 map0_talk_professor:
     @saystr         map0_str_professor_talk
-    @textbox        0 0 0
+    textbox
     p_reset
     ret
 
 map0_talk_academysign:
     @saystr         map0_str_academysign_text
-    @textbox        0 0 0
+    textbox
     ret
 map0_talk_archdean:
     @p_damage       1 10
-    @readb          map0_gotfirst_flag
-    push            map0_talk_archdean_alreadyhave
-    jnz
     @saystr         map0_str_archdean_givebeast
-    @textbox        0 0 0
-    @storeb         1 map0_gotfirst_flag
-    ret
-map0_talk_archdean_alreadyhave:
-    @saystr         map0_str_archdean_alreadygavebeast
-    @textbox        0 0 0
+    textbox
     ret
 
 map0_talk_gateguard:
     @saystr         map0_str_gateguard_nopass
-    @textbox        0 0 0
+    textbox
     ret
 map0_talk_gateguard_havebeast:
     @saystr         map0_str_gateguard_allowpass
-    @textbox        0 0 0
+    textbox
     ret
 
 map0_str_giftparty:
@@ -68,12 +56,12 @@ map0_str_giftparty:
 
 map0_test_giveparty:
     @saystr         map0_str_giftparty
-    @textbox        0 0 0
+    textbox
     ret
 
 map0_test_fight:
     @saystr         map0_str_fledTestFight
-    @textbox        0 0 0
+    textbox
     ret
 
 map0_str_test_fight_givebeast:
@@ -294,7 +282,7 @@ map0_townPassageLeft:
     push       tileWindow
     mf_settile
     @saystr     map0_strRumblingNoise
-    @textbox    0 0 0
+    textbox
     ret
 map0_townPassageRight:
     push       40
@@ -302,7 +290,7 @@ map0_townPassageRight:
     push       tileDoorOpen
     mf_settile
     @saystr     map0_strRumblingNoise
-    @textbox    0 0 0
+    textbox
     ret
 
 map0_townTeleportBottom:
@@ -316,10 +304,9 @@ map0_strRumblingNoise: .string "There is a rumbling sound as the walls shift."
 
 map0_talkScorpian:
     @saystr     map0_strScorpianSaysHi
-    @textbox    1   map0_strPortrait1 0
+    textbox
     ret
 
-map0_strPortrait1:      .string "por0001.png"
 map0_strScorpianSaysHi: .string "The scorpian greets you cheerfully.\n\nYou respond politely."
 map0_strActor:          .string "actor"
 map0_strScorpian:       .string "scorpian"
