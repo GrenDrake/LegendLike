@@ -244,17 +244,17 @@ bool System::loadMoveData() {
         return false;
     }
 
-    const int moveSize = 22;
     int baseAddress = moves.getExport("move_info");
     if (baseAddress == -1) {
         log.error("Could not find move_info in moves.dat");
     } else {
-        int ident = moves.readWord(baseAddress);
+        moves.setPosition(baseAddress);
+        int ident = moves.readWord();
         while (ident > 0) {
             MoveType type;
             type.ident          = ident;
 
-            int nameId          = moves.readWord(baseAddress + 4);
+            int nameId          = moves.readWord();
             auto nameStr = strings.find(nameId);
             if (nameStr == strings.end()) {
                 type.name = "attack #" + std::to_string(ident);
@@ -262,24 +262,23 @@ bool System::loadMoveData() {
                 type.name = nameStr->second;
             }
 
-            type.accuracy       = moves.readByte(baseAddress + 8);
-            type.speed          = moves.readByte(baseAddress + 9);
-            type.cost           = moves.readByte(baseAddress + 10);
+            type.accuracy       = moves.readByte();
+            type.speed          = moves.readByte();
+            type.cost           = moves.readByte();
 
-            type.type           = moves.readByte(baseAddress + 11);
-            type.minRange       = moves.readByte(baseAddress + 12);
-            type.maxRange       = moves.readByte(baseAddress + 13);
+            type.type           = moves.readByte();
+            type.minRange       = moves.readByte();
+            type.maxRange       = moves.readByte();
 
-            type.damage         = moves.readByte(baseAddress + 14);
-            type.damageSize     = moves.readByte(baseAddress + 15);
-            type.damageShape    = moves.readByte(baseAddress + 16);
-            type.damageType     = moves.readByte(baseAddress + 17);
+            type.damage         = moves.readByte();
+            type.damageSize     = moves.readByte();
+            type.damageShape    = moves.readByte();
+            type.damageType     = moves.readByte();
 
-            type.flags          = moves.readWord(baseAddress + 18);
+            type.flags          = moves.readWord();
 
             MoveType::add(type);
-            baseAddress += moveSize;
-            ident = moves.readWord(baseAddress);
+            ident = moves.readWord();
         }
     }
     log.info("Loaded " + std::to_string(MoveType::typeCount()) + " moves.");

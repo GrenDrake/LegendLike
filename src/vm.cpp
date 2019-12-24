@@ -57,7 +57,8 @@ std::ostream& operator<<(std::ostream &out, Opcode code) {
 
 
 VM::VM()
-: state(nullptr), mMemory(nullptr), mMemorySize(0)
+: state(nullptr), mMemory(nullptr), mMemorySize(0), mCurrentPosition(0),
+  mImageFile("<memory>")
 { }
 VM::~VM() {
     if (mMemory) delete[] mMemory;
@@ -80,6 +81,7 @@ bool VM::loadFromFile(const std::string &filename) {
     PHYSFS_close(inf);
 
     mMemorySize = length;
+    mImageFile = filename;
 
     return true;
 }
@@ -107,12 +109,12 @@ bool VM::runFunction(const std::string &name) {
 }
 
 int VM::readByte(unsigned address) const {
-    if (address >= mMemorySize) throw VMError("Tried to read address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to read address " + std::to_string(address) + " which is beyond EOF.");
     return mMemory[address];
 }
 
 int VM::readShort(unsigned address) const {
-    if (address >= mMemorySize) throw VMError("Tried to read address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to read address " + std::to_string(address) + " which is beyond EOF.");
     unsigned word = 0;
     word |= mMemory[address] & 0xFF;
     word |= (mMemory[address + 1] << 8);
@@ -120,7 +122,7 @@ int VM::readShort(unsigned address) const {
 }
 
 int VM::readWord(unsigned address) const {
-    if (address >= mMemorySize) throw VMError("Tried to read address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to read address " + std::to_string(address) + " which is beyond EOF.");
     unsigned word = 0;
     word |= mMemory[address] & 0xFF;
     word |= (mMemory[address + 1] << 8) & 0xFF00;
@@ -135,7 +137,7 @@ std::string VM::readString(unsigned address) const {
 }
 
 void VM::storeWord(unsigned address, unsigned value) {
-    if (address >= mMemorySize) throw VMError("Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
     mMemory[address]     = value & 0xFF;
     mMemory[address + 1] = (value >> 8)  & 0xFF;
     mMemory[address + 2] = (value >> 16) & 0xFF;
@@ -143,13 +145,13 @@ void VM::storeWord(unsigned address, unsigned value) {
 }
 
 void VM::storeShort(unsigned address, unsigned value) {
-    if (address >= mMemorySize) throw VMError("Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
     mMemory[address]     = value & 0xFF;
     mMemory[address + 1] = (value >> 8) & 0xFF;
 }
 
 void VM::storeByte(unsigned address, unsigned value) {
-    if (address >= mMemorySize) throw VMError("Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
+    if (address >= mMemorySize) throw VMError(mImageFile + ": Tried to write to address " + std::to_string(address) + " which is beyond EOF.");
     mMemory[address] = value & 0xFF;
 }
 
@@ -164,38 +166,69 @@ void VM::storeString(unsigned address, const std::string &text, unsigned maxLeng
 }
 
 
+unsigned VM::getPosition() const {
+    return mCurrentPosition;
+}
+
+void VM::setPosition(unsigned address) {
+    mCurrentPosition = address;
+}
+
+bool VM::validPosition() const {
+    return mCurrentPosition < mMemorySize;
+}
+
+int VM::readByte() {
+    int value = readByte(mCurrentPosition);
+    mCurrentPosition += 1;
+    return value;
+}
+
+int VM::readShort() {
+    int value = readShort(mCurrentPosition);
+    mCurrentPosition += 2;
+    return value;
+}
+
+int VM::readWord() {
+    int value = readWord(mCurrentPosition);
+    mCurrentPosition += 4;
+    return value;
+}
+
+
 void VM::push(int value) {
-    if (mCallStack.empty()) throw VMError("Push on empty callstack.");
+    if (mCallStack.empty()) throw VMError(mImageFile + ": Push on empty callstack.");
     Frame &frame = mCallStack.back();
-    if (frame.stackPos >= maxStackSize) throw VMError("Stack overflow.");
+    if (frame.stackPos >= maxStackSize) throw VMError(mImageFile + ": Stack overflow.");
     frame.stack[frame.stackPos] = value;
     ++frame.stackPos;
 }
 int VM::stackSize() const {
-    if (mCallStack.empty()) throw VMError("StackSize on empty callstack.");
+    if (mCallStack.empty()) throw VMError(mImageFile + ": StackSize on empty callstack.");
     return mCallStack.back().stackPos;
 }
 int VM::peek(int pos) const {
-    if (mCallStack.empty()) throw VMError("Peek on empty callstack.");
+    if (mCallStack.empty()) throw VMError(mImageFile + ": Peek on empty callstack.");
     const Frame &frame = mCallStack.back();
     return frame.stack[frame.stackPos - pos];
 }
 int VM::pop() {
-    if (mCallStack.empty()) throw VMError("Pop on empty callstack.");
+    if (mCallStack.empty()) throw VMError(mImageFile + ": Pop on empty callstack.");
     Frame &frame = mCallStack.back();
-    if (frame.stackPos == 0) throw VMError("Stack underflow.");
+    if (frame.stackPos == 0) throw VMError(mImageFile + ": Stack underflow.");
     --frame.stackPos;
     return frame.stack[frame.stackPos];
 }
 void VM::update(int position, int value) {
-    if (mCallStack.empty()) throw VMError("Update on empty callstack.");
+    if (mCallStack.empty()) throw VMError(mImageFile + ": Update on empty callstack.");
     Frame &frame = mCallStack.back();
     frame.stack[frame.stackPos - position] = value;
 }
 
 void VM::minStack(int minimumSize) const {
     if (stackSize() < minimumSize) {
-        throw VMError("Stack underflow.");
+        throw VMError(mImageFile + ": Stack underflow.");
     }
 }
 
@@ -214,7 +247,8 @@ bool VM::run(unsigned address) {
     mCallStack.push_back(Frame(address, 0));
     while (!state->wantsToQuit) {
         if (IP >= mMemorySize) {
-            throw VMError("Tried to execute instruction at "
+            throw VMError(mImageFile
+                           + ": Tried to execute instruction at "
                            + std::to_string(IP)
                            + " which is outside memory sized "
                            + std::to_string(mMemorySize)
@@ -351,7 +385,7 @@ bool VM::run(unsigned address) {
                 mCallStack.push_back(frame);
                 IP = frame.functionAddress;
                 if (mCallStack.size() > maxCallStack) {
-                    throw VMError("Exceed maximum call stack size.");
+                    throw VMError(mImageFile + ": Exceed maximum call stack size.");
                 }
                 break; }
             case Opcode::ret: {
@@ -588,7 +622,8 @@ bool VM::run(unsigned address) {
                 break; }
 
             default:
-                throw VMError("Tried to execute unknown instruction "
+                throw VMError(mImageFile
+                              + ": Tried to execute unknown instruction "
                               + std::to_string(static_cast<unsigned>(opcode))
                               + " at address "
                               + std::to_string(IP)

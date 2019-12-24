@@ -43,6 +43,16 @@ public:
     void storeByte(unsigned address, unsigned value);
     void storeString(unsigned address, const std::string &text, unsigned maxLength);
 
+    unsigned getPosition() const;
+    void setPosition(unsigned address);
+    int rewind(bool skipHeader);
+    bool validPosition() const;
+    int readByte();
+    int readShort();
+    int readWord();
+
+
+
 private:
     struct Frame {
         Frame(unsigned address, unsigned returnTo)
@@ -67,6 +77,8 @@ private:
     char *mMemory;
     unsigned long long mMemorySize;
     std::vector<Frame> mCallStack;
+    unsigned mCurrentPosition;
+    std::string mImageFile;
 };
 
 #endif
