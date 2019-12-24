@@ -294,7 +294,36 @@ bool System::load() {
         }
     }
 
-    if (!loadTypeData()) return false;
+    if (!loadTypeData())   return false;
+    if (!loadStringData()) return false;
+    return true;
+}
+
+bool System::loadStringData() {
+    Logger &log = Logger::getInstance();
+    char *text = slurpFile("strings.dat");
+    if (text == nullptr) return false;
+    std::stringstream fulltext(text);
+    std::string line;
+    int lineNo = 0;
+    while (std::getline(fulltext, line)) {
+        ++lineNo;
+        if (line.empty()) continue;
+        std::string::size_type pos = line.find_first_of("=");
+        if (pos == std::string::npos) {
+            log.warn("strings.dat: malformed string def on line " + std::to_string(lineNo));
+            continue;
+        }
+        std::string number = trim(line.substr(0, pos));
+        std::string text = trim(line.substr(pos + 1));
+        unescapeString(text);
+        int textNo = strToInt(number);
+        auto old = strings.find(textNo);
+        if (old != strings.end()) {
+            log.warn("String ID " + number + " used on line " + std::to_string(lineNo) + " was previously defined.");
+        }
+        strings[textNo] = text;
+    }
     return true;
 }
 

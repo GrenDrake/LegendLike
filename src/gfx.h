@@ -92,6 +92,7 @@ public:
     std::map<int, Mix_Chunk*> mAudio;
     std::map<std::string, SDL_Texture*> mImages;
     std::map<std::string, Font*> mFonts;
+    std::map<int, std::string> strings;
 
     // system modules
     SDL_Renderer *renderer;
@@ -112,7 +113,9 @@ public:
     int fps;
 
 private:
+    bool loadStringData();
     bool loadTypeData();
+
 };
 
 class Font {

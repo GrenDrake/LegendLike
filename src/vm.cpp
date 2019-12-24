@@ -9,6 +9,7 @@
 #include "gfx.h"
 #include "vm.h"
 #include "random.h"
+#include "textutil.h"
 #include "vm_opcode.h"
 #include "logger.h"
 
@@ -323,14 +324,24 @@ bool VM::run(unsigned address) {
             case Opcode::saychar:
                 currentText << static_cast<char>(pop());
                 break;
-            case Opcode::saystr:
-                currentText << readString(pop());
-                break;
+            case Opcode::saystr: {
+                int stringId = pop();
+                auto iter = state->strings.find(stringId);
+                if (iter != state->strings.end()) {
+                    currentText << iter->second;
+                } else {
+                    currentText << "{bad string " << stringId << "}";
+                }
+                break; }
             case Opcode::textbox: {
                 if (state) {
-                    state->messages.push_back(currentText.str());
+                    std::string text = currentText.str();
                     currentText.clear();
                     currentText.str("");
+                    std::vector<std::string> lines = explode(text, "\n");
+                    for (const std::string &s : lines) {
+                        state->messages.push_back(s);
+                    }
                 }
                 break; }
 

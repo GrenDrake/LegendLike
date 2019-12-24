@@ -1,27 +1,24 @@
 ; data for map of the starting town
 
-map0_str_professor:
-    .string "professor"
-map0_str_gateguard:
-    .string "gate guard"
-map0_str_combatdemoguy:
-    .string "combat demo guy"
-map0_str_partygifter:
-    .string "party gifter guy"
-map0_str_archdean:
-    .string "archdean"
-map0_str_sign:
-    .string "sign"
-map0_str_academysign_text:
-    .string "Sign: \"Demon Beast Academy (Under Renovation)\""
-map0_str_gateguard_nopass:
-    .string "Guard: \"It is not safe beyond the gate; you must claim a beast from the academy before you may depart.\""
-map0_str_gateguard_allowpass:
-    .string "Guard: \"I see you have a beast with you. You may pass.\""
-map0_str_archdean_givebeast:
-    .string "Archdean: \"Unfortunately, with the work being done on the academy, are usual arrangements are not available. Thus, please, take this beast to get you started.\""
-map0_str_professor_talk:
-    .string "Professor: \"Are your beasts hurt? If they are, allow me to heal them.\""
+map0_str_professor:     .string "professor"
+map0_str_gateguard:     .string "gate guard"
+map0_str_combatdemoguy: .string "combat demo guy"
+map0_str_partygifter:   .string "party gifter guy"
+map0_str_archdean:      .string "archdean"
+map0_str_sign:          .string "sign"
+map0_strActor:          .string "actor"
+map0_strScorpian:       .string "scorpian"
+
+.define map0_str_academysign_text       5
+.define map0_str_gateguard_nopass       4
+.define map0_str_gateguard_allowpass    3
+.define map0_str_archdean_givebeast     2
+.define map0_str_professor_talk         1
+.define map0_str_fledTestFight          6
+.define map0_str_giftparty              7
+
+.define map0_strRumblingNoise           8
+.define map0_strScorpianSaysHi          9
 
 map0_gotfirst_flag:
     .byte 0
@@ -51,9 +48,6 @@ map0_talk_gateguard_havebeast:
     textbox
     ret
 
-map0_str_giftparty:
-    .string "I am the stablemaster. Here, have some beasts."
-
 map0_test_giveparty:
     @saystr         map0_str_giftparty
     textbox
@@ -63,15 +57,6 @@ map0_test_fight:
     @saystr         map0_str_fledTestFight
     textbox
     ret
-
-map0_str_test_fight_givebeast:
-    .string "Here. You don't appear to have a beast, so have this one."
-map0_str_wonTestFight:
-    .string         "Congradulations! If you're ever in the mood for a rematch, come speak to me again."
-map0_str_lostTestFight:
-    .string         "I'm sorry that you lost. Get your beasties healed at the lab and come back to try again."
-map0_str_fledTestFight:
-    .string         "Too much for you, eh?"
 
 testfight:
     .word 9147  5  -1 -1 -1 -1
@@ -300,13 +285,9 @@ map0_townTeleportBottom:
     warpto
     ret
 
-map0_strRumblingNoise: .string "There is a rumbling sound as the walls shift."
 
 map0_talkScorpian:
     @saystr     map0_strScorpianSaysHi
     textbox
     ret
 
-map0_strScorpianSaysHi: .string "The scorpian greets you cheerfully.\n\nYou respond politely."
-map0_strActor:          .string "actor"
-map0_strScorpian:       .string "scorpian"

@@ -3,20 +3,14 @@
 .include "stddefs.inc"
 
 
-prologText1:
-    .string "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest."
-prologText2:
-    .string "But first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion.\n"
-strDivider:
-    .string "---"
+.define strPrologText   0
+.define strDivider      10
 
 
 start:
     ; teleport the player to the starting location
     @warpto     23 17 0
-    @saystr     prologText1
-    textbox
-    @saystr     prologText2
+    @saystr     strPrologText
     textbox
     @saystr     strDivider
     textbox

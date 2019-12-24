@@ -95,3 +95,17 @@ std::string trim(const std::string &inStr) {
     return str;
 }
 
+std::string& replaceAll(std::string &text, const std::string &from, const std::string &to) {
+    std::string::size_type pos = text.find(from);
+    while (pos != std::string::npos) {
+        text.replace(pos, from.size(), to);
+        pos = text.find(from);
+    }
+    return text;
+}
+
+std::string& unescapeString(std::string &text) {
+    replaceAll(text, "\\n", "\n");
+    return text;
+}
+
