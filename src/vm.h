@@ -28,7 +28,7 @@ public:
     ~VM();
 
     void setSystem(System *newState);
-    bool loadFromFile(const std::string &filename);
+    bool loadFromFile(const std::string &filename, bool requireValid);
 
     int getExport(const std::string &name) const;
     bool runFunction(const std::string &name);
@@ -79,6 +79,7 @@ private:
     std::vector<Frame> mCallStack;
     unsigned mCurrentPosition;
     std::string mImageFile;
+    bool mIsValid;
 };
 
 #endif

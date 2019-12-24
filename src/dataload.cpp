@@ -58,7 +58,7 @@ bool System::load() {
     Logger &log = Logger::getInstance();
 
     try {
-        if (!vm->loadFromFile("game.dat")) {
+        if (!vm->loadFromFile("game.dat", true)) {
             log.error("Failed to load VM image.");
             return false;
         }
@@ -199,7 +199,7 @@ bool System::load() {
 bool System::loadCreatureData() {
     Logger &log = Logger::getInstance();
     VM beasts;
-    if (!beasts.loadFromFile("beasts.dat")) {
+    if (!beasts.loadFromFile("beasts.dat", false)) {
         log.error("Failed to load beast info.");
         return false;
     }
@@ -239,7 +239,7 @@ bool System::loadCreatureData() {
 bool System::loadMoveData() {
     Logger &log = Logger::getInstance();
     VM moves;
-    if (!moves.loadFromFile("moves.dat")) {
+    if (!moves.loadFromFile("moves.dat", false)) {
         log.error("Failed to load move info.");
         return false;
     }

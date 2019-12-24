@@ -13,6 +13,8 @@
 #include "vm_opcode.h"
 #include "logger.h"
 
+const static unsigned FILE_ID_NUMBER = 0x004D5654;
+
 std::ostream& operator<<(std::ostream &out, Opcode code) {
     switch(code) {
         case Opcode::exit: out << "Exit"; break;
@@ -58,7 +60,7 @@ std::ostream& operator<<(std::ostream &out, Opcode code) {
 
 VM::VM()
 : state(nullptr), mMemory(nullptr), mMemorySize(0), mCurrentPosition(0),
-  mImageFile("<memory>")
+  mImageFile("<memory>"), mIsValid(false)
 { }
 VM::~VM() {
     if (mMemory) delete[] mMemory;
@@ -68,7 +70,7 @@ void VM::setSystem(System *newState) {
     state = newState;
 }
 
-bool VM::loadFromFile(const std::string &filename) {
+bool VM::loadFromFile(const std::string &filename, bool requireValid) {
 
     if (!PHYSFS_exists(filename.c_str())) {
         return false;
@@ -83,10 +85,20 @@ bool VM::loadFromFile(const std::string &filename) {
     mMemorySize = length;
     mImageFile = filename;
 
+    if (readWord(0) != FILE_ID_NUMBER) {
+        mIsValid = false;
+    } else {
+        mIsValid = true;
+    }
+    if (requireValid && !mIsValid) {
+        throw VMError(filename + ": Invalid VM image.");
+    }
+
     return true;
 }
 
 int VM::getExport(const std::string &name) const {
+    if (!mIsValid) return -1;
     int export_count = readWord(exportCountPosition);
     for (int i = 0; i < export_count; ++i) {
         int pos = firstExportPosition + i * exportSize;
@@ -233,6 +245,7 @@ void VM::minStack(int minimumSize) const {
 }
 
 bool VM::run(unsigned address) {
+    if (!mIsValid) return false;
     if (!mMemory || address >= mMemorySize) {
         return false;
     }
