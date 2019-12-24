@@ -296,14 +296,19 @@ bool System::loadStringData() {
     int lineNo = 0;
     while (std::getline(fulltext, line)) {
         ++lineNo;
+        // skip blank lines and comments
         if (line.empty()) continue;
-        std::string::size_type pos = line.find_first_of("=");
+        std::string::size_type pos = line.find_first_not_of(" \t");
+        if (pos == std::string::npos || line[pos] == ';') continue;
+        // break lines into parts
+        pos = line.find_first_of("=");
         if (pos == std::string::npos) {
             log.warn("strings.dat: malformed string def on line " + std::to_string(lineNo));
             continue;
         }
         std::string number = trim(line.substr(0, pos));
         std::string text = trim(line.substr(pos + 1));
+        // save new string
         unescapeString(text);
         int textNo = strToInt(number);
         auto old = strings.find(textNo);
