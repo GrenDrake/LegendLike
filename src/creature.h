@@ -87,6 +87,7 @@ public:
     int typeIdent;
     int level, xp;
     int curHealth, curEnergy;
+    std::vector<int> moves;
 
     int nextAction;
     bool isPlayer;

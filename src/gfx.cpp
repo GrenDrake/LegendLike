@@ -107,6 +107,10 @@ void repaint(System &state, bool callPresent) {
         state.tinyFont->out(xPos, yPos, line.str());
         yPos += tinyLineHeight;
     }
+    for (unsigned i = 0; i < 4 && i < player->moves.size(); ++i) {
+        state.tinyFont->out(xPos, yPos, std::to_string(player->moves[i]));
+        yPos += tinyLineHeight;
+    }
     yPos = statTop;
     for (int i = 0; i < damageTypeCount; ++i) {
         DamageType damageType = static_cast<DamageType>(i);

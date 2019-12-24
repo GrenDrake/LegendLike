@@ -91,6 +91,7 @@ Creature::Creature(int type)
 {
     typeIdent = type;
     typeInfo = &CreatureType::get(type);
+    moves.push_back(typeInfo->defaultMove);
 }
 
 std::string Creature::getName() const {
