@@ -6,7 +6,6 @@
 
 #include "creature.h"
 #include "board.h"
-#include "gamestate.h"
 #include "gfx.h"
 #include "vm.h"
 #include "random.h"
@@ -205,7 +204,7 @@ bool VM::run(unsigned address) {
     }
 
     Board *board = nullptr;
-    if (state) board = state->game->getBoard();
+    if (state) board = state->getBoard();
     Opcode opcode;
     unsigned operand;
 
@@ -528,7 +527,7 @@ bool VM::run(unsigned address) {
                 break; }
             case Opcode::mf_makemaze: {
                 unsigned flags = pop();
-                makeMapMaze(state->game->getBoard(), state->coreRNG, flags);
+                makeMapMaze(state->getBoard(), state->coreRNG, flags);
                 break; }
             case Opcode::mf_makefoes: {
                 unsigned infoAddr = pop();
@@ -549,7 +548,7 @@ bool VM::run(unsigned address) {
                     info.rows.push_back(row);
                 }
 
-                mapRandomEnemies(state->game->getBoard(), state->coreRNG, info);
+                mapRandomEnemies(state->getBoard(), state->coreRNG, info);
                 break; }
 
             case Opcode::p_stat: {
@@ -559,14 +558,14 @@ bool VM::run(unsigned address) {
                 break; }
             case Opcode::p_reset: {
                 if (board) {
-                    state->game->getPlayer()->reset();
+                    state->getPlayer()->reset();
                 }
                 break; }
             case Opcode::p_damage: {
                 int amnt = pop();
                 int type = pop();
                 if (board) {
-                    state->game->getPlayer()->takeDamage(amnt, static_cast<DamageType>(type));
+                    state->getPlayer()->takeDamage(amnt, static_cast<DamageType>(type));
                 }
                 break; }
 
@@ -574,7 +573,7 @@ bool VM::run(unsigned address) {
                 int map = pop();
                 int x = pop();
                 int y = pop();
-                state->game->warpTo(map, x, y);
+                state->warpTo(map, x, y);
                 break; }
 
             default:

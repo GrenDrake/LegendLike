@@ -9,7 +9,6 @@
 #include "game.h"
 #include "gfx.h"
 #include "menu.h"
-#include "gamestate.h"
 #include "vm.h"
 #include "config.h"
 
@@ -42,8 +41,6 @@ void doControlsList(System &system);
 
 void doGameMenu(System &state) {
     int optBool = 1;
-
-    GameState *gameState = nullptr;
     int defOpt = 0;
 
     state.playMusic(0);
@@ -57,11 +54,8 @@ void doGameMenu(System &state) {
             case 0:
                 mainMenu[4].type = MenuType::Choice;
                 defOpt = 4;
-                if (gameState) delete gameState;
-                gameState = new GameState(*state.vm);
-                gameState->system = &state;
-                state.game = gameState;
-                gameState->getVM().runFunction("start");
+                state.reset();
+                state.vm->runFunction("start");
                 gameloop(state);
                 state.playMusic(0);
                 break;
@@ -96,8 +90,6 @@ void doGameMenu(System &state) {
                 break;
         }
     }
-
-    if (gameState) delete gameState;
 }
 
 static std::string makeCommandEntry(const CommandDef &cmd) {

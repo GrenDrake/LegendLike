@@ -6,14 +6,13 @@
 #include "creature.h"
 #include "board.h"
 #include "game.h"
-#include "gamestate.h"
 #include "gfx.h"
 #include "command.h"
 
-void showFullMap(System &renderState) {
+void showFullMap(System &system) {
     int dispWidth, dispHeight;
-    SDL_GetRendererOutputSize(renderState.renderer, &dispWidth, &dispHeight);
-    Board *board = renderState.game->getBoard();
+    SDL_GetRendererOutputSize(system.renderer, &dispWidth, &dispHeight);
+    Board *board = system.getBoard();
 
     int mapTileHeight = dispHeight / board->height();
     int mapTileWidth = dispWidth / board->width();
@@ -27,8 +26,8 @@ void showFullMap(System &renderState) {
     int offsetY = (dispHeight - mapTileHeight * board->height()) / 2;
 
     while (1) {
-        SDL_SetRenderDrawColor(renderState.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderState.renderer);
+        SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(system.renderer);
 
         for (int y = 0; y < dispHeight && y < board->height(); ++y) {
             for (int x = 0; x < dispWidth && x < board->width(); ++x) {
@@ -46,11 +45,11 @@ void showFullMap(System &renderState) {
 
                 const TileInfo &tileInfo = TileInfo::get(board->getTile(here));
                 if (visible) {
-                    SDL_SetRenderDrawColor(renderState.renderer, tileInfo.red, tileInfo.green, tileInfo.blue, SDL_ALPHA_OPAQUE);
+                    SDL_SetRenderDrawColor(system.renderer, tileInfo.red, tileInfo.green, tileInfo.blue, SDL_ALPHA_OPAQUE);
                 } else {
-                    SDL_SetRenderDrawColor(renderState.renderer, tileInfo.red / 3, tileInfo.green / 3, tileInfo.blue / 3, SDL_ALPHA_OPAQUE);
+                    SDL_SetRenderDrawColor(system.renderer, tileInfo.red / 3, tileInfo.green / 3, tileInfo.blue / 3, SDL_ALPHA_OPAQUE);
                 }
-                SDL_RenderFillRect(renderState.renderer, &texturePosition);
+                SDL_RenderFillRect(system.renderer, &texturePosition);
 
                 if (visible) {
                     Creature *creatureHere = board->actorAt(here);
@@ -64,16 +63,16 @@ void showFullMap(System &renderState) {
                         }
 
                         if (creatureHere->aiType == aiPlayer) {
-                            SDL_SetRenderDrawColor(renderState.renderer, 32, 192, 32, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(system.renderer, 32, 192, 32, SDL_ALPHA_OPAQUE);
                         } else {
-                            SDL_SetRenderDrawColor(renderState.renderer, 192, 32, 192, SDL_ALPHA_OPAQUE);
+                            SDL_SetRenderDrawColor(system.renderer, 192, 32, 192, SDL_ALPHA_OPAQUE);
                         }
-                        SDL_RenderFillRect(renderState.renderer, &objectPosition);
+                        SDL_RenderFillRect(system.renderer, &objectPosition);
                     }
                 }
             }
         }
-        SDL_RenderPresent(renderState.renderer);
+        SDL_RenderPresent(system.renderer);
 
         // ////////////////////////////////////////////////////////////////////
         // event loop
@@ -82,16 +81,16 @@ void showFullMap(System &renderState) {
             const CommandDef &cmd = getCommand(event, gameCommands);
             switch(cmd.command) {
                 case Command::Quit:
-                    renderState.wantsToQuit = true;
+                    system.wantsToQuit = true;
                 case Command::Cancel:
                 case Command::ReturnToMenu:
                 case Command::ShowMap:
                     return;
                 case Command::Debug_Reveal:
-                    renderState.game->getBoard()->dbgRevealAll();
+                    system.getBoard()->dbgRevealAll();
                     break;
                 case Command::Debug_NoFOV:
-                    renderState.game->getBoard()->dbgToggleFOV();
+                    system.getBoard()->dbgToggleFOV();
                     break;
                 default:
                     // do nothing
@@ -99,6 +98,6 @@ void showFullMap(System &renderState) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(renderState.fpsManager));
+        SDL_framerateDelay(static_cast<FPSmanager*>(system.fpsManager));
     }
 }

@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+class Board;
+class Creature;
 class Random;
 class GameState;
 struct SDL_Renderer;
@@ -35,6 +37,8 @@ public:
 
     bool load();
     void unloadAll();
+    void reset();
+    void endGame();
 
     SDL_Texture* getImageCore(const std::string &name);
     SDL_Texture* getImage(const std::string &name);
@@ -52,33 +56,63 @@ public:
     void playEffect(int effectNumber);
     void setAudioVolume(int volume);
 
-    SDL_Renderer *renderer;
-    Random &coreRNG;
-    GameState *game;
-    SDL_Texture *tileset;
+
+    void requestTick();
+    bool hasTick() const;
+    void tick();
+
+    Board* getBoard() {
+        return mCurrentBoard;
+    }
+    Creature* getPlayer() {
+        return mPlayer;
+    }
+    bool warpTo(int boardIndex, int x, int y);
+    bool down();
+    bool up();
+    bool build(int forIndex);
+
+    // message log
+    std::vector<std::string> messages;
+
+    // Map data
+    int turnNumber;
+    int depth;
+    Board *mCurrentBoard;
+    Creature *mPlayer;
+    std::map<int, Board*> mBoards;
+
+    // game resources
     Font *smallFont;
     Font *tinyFont;
+    int mCurrentTrack;
+    Mix_Music *mCurrentMusic;
+    std::map<int, SDL_Texture*> mTiles;
+    std::map<int, TrackInfo> mTracks;
+    std::map<int, Mix_Chunk*> mAudio;
+    std::map<std::string, SDL_Texture*> mImages;
+    std::map<std::string, Font*> mFonts;
+
+    // system modules
+    SDL_Renderer *renderer;
+    Random &coreRNG;
     VM *vm;
     Config *config;
+
+    // game configuration flags
+    bool wantsToQuit;
+    bool showInfo;
+    bool showFPS;
+    bool wantsTick;
+
+    // fps management
     // we declared this as a void* to avoid needing to include the often
     // unneccesary header file or dealing with the typedef FPSManager
     void *fpsManager;
     int fps;
-    bool wantsToQuit;
-    bool showInfo;
-    bool showFPS;
-    std::vector<std::string> messages;
 
-    std::map<int, SDL_Texture*> mTiles;
-    std::map<int, TrackInfo> mTracks;
-    std::map<int, Mix_Chunk*> mAudio;
 private:
     bool loadTypeData();
-
-    int mCurrentTrack;
-    Mix_Music *mCurrentMusic;
-    std::map<std::string, SDL_Texture*> mImages;
-    std::map<std::string, Font*> mFonts;
 };
 
 class Font {

@@ -11,17 +11,6 @@
 const TrackInfo noTrack{-1, "", "no track playing", ""};
 
 
-System::System(SDL_Renderer *renderer, Random &rng)
-: renderer(renderer), coreRNG(rng), game(nullptr), tileset(nullptr),
-  smallFont(nullptr), vm(nullptr), fpsManager(nullptr),
-  fps(0), wantsToQuit(false), showInfo(false), showFPS(false),
-  mCurrentTrack(-1), mCurrentMusic(nullptr)
-{ ; }
-
-System::~System() {
-}
-
-
 SDL_Texture* System::getImageCore(const std::string &name) {
     Logger &log = Logger::getInstance();
     auto previous = mImages.find(name);

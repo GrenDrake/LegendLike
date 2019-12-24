@@ -11,7 +11,6 @@
 #include "board.h"
 #include "game.h"
 #include "point.h"
-#include "gamestate.h"
 #include "command.h"
 #include "textutil.h"
 
@@ -34,21 +33,21 @@ void repaint(System &state, bool callPresent) {
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     // DRAW MAP
-    int viewX = state.game->getPlayer()->position.x() - (mapWidthTiles / 2);
-    int viewY = state.game->getPlayer()->position.y() - (mapHeightTiles  / 2);
+    int viewX = state.getPlayer()->position.x() - (mapWidthTiles / 2);
+    int viewY = state.getPlayer()->position.y() - (mapHeightTiles  / 2);
 
     SDL_Rect clipRect = { 0, 0, mapWidthPixels, mapHeightPixels };
     SDL_RenderSetClipRect(state.renderer, &clipRect);
     for (int y = 0; y < mapHeightTiles; ++y) {
         for (int x = 0; x < mapWidthTiles; ++x) {
             const Point here(viewX + x, viewY + y);
-            if (here.x() < 0 || here.y() < 0 || here.x() >= state.game->getBoard()->width() || here.y() >= state.game->getBoard()->height()) {
+            if (here.x() < 0 || here.y() < 0 || here.x() >= state.getBoard()->width() || here.y() >= state.getBoard()->height()) {
                 continue;
             }
-            if (!state.game->getBoard()->isKnown(here)) continue;
-            bool visible = state.game->getBoard()->isVisible(here);
+            if (!state.getBoard()->isKnown(here)) continue;
+            bool visible = state.getBoard()->isVisible(here);
 
-            int tileHere = state.game->getBoard()->getTile(here);
+            int tileHere = state.getBoard()->getTile(here);
             SDL_Rect texturePosition = {
                 x * tileWidth - mapOffsetX,
                 y * tileHeight - mapOffsetY,
@@ -66,7 +65,7 @@ void repaint(System &state, bool callPresent) {
             }
 
             if (visible) {
-                Creature *creature = state.game->getBoard()->actorAt(here);
+                Creature *creature = state.getBoard()->actorAt(here);
                 if (creature) {
                     SDL_Texture *tile = state.getTile(creature->typeInfo->artIndex);
                     if (tile) {
@@ -86,7 +85,7 @@ void repaint(System &state, bool callPresent) {
     const int tinyLineHeight = state.tinyFont->getLineHeight();
     const int barHeight = lineHeight / 2;
     const int column2 = xPos + sidebarWidth / 2;
-    Creature *player = state.game->getPlayer();
+    Creature *player = state.getPlayer();
     const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->getStat(Stat::Health));
     const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->getStat(Stat::Energy));
 
@@ -152,19 +151,19 @@ void repaint(System &state, bool callPresent) {
             std::stringstream ss;
             int tileX = viewX + mouseX / (tileWidth + 1);
             int tileY = viewY + mouseY / (tileHeight + 1);
-            int tileHere = state.game->getBoard()->getTile(Point(tileX,tileY));
+            int tileHere = state.getBoard()->getTile(Point(tileX,tileY));
             if (tileHere != tileOutOfBounds) {
                 Point here(tileX, tileY);
-                Creature *creature = state.game->getBoard()->actorAt(here);
+                Creature *creature = state.getBoard()->actorAt(here);
                 if (creature) {
                     ss << creature->name << "   ";
                 }
                 const TileInfo &tileInfo = TileInfo::get(tileHere);
                 ss << tileInfo.name << "   " << tileX << ", " << tileY;
-                ss << " V:" << state.game->getBoard()->isVisible(here);
-                ss << " K:" << state.game->getBoard()->isKnown(here);
-                ss << " MAPID: " << state.game->getDepth();
-                ss << " Turn: " << state.game->getTurn();
+                ss << " V:" << state.getBoard()->isVisible(here);
+                ss << " K:" << state.getBoard()->isKnown(here);
+                ss << " MAPID: " << state.depth;
+                ss << " Turn: " << state.turnNumber;
                 ss << " track: " << state.getTrackNumber();
                 state.smallFont->out(screenWidth - (ss.str().size() + 1) * state.smallFont->getCharWidth(), screenHeight - state.smallFont->getLineHeight() * 2, ss.str());
                 const TrackInfo &info = state.getTrackInfo();

@@ -14,61 +14,59 @@
 #include "point.h"
 #include "vm.h"
 #include "random.h"
-#include "gamestate.h"
 #include "gfx.h"
 
 
 
-bool tryInteract(System &renderState, const Point &target) {
-    Creature *actor = renderState.game->getBoard()->actorAt(target);
-    const Board::Event *event = renderState.game->getBoard()->eventAt(target);
-    if (actor && actor != renderState.game->getPlayer()) {
+bool tryInteract(System &state, const Point &target) {
+    Creature *actor = state.getBoard()->actorAt(target);
+    const Board::Event *event = state.getBoard()->eventAt(target);
+    if (actor && actor != state.getPlayer()) {
         if (actor->talkFunc) {
-            renderState.game->getVM().run(actor->talkFunc);
+            state.vm->run(actor->talkFunc);
         } else {
-            renderState.messages.push_back("They have nothing to say.");
+            state.messages.push_back("They have nothing to say.");
         }
-        renderState.game->requestTick();
+        state.requestTick();
         return true;
     } else if (event && event->type == eventTypeManual) {
-        renderState.game->getVM().run(event->funcAddr);
+        state.vm->run(event->funcAddr);
     } else {
-        const TileInfo &info = TileInfo::get(renderState.game->getBoard()->getTile(target));
+        const TileInfo &info = TileInfo::get(state.getBoard()->getTile(target));
         int to = info.interactTo;
         if (to >= 0) {
-            renderState.game->getBoard()->setTile(target, to);
-            renderState.game->requestTick();
+            state.getBoard()->setTile(target, to);
+            state.requestTick();
         } else if (to == interactGoDown) {
-            renderState.game->down();
-            renderState.game->requestTick();
+            state.down();
+            state.requestTick();
         } else if (to == interactGoUp) {
-            renderState.game->up();
-            renderState.game->requestTick();
+            state.up();
+            state.requestTick();
         }
     }
     return false;
 }
-void gameloop(System &renderState) {
-    GameState &state = *renderState.game;
+void gameloop(System &state) {
     state.getBoard()->calcFOV(state.getPlayer()->position);
 
     Dir runDirection = Dir::None;
 
-    while (!renderState.wantsToQuit) {
+    while (!state.wantsToQuit) {
         if (runDirection != Dir::None) {
             bool hitWall = false;
             do {
                 Point t = state.getPlayer()->position.shift(runDirection, 1);
                 if (state.getPlayer()->tryMove(state.getBoard(), runDirection)) {
                     const Board::Event *e = state.getBoard()->eventAt(t);
-                    if (e && e->type == eventTypeAuto) state.getVM().run(e->funcAddr);
+                    if (e && e->type == eventTypeAuto) state.vm->run(e->funcAddr);
                     state.requestTick();
                 } else {
                     hitWall = true;
                 }
                 if (state.hasTick()) {
                     state.tick();
-                    gfx_frameDelay(renderState);
+                    gfx_frameDelay(state);
                 }
             } while (!hitWall);
             runDirection = Dir::None;
@@ -76,7 +74,7 @@ void gameloop(System &renderState) {
         }
 
         if (state.hasTick()) state.tick();
-        repaint(renderState);
+        repaint(state);
 
         // ////////////////////////////////////////////////////////////////////
         // event loop
@@ -91,7 +89,7 @@ void gameloop(System &renderState) {
                 case Command::ReturnToMenu:
                     return;
                 case Command::Quit:
-                    renderState.wantsToQuit = true;
+                    state.wantsToQuit = true;
                     break;
 
                 case Command::Move: {
@@ -99,11 +97,11 @@ void gameloop(System &renderState) {
                     if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
                         const Board::Event *e = state.getBoard()->eventAt(dest);
                         if (e && e->type == eventTypeAuto) {
-                            state.getVM().run(e->funcAddr);
+                            state.vm->run(e->funcAddr);
                         }
                         state.requestTick();
                     } else {
-                        tryInteract(renderState, dest);
+                        tryInteract(state, dest);
                     }
                     break; }
                 case Command::Run:
@@ -113,13 +111,13 @@ void gameloop(System &renderState) {
                 case Command::Interact: {
                     Dir d = cmd.direction;
                     Point target = state.getPlayer()->position.shift(d, 1);
-                    tryInteract(renderState, target);
+                    tryInteract(state, target);
                     break; }
                 case Command::Wait:
                     state.requestTick();
                     break;
                 case Command::ShowMap:
-                    showFullMap(renderState);
+                    showFullMap(state);
                     break;
 
                 case Command::Debug_Reveal:
@@ -129,10 +127,10 @@ void gameloop(System &renderState) {
                     state.getBoard()->dbgToggleFOV();
                     break;
                 case Command::Debug_ShowInfo:
-                    renderState.showInfo = !renderState.showInfo;
+                    state.showInfo = !state.showInfo;
                     break;
                 case Command::Debug_ShowFPS:
-                    renderState.showFPS = !renderState.showFPS;
+                    state.showFPS = !state.showFPS;
                     break;
 
                 default:
@@ -141,6 +139,6 @@ void gameloop(System &renderState) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(renderState.fpsManager));
+        SDL_framerateDelay(static_cast<FPSmanager*>(state.fpsManager));
     }
 }

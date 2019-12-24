@@ -1,13 +1,30 @@
 #include "creature.h"
-#include "gamestate.h"
 #include "board.h"
 #include "vm.h"
 #include "gfx.h"
 
 
-GameState::GameState(VM &vm)
-: wantsTick(false), vm(vm), mTurnNumber(1), mDepth(0), mCurrentBoard(nullptr)
+System::System(SDL_Renderer *renderer, Random &rng)
+: turnNumber(1), depth(0), mCurrentBoard(nullptr),  mPlayer(nullptr),
+  smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
+  mCurrentMusic(nullptr), renderer(renderer), coreRNG(rng), vm(nullptr),
+  config(nullptr), wantsToQuit(false), showInfo(false), showFPS(false),
+  wantsTick(false), fpsManager(nullptr), fps(0)
 {
+}
+
+System::~System() {
+    endGame();
+}
+
+void System::reset() {
+    endGame();
+
+    turnNumber = 1;
+    depth = 0;
+    mCurrentBoard = nullptr;
+    wantsTick = false;
+
     mPlayer = new Creature(1);
     mPlayer->name = "player";
     mPlayer->isPlayer = true;
@@ -16,29 +33,32 @@ GameState::GameState(VM &vm)
     mPlayer->reset();
 }
 
-GameState::~GameState() {
+void System::endGame() {
+    messages.clear();
+    if (mCurrentBoard) mCurrentBoard = nullptr;
+    if (mPlayer) mPlayer = nullptr;
     for (auto boardIter : mBoards) {
         delete boardIter.second;
     }
 }
 
-void GameState::requestTick() {
+void System::requestTick() {
     wantsTick = true;
 }
 
-bool GameState::hasTick() const {
+bool System::hasTick() const {
     return wantsTick;
 }
 
-void GameState::tick() {
+void System::tick() {
     wantsTick = false;
     if (mCurrentBoard) {
-        ++mTurnNumber;
+        ++turnNumber;
         mCurrentBoard->tick();
     }
 }
 
-bool GameState::warpTo(int boardIndex, int x, int y) {
+bool System::warpTo(int boardIndex, int x, int y) {
     if (boardIndex < 0) {
         if (!mCurrentBoard) return false;
         mCurrentBoard->removeActor(mPlayer);
@@ -55,8 +75,8 @@ bool GameState::warpTo(int boardIndex, int x, int y) {
     return true;
 }
 
-bool GameState::down() {
-    int newDepth = mDepth + 1;
+bool System::down() {
+    int newDepth = depth + 1;
     if (build(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileUp);
         mCurrentBoard->addActor(mPlayer, startPos);
@@ -66,8 +86,8 @@ bool GameState::down() {
     return true;
 }
 
-bool GameState::up() {
-    int newDepth = mDepth - 1;
+bool System::up() {
+    int newDepth = depth - 1;
     if (build(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileDown);
         mCurrentBoard->addActor(mPlayer, startPos);
@@ -77,7 +97,7 @@ bool GameState::up() {
     return true;
 }
 
-bool GameState::build(int forIndex) {
+bool System::build(int forIndex) {
     const MapInfo &info = MapInfo::get(forIndex);
     if (info.index < 0) return false;
 
@@ -92,15 +112,15 @@ bool GameState::build(int forIndex) {
         Board *newBoard = new Board(info.width, info.height, info.name);
         mCurrentBoard = newBoard;
         if (info.buildFunction) {
-            vm.run(info.buildFunction);
+            vm->run(info.buildFunction);
         }
         mBoards.insert(std::make_pair(forIndex, mCurrentBoard));
     }
-    if (info.enterFunction) vm.run(info.enterFunction);
-    mDepth = forIndex;
+    if (info.enterFunction) vm->run(info.enterFunction);
+    depth = forIndex;
     if (info.musicTrack >= 0) {
 
-        system->playMusic(info.musicTrack);
+        playMusic(info.musicTrack);
     }
     return true;
 }
