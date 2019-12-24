@@ -34,14 +34,6 @@ enum class Stat {
     DR,     DB,     Speed,
 };
 
-namespace TypeInfo {
-    void setTypeCount(int count);
-    void setName(int type, const std::string &name);
-    const std::string& getName(int type);
-    void setEffectiveness(int atk, int def, int effect);
-    double getTypeEffectiveness(int atk, int def);
-}
-
 class MoveType {
 public:
     static void add(const MoveType &type);

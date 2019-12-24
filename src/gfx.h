@@ -117,7 +117,6 @@ private:
     bool loadMoveData();
     bool loadStringData();
     bool loadTileData();
-    bool loadTypeData();
 
 };
 

@@ -20,7 +20,6 @@
 const int END_MARKER    = -1;
 const int MAP_INFO_SIZE = 42;
 const int TILE_ID       = 0x454C4954;
-const int TYPE_ID       = 0x45505954;
 
 static bool fileHasExtension(const std::string &filename, const std::vector<std::string> &list) {
     std::string::size_type pos = filename.find_last_of('.');
@@ -190,7 +189,6 @@ bool System::load() {
         if (!loadMoveData())        return false;
         if (!loadStringData())      return false;
         if (!loadTileData())        return false;
-        if (!loadTypeData())        return false;
     } catch (VMError &e) {
         log.error(e.what());
         return false;
@@ -354,48 +352,6 @@ bool System::loadTileData() {
         PHYSFS_readSLE32(fp, &ident);
     }
     log.info("Loaded " + std::to_string(TileInfo::types.size()) + " tile types.");
-    return true;
-}
-
-bool System::loadTypeData() {
-    Logger &log = Logger::getInstance();
-    PHYSFS_file *fp = PHYSFS_openRead("types.dat");
-    if (!fp) {
-        log.error("Failed to open type data file.");
-        return false;
-    }
-
-    PHYSFS_uint32 typeId = 0;
-    PHYSFS_readULE32(fp, &typeId);
-    if (typeId != TYPE_ID) {
-        log.error("types.dat has wrong datafile ID.");
-        return false;
-    }
-
-    PHYSFS_sint8 count = 0;
-    PHYSFS_readBytes(fp, &count, 1);
-    if (count <= 0) {
-        log.error("Number of types cannot be zero or less.");
-        return false;
-    }
-    TypeInfo::setTypeCount(count);
-
-    for (int i = 0; i < count; ++i) {
-        char name[32] = { 0 };
-        PHYSFS_readBytes(fp, name, 16);
-        TypeInfo::setName(i, name);
-    }
-
-    for (int x = 0; x < count; ++x) {
-        for (int y = 0; y < count; ++y) {
-            PHYSFS_uint8 b = 0;
-            PHYSFS_readBytes(fp, &b, 1);
-            TypeInfo::setEffectiveness(y, x, b);
-        }
-    }
-
-    PHYSFS_close(fp);
-    log.info("Loaded " + std::to_string(count) + " types.");
     return true;
 }
 
