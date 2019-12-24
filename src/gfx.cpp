@@ -22,8 +22,8 @@ void repaint(System &state, bool callPresent) {
     const int mapOffsetY = tileHeight / 3 * 2;
     const int mapWidthPixels = screenWidth - sidebarWidth;
     const int mapHeightPixels = screenHeight;
-    const int mapWidthTiles = mapWidthPixels / tileWidth + 1;
-    const int mapHeightTiles = mapHeightPixels / tileHeight + 1;
+    const int mapWidthTiles = mapWidthPixels / tileWidth + 2;
+    const int mapHeightTiles = mapHeightPixels / tileHeight + 2;
 
     const std::uint32_t uiColor = 0xF0F0F0FF;
 
@@ -171,8 +171,8 @@ void repaint(System &state, bool callPresent) {
         mouseY += mapOffsetY;
         if (mouseX < mapWidthPixels) {
             std::stringstream ss;
-            int tileX = viewX + mouseX / (tileWidth + 1);
-            int tileY = viewY + mouseY / (tileHeight + 1);
+            int tileX = viewX + mouseX / (tileWidth);
+            int tileY = viewY + mouseY / (tileHeight);
             int tileHere = state.getBoard()->getTile(Point(tileX,tileY));
             if (tileHere != tileOutOfBounds) {
                 Point here(tileX, tileY);
