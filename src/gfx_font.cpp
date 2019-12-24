@@ -28,13 +28,10 @@ int Font::getLineHeight() const {
     return mCharHeight + mLineSpace;
 }
 
-static const int defaultRed = 255;
-static const int defaultGreen = 255;
-static const int defaultBlue = 255;
-void Font::out(int x, int y, const std::string &text) {
+void Font::out(int x, int y, const std::string &text, const Color &defaultColor) {
     if (!mTexture || !mRenderer) return;
 
-    SDL_SetTextureColorMod(mTexture, defaultRed, defaultGreen, defaultBlue);
+    SDL_SetTextureColorMod(mTexture, defaultColor.r, defaultColor.g, defaultColor.b);
 
     SDL_Rect src = { 0, 0, mCharWidth, mCharHeight };
     SDL_Rect dest = { x, y, mCharWidth, mCharHeight };
@@ -52,7 +49,7 @@ void Font::out(int x, int y, const std::string &text) {
             int cmd = text[i];
             switch(cmd) {
                 case 1: // reset formatting
-                    SDL_SetTextureColorMod(mTexture, defaultRed, defaultGreen, defaultBlue);
+                    SDL_SetTextureColorMod(mTexture, defaultColor.r, defaultColor.g, defaultColor.b);
                     break;
                 case 2: { // set text colour
                     ++i;

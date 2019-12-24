@@ -123,7 +123,7 @@ public:
     int getCharWidth() const;
     int getCharHeight() const;
     int getLineHeight() const;
-    void out(int x, int y, const std::string &text);
+    void out(int x, int y, const std::string &text, const Color &defaultColor = Color{255,255,255});
 private:
     SDL_Renderer *mRenderer;
     SDL_Texture *mTexture;
