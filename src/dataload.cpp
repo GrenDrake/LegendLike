@@ -292,6 +292,7 @@ bool System::loadStringData() {
     char *text = slurpFile("strings.dat");
     if (text == nullptr) return false;
     std::stringstream fulltext(text);
+    delete[] text;
     std::string line;
     int lineNo = 0;
     while (std::getline(fulltext, line)) {
