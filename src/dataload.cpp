@@ -185,9 +185,10 @@ bool System::load() {
 
 
     try {
+        if (!loadStringData())      return false;
+
         if (!loadCreatureData())    return false;
         if (!loadMoveData())        return false;
-        if (!loadStringData())      return false;
         if (!loadTileData())        return false;
     } catch (VMError &e) {
         log.error(e.what());
@@ -256,6 +257,7 @@ bool System::loadMoveData() {
 
             int nameId          = moves.readWord();
             auto nameStr = strings.find(nameId);
+            log.warn(std::to_string(nameId));
             if (nameStr == strings.end()) {
                 type.name = "attack #" + std::to_string(ident);
             } else {

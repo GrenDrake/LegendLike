@@ -108,7 +108,8 @@ void repaint(System &state, bool callPresent) {
         yPos += tinyLineHeight;
     }
     for (unsigned i = 0; i < 4 && i < player->moves.size(); ++i) {
-        state.tinyFont->out(xPos, yPos, std::to_string(player->moves[i]));
+        const MoveType &move = MoveType::get(player->moves[i]);
+        state.tinyFont->out(xPos, yPos, move.name);
         yPos += tinyLineHeight;
     }
     yPos = statTop;
