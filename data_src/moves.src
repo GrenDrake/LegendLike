@@ -1,35 +1,65 @@
 .export move_info
 
-;struct move_def { 14words
-;    ident,     power,      accuracy,       cost,   type,   priority,
-;    atk_stat,  def_stat,   statusChance,   status, stat,   statshift,
-;    special, flags         name[string/16]
+; AttackType
+;     ident           unique identifier
+;     base_accuracy   base chance to hit target in range as percent (default 100)
+;     double speed    how long in game time the attack takes to occur
+;     Type :
+;         self        target user only
+;         melee       target one adajent tile
+;         melee4way   target all adacent tiles
+;         ranged      target in straight line, stopped by creatures or obstacles
+;         lobbed      target in straight line, bypasses creatures or obstacles
+;     min_range       cannot attack targets closer than this
+;     max_range       cannot attack targets further than this
+;     damage          amount of damage caused to targets
+;     damage_size     radius/edge length for damaged area
+;     damage_shape    see below
+;     damage_type     elemental type of damage
+
+;struct move_def { 10words
+;   ident,   name(16)
+; accuracy, speed, type
+;   min_r, max_r,
+;   dam, dam_siz, dam_shape, dam_type
 ;}
 
+.define typeSelf    0
+.define typeBullet  1
+.define typeLobbed  2
+.define typeFourway 3
+
+.define shapeSquare 0
+.define shapeCircle 1
+.define shapeLong   2
+.define shapeWide   3
+.define shapeCone   4
+
+.define typePhysical    0
+.define typeCold        1
+.define typeFire        2
+.define typeElectric    3
+.define typeToxic       4
+.define typeDivine      5
+.define typeInfernal    6
+.define typeVoid        7
+
 move_info:
-    .word   1       40      100     10      4       0
-    .word   0       1       0       0       0       0
-    .word   0       0
-    .string_pad 16 "Tackle"
+    ;       ident   name (stringId)
+    .word   1       11
+    ;       acc     speed   cost
+    .byte   100     100     0
+    ;       type        min/max range
+    .byte   typeBullet  1   1
+; damage    amnt    size    shape       type
+    .byte   4       1       shapeSquare typePhysical
+    .word   0 ; flags
 
-    .word   2       80      75      10      4       0
-    .word   0       1       0       0       0       0
-    .word   0       0
-    .string_pad 16 "Charge"
 
-    .word   3       40      100     10      4       0
-    .word   0       0       0       0       0       -1
-    .word   0       0
-    .string_pad 16 "Growl"
-
-    .word   4       40      100     10      4       0
-    .word   0       0       0       0       1       -1
-    .word   0       0
-    .string_pad 16 "Grovel"
-
-    .word   5       40      20     10      4       0
-    .word   0       0       60       0       0       -1
-    .word   0       0
-    .string_pad 16 "Poison"
+    .word   2       12
+    .byte   100     100     1
+    .byte   typeFourway  1   1
+    .byte   2       2       shapeLong typePhysical
+    .word   0
 
     .word -1

@@ -215,45 +215,6 @@ bool System::load() {
         }
         log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " beasts.");
 
-        // LOAD MOVE TYPES
-        VM moves;
-        if (!moves.loadFromFile("moves.dat")) {
-            log.error("Failed to load move info.");
-            return false;
-        }
-        const int moveSize = 72;
-        baseAddress = moves.getExport("move_info");
-        if (baseAddress == -1) {
-            log.error("Could not find move_info in moves.dat");
-        } else {
-            int ident = moves.readWord(baseAddress);
-            while (ident > 0) {
-                MoveType type;
-                type.ident          = ident;
-                type.power          = moves.readWord(baseAddress + 4);
-                type.accuracy       = moves.readWord(baseAddress + 8);
-                type.cost           = moves.readWord(baseAddress + 12);
-                type.type           = moves.readWord(baseAddress + 16);
-
-                type.priority       = moves.readWord(baseAddress + 20);
-                type.attackStat     = moves.readWord(baseAddress + 24);
-                type.defendStat     = moves.readWord(baseAddress + 28);
-                type.statusChance   = moves.readWord(baseAddress + 32);
-                type.statusEffect   = moves.readWord(baseAddress + 36);
-
-                type.statToShift    = moves.readWord(baseAddress + 40);
-                type.shiftAmount    = moves.readWord(baseAddress + 44);
-                type.special        = moves.readWord(baseAddress + 48);
-                type.flags          = moves.readWord(baseAddress + 52);
-
-                type.name           = moves.readString(baseAddress + 56);
-                MoveType::add(type);
-                baseAddress += moveSize;
-                ident = moves.readWord(baseAddress);
-            }
-        }
-        log.info(std::string("Loaded ") + std::to_string(MoveType::typeCount()) + " moves.");
-
     } catch (VMError &e) {
         log.error(std::string("Failed to initialize VM: ") + e.what());
         return false;
@@ -294,10 +255,62 @@ bool System::load() {
         }
     }
 
+    if (!loadMoveData())   return false;
     if (!loadTypeData())   return false;
     if (!loadStringData()) return false;
     return true;
 }
+
+bool System::loadMoveData() {
+    Logger &log = Logger::getInstance();
+    VM moves;
+    if (!moves.loadFromFile("moves.dat")) {
+        log.error("Failed to load move info.");
+        return false;
+    }
+
+    const int moveSize = 22;
+    int baseAddress = moves.getExport("move_info");
+    if (baseAddress == -1) {
+        log.error("Could not find move_info in moves.dat");
+    } else {
+        int ident = moves.readWord(baseAddress);
+        while (ident > 0) {
+            MoveType type;
+            type.ident          = ident;
+
+            int nameId          = moves.readWord(baseAddress + 4);
+            auto nameStr = strings.find(nameId);
+            if (nameStr == strings.end()) {
+                type.name = "attack #" + std::to_string(ident);
+            } else {
+                type.name = nameStr->second;
+            }
+
+            type.accuracy       = moves.readByte(baseAddress + 8);
+            type.speed          = moves.readByte(baseAddress + 9);
+            type.cost           = moves.readByte(baseAddress + 10);
+
+            type.type           = moves.readByte(baseAddress + 11);
+            type.minRange       = moves.readByte(baseAddress + 12);
+            type.maxRange       = moves.readByte(baseAddress + 13);
+
+            type.damage         = moves.readByte(baseAddress + 14);
+            type.damageSize     = moves.readByte(baseAddress + 15);
+            type.damageShape    = moves.readByte(baseAddress + 16);
+            type.damageType     = moves.readByte(baseAddress + 17);
+
+            type.flags          = moves.readWord(baseAddress + 18);
+
+            MoveType::add(type);
+            baseAddress += moveSize;
+            ident = moves.readWord(baseAddress);
+        }
+    }
+    log.info(std::string("Loaded ") + std::to_string(MoveType::typeCount()) + " moves.");
+    return true;
+}
+
 
 bool System::loadStringData() {
     Logger &log = Logger::getInstance();

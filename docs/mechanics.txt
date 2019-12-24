@@ -73,19 +73,34 @@ AttackType {
     damage_type     elemental type of damage
 }
 
-  SQUARE  CIRCLE  LONG  WIDE
-    @       @      @     @
-0:  *       *      *     *
 
-    @       @      @     @
-1: ***      *      *     **
-1: ***     ***     *
+SELF     @
+BULLET   @ - - - *#
+          / - - \
+LOBBED   @   #   *
+          *
+FOURWAY  *@*
+          *
+
+  SELF  BULLET  LOBBED
+   @      @       @
+          |
+          |
+          *       *
+
+  SQUARE  CIRCLE  LONG  WIDE  CONE
+    @       @      @     @     @
+0:  *       *      *     *     *
+
+    @       @      @     @     @
+1: ***      *      *     **    *
+1: ***     ***     *          ***
 1: ***      *
 
-    @       @      @     @
-2: *****    *      *    ***
-2: *****   ***     *
-2: *****  *****    *
+    @       @      @     @     @
+2: *****    *      *    ***    *
+2: *****   ***     *          ***
+2: *****  *****    *         *****
 2: *****   ***
 2: *****    *
 

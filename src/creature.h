@@ -50,18 +50,16 @@ public:
 
     std::string name;
     int ident;
-    int power;
     int accuracy;
+    int speed;
     int cost;
     int type;
-    int priority;
-    int attackStat;
-    int defendStat;
-    int statusEffect;
-    int statusChance;
-    int statToShift;
-    int shiftAmount;
-    int special;
+    int minRange;
+    int maxRange;
+    int damage;
+    int damageSize;
+    int damageShape;
+    int damageType;
     unsigned flags;
 private:
     static std::vector<MoveType> types;

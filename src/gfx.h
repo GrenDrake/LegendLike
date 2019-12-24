@@ -113,6 +113,7 @@ public:
     int fps;
 
 private:
+    bool loadMoveData();
     bool loadStringData();
     bool loadTypeData();
 
