@@ -14,7 +14,6 @@
 #include "command.h"
 #include "textutil.h"
 
-
 void repaint(System &state, bool callPresent) {
     const int sidebarWidth = 30 * state.smallFont->getCharWidth();
     const int sidebarX = screenWidth - sidebarWidth;
@@ -164,19 +163,28 @@ void repaint(System &state, bool callPresent) {
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO
-    if (state.showInfo) {
-        int mouseX, mouseY;
-        SDL_GetMouseState(&mouseX, &mouseY);
-        mouseX += mapOffsetX;
-        mouseY += mapOffsetY;
-        if (mouseX < mapWidthPixels) {
-            std::stringstream ss;
-            int tileX = viewX + mouseX / (tileWidth);
-            int tileY = viewY + mouseY / (tileHeight);
-            int tileHere = state.getBoard()->getTile(Point(tileX,tileY));
-            if (tileHere != tileOutOfBounds) {
-                Point here(tileX, tileY);
-                Creature *creature = state.getBoard()->actorAt(here);
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    if (mouseX < mapWidthPixels) {
+        int mapMouseX = mouseX + mapOffsetX;
+        int mapMouseY = mouseY + mapOffsetY;
+        int tileX = viewX + mapMouseX / (tileWidth);
+        int tileY = viewY + mapMouseY / (tileHeight);
+            Point here(tileX, tileY);
+        int tileHere = state.getBoard()->getTile(here);
+        Creature *creature = state.getBoard()->actorAt(here);
+        if (tileHere != tileOutOfBounds) {
+            if (state.showTooltip && state.getBoard()->isKnown(here)) { // show tooltip
+                std::stringstream ss;
+                if (creature && state.getBoard()->isVisible(here)) {
+                    ss << creature->name << "\n";
+                }
+                const TileInfo &tileInfo = TileInfo::get(tileHere);
+                ss << tileInfo.name;
+                gfx_DrawTooltip(state, mouseX, mouseY + 20, ss.str());
+            }
+            if (state.showInfo) {
+                std::stringstream ss;
                 if (creature) {
                     ss << creature->name << "   ";
                 }

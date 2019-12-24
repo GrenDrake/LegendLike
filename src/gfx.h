@@ -102,6 +102,7 @@ public:
 
     // game configuration flags
     bool wantsToQuit;
+    bool showTooltip;
     bool showInfo;
     bool showFPS;
     bool wantsTick;
@@ -157,6 +158,7 @@ void doGameMenu(System &state);
 void doCredits(System &state);
 
 void gfx_MessageBox(System &state, std::string text, const std::string &portrait, int portraitSide);
+void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);

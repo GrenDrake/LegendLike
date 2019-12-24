@@ -18,6 +18,7 @@ enum class Command {
     ReturnToMenu,
     PartyInfo,
     Rename,
+    ShowTooltip,
 
     Debug_Reveal,
     Debug_NoFOV,

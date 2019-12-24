@@ -200,3 +200,24 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
         SDL_framerateDelay(static_cast<FPSmanager*>(system.fpsManager));
     }
 }
+
+void gfx_DrawTooltip(System &system, int x, int y, const std::string &text) {
+    std::vector<std::string> lines = explode(text, "\n");
+    unsigned longestLine = 0;
+    for (const std::string &s : lines) {
+        if (s.size() > longestLine) longestLine = s.size();
+    }
+    const int offset = 4;
+    const int height = lines.size() * system.tinyFont->getLineHeight() + offset * 2;
+    const int width = longestLine * system.tinyFont->getCharWidth() + offset * 2;
+    if (x + width >= screenWidth) x -= width;
+    if (y + height >= screenHeight) y -= height;
+
+    SDL_Rect outer = { x - 2, y - 2, width + 4, height + 4 };
+    SDL_Rect inner = { x, y, width, height };
+    SDL_SetRenderDrawColor(system.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &outer);
+    SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &inner);
+    system.tinyFont->out(x + offset, y + offset, text);
+}

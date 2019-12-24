@@ -29,6 +29,7 @@ CommandDef gameCommands[] = {
     { Command::Wait,        Dir::None,  SDLK_SPACE },
     { Command::ShowMap,     Dir::None,  SDLK_m },
     { Command::PartyInfo,   Dir::None,  SDLK_p },
+    { Command::ShowTooltip, Dir::None,  SDLK_t },
     { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
     { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
     { Command::Debug_ShowInfo, Dir::None, SDLK_F5 },
@@ -109,6 +110,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::ReturnToMenu:     out << "return to menu"; break;
         case Command::PartyInfo:        out << "party info"; break;
         case Command::Rename:           out << "rename"; break;
+        case Command::ShowTooltip:      out << "show tooltip"; break;
 
         case Command::Debug_Reveal:     out << "reveal full map (debug)"; break;
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;

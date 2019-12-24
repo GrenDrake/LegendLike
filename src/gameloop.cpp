@@ -119,6 +119,9 @@ void gameloop(System &state) {
                 case Command::ShowMap:
                     showFullMap(state);
                     break;
+                case Command::ShowTooltip:
+                    state.showTooltip = !state.showTooltip;
+                    break;
 
                 case Command::Debug_Reveal:
                     state.getBoard()->dbgRevealAll();
