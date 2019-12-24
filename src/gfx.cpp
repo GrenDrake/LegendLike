@@ -121,24 +121,34 @@ void repaint(System &state, bool callPresent) {
     //  MESSAGE LOG
     const int logTop = yPos + tinyLineHeight;
     const int wrapWidth = (sidebarWidth - 8) / state.tinyFont->getCharWidth() - 2;
+    const SDL_Rect logArea = {
+        sidebarX, logTop,
+        screenWidth - sidebarX,
+        screenHeight - logTop
+    };
+    SDL_RenderSetClipRect(state.renderer, &logArea);
     yPos = screenHeight - tinyLineHeight;
-    hlineRGBA(state.renderer, sidebarX, screenWidth, logTop, 255, 255, 255, SDL_ALPHA_OPAQUE);
     for (int i = state.messages.size() - 1; i >= 0; --i) {
+        Color lineColour = Color{160,160,160};
+        if (i == state.messages.size() - 1) lineColour = {255, 255, 255};
         std::string m = state.messages[i];
         std::vector<std::string> lines;
         wordwrap(m, wrapWidth, lines);
         for (int j = lines.size() - 1; j >= 0; --j) {
             const std::string &line = lines[j];
             if (j == 0) {
-                state.tinyFont->out(xPos, yPos, line);
+                state.tinyFont->out(xPos, yPos, line, lineColour);
             } else {
-                state.tinyFont->out(xPos, yPos, "  " + line);
+                state.tinyFont->out(xPos, yPos, "  " + line, lineColour);
             }
             yPos -= tinyLineHeight;
-            if (yPos < logTop) break;
+            if (yPos < logTop - tinyLineHeight) break;
         }
-        if (yPos < logTop) break;
+        yPos -= tinyLineHeight / 4;
+        if (yPos < logTop - tinyLineHeight) break;
     }
+    SDL_RenderSetClipRect(state.renderer, nullptr);
+    hlineRGBA(state.renderer, sidebarX, screenWidth, logTop - 1, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO
