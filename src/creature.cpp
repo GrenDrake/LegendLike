@@ -7,35 +7,6 @@
 std::vector<CreatureType> CreatureType::types;
 std::vector<MoveType> MoveType::types;
 
-namespace TypeInfo {
-    static std::vector<double> typeEffects;
-    static std::vector<std::string> typeNames;
-    static int typeCount = 0;
-
-    void setTypeCount(int count) {
-        typeCount = count;
-        typeEffects.resize(count * count, 100.0);
-        typeNames.resize(count);
-    }
-
-    void setName(int type, const std::string &name) {
-        typeNames[type] = name;
-    }
-
-    const std::string& getName(int type) {
-        return typeNames[type];
-    }
-
-    void setEffectiveness(int atk, int def, int effect) {
-        typeEffects[atk + def * typeCount] = effect / 100.0;
-    }
-
-    double getTypeEffectiveness(int atk, int def) {
-        return typeEffects[atk + def * typeCount];
-    }
-
-}
-
 void MoveType::add(const MoveType &type) {
     types.push_back(type);
 }
@@ -51,22 +22,6 @@ int MoveType::typeCount() {
     return types.size();
 }
 
-
-/*
-    X    Y
-1   0    L0
-2   100  L100
-3   lev  ??
-*/
-// static int interp(int L0, int L100, int level) {
-//     return (level * (L100 - L0)) / 100;
-
-//     int l0 = typeInfo->stats[statNumber][0];;
-// }
-
-static double interp(double x1, double y1, double x2, double y2, double target) {
-    return ((target - x1) * (y2 - y1)) / (x2 - x1) + y1;
-}
 
 void CreatureType::add(const CreatureType &type) {
     types.push_back(type);
