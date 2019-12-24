@@ -113,8 +113,10 @@ public:
     int fps;
 
 private:
+    bool loadCreatureData();
     bool loadMoveData();
     bool loadStringData();
+    bool loadTileData();
     bool loadTypeData();
 
 };

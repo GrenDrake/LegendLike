@@ -178,86 +178,63 @@ bool System::load() {
         }
         log.info("Loaded " + std::to_string(counter) + " maps.");
 
-        // LOAD BEAST TYPES
-        VM beasts;
-        if (!beasts.loadFromFile("beasts.dat")) {
-            log.error("Failed to load beast info.");
-            return false;
-        }
-        const int beastSize = 66;
-        int baseAddress = beasts.getExport("beast_info");
-        if (baseAddress == -1) {
-            log.error("Could not find beast_info in beasts.dat");
-        } else {
-            int ident = beasts.readWord(baseAddress);
-            while (ident > 0) {
-                CreatureType type;
-                type.ident = ident;
-                type.name = beasts.readString(baseAddress + 4);
-                type.artIndex = beasts.readWord(baseAddress + 36);
-                type.defaultMove = beasts.readWord(baseAddress + 40);
-                int offset = baseAddress + 44;
-                for (int j = 0; j < statCount; ++j) {
-                    type.stats[j] = beasts.readShort(offset);
-                    offset += 2;
-                }
-                for (int j = 0; j < damageTypeCount; ++j) {
-                    int value = beasts.readByte(offset);
-                    type.resistances[j] = value / 100.0;
-                    offset += 1;
-                }
-
-                CreatureType::add(type);
-
-                baseAddress += beastSize;
-                ident = beasts.readWord(baseAddress);
-            }
-        }
-        log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " beasts.");
 
     } catch (VMError &e) {
         log.error(std::string("Failed to initialize VM: ") + e.what());
         return false;
     }
 
-    // LOAD TILE TYPE DATA
-    PHYSFS_file *fp = PHYSFS_openRead("tiles.dat");
-    if (!fp) {
-        log.error("Failed to open tile data file.");
-        return 0;
+
+    try {
+        if (!loadCreatureData())    return false;
+        if (!loadMoveData())        return false;
+        if (!loadStringData())      return false;
+        if (!loadTileData())        return false;
+        if (!loadTypeData())        return false;
+    } catch (VMError &e) {
+        log.error(e.what());
+        return false;
     }
-    PHYSFS_uint32 tileId = 0;
-    PHYSFS_readULE32(fp, &tileId);
-    if (tileId != TILE_ID) {
-        log.error("tiles.dat has wrong datafile ID.");
+    return true;
+}
+
+bool System::loadCreatureData() {
+    Logger &log = Logger::getInstance();
+    VM beasts;
+    if (!beasts.loadFromFile("beasts.dat")) {
+        log.error("Failed to load beast info.");
+        return false;
+    }
+    const int beastSize = 66;
+    int baseAddress = beasts.getExport("beast_info");
+    if (baseAddress == -1) {
+        log.error("Could not find beast_info in beasts.dat");
     } else {
-        PHYSFS_sint32 ident = 0;
-        PHYSFS_readSLE32(fp, &ident);
-        while (ident >= 0) {
-            TileInfo info;
-            char nameBuffer[32] = { 0 };
-            PHYSFS_uint8 u8;
-            PHYSFS_uint32 u32;
+        int ident = beasts.readWord(baseAddress);
+        while (ident > 0) {
+            CreatureType type;
+            type.ident = ident;
+            type.name = beasts.readString(baseAddress + 4);
+            type.artIndex = beasts.readWord(baseAddress + 36);
+            type.defaultMove = beasts.readWord(baseAddress + 40);
+            int offset = baseAddress + 44;
+            for (int j = 0; j < statCount; ++j) {
+                type.stats[j] = beasts.readShort(offset);
+                offset += 2;
+            }
+            for (int j = 0; j < damageTypeCount; ++j) {
+                int value = beasts.readByte(offset);
+                type.resistances[j] = value / 100.0;
+                offset += 1;
+            }
 
-            info.index = ident;
-            PHYSFS_readULE32(fp, &u32);     info.artIndex = u32;
-            PHYSFS_readULE32(fp, &u32);     info.interactTo = u32;
-            PHYSFS_readBytes(fp, &u8, 1);   info.red = u8;
-            PHYSFS_readBytes(fp, &u8, 1);   info.green = u8;
-            PHYSFS_readBytes(fp, &u8, 1);   info.blue = u8;
-            PHYSFS_readBytes(fp, &u8, 1);   info.block_travel = u8;
-            PHYSFS_readBytes(fp, &u8, 1);   info.block_los = u8;
-            PHYSFS_readBytes(fp, nameBuffer, 32);
-            info.name = nameBuffer;
-            TileInfo::add(info);
+            CreatureType::add(type);
 
-            PHYSFS_readSLE32(fp, &ident);
+            baseAddress += beastSize;
+            ident = beasts.readWord(baseAddress);
         }
     }
-
-    if (!loadMoveData())   return false;
-    if (!loadTypeData())   return false;
-    if (!loadStringData()) return false;
+    log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " creatures.");
     return true;
 }
 
@@ -307,7 +284,7 @@ bool System::loadMoveData() {
             ident = moves.readWord(baseAddress);
         }
     }
-    log.info(std::string("Loaded ") + std::to_string(MoveType::typeCount()) + " moves.");
+    log.info("Loaded " + std::to_string(MoveType::typeCount()) + " moves.");
     return true;
 }
 
@@ -337,6 +314,46 @@ bool System::loadStringData() {
         }
         strings[textNo] = text;
     }
+    log.info("Loaded " + std::to_string(strings.size()) + " strings.");
+    return true;
+}
+
+bool System::loadTileData() {
+    Logger &log = Logger::getInstance();
+    PHYSFS_file *fp = PHYSFS_openRead("tiles.dat");
+    if (!fp) {
+        log.error("Failed to open tile data file.");
+        return false;
+    }
+    PHYSFS_uint32 tileId = 0;
+    PHYSFS_readULE32(fp, &tileId);
+    if (tileId != TILE_ID) {
+        log.error("tiles.dat has wrong datafile ID.");
+        return false;
+    }
+    PHYSFS_sint32 ident = 0;
+    PHYSFS_readSLE32(fp, &ident);
+    while (ident >= 0) {
+        TileInfo info;
+        char nameBuffer[32] = { 0 };
+        PHYSFS_uint8 u8;
+        PHYSFS_uint32 u32;
+
+        info.index = ident;
+        PHYSFS_readULE32(fp, &u32);     info.artIndex = u32;
+        PHYSFS_readULE32(fp, &u32);     info.interactTo = u32;
+        PHYSFS_readBytes(fp, &u8, 1);   info.red = u8;
+        PHYSFS_readBytes(fp, &u8, 1);   info.green = u8;
+        PHYSFS_readBytes(fp, &u8, 1);   info.blue = u8;
+        PHYSFS_readBytes(fp, &u8, 1);   info.block_travel = u8;
+        PHYSFS_readBytes(fp, &u8, 1);   info.block_los = u8;
+        PHYSFS_readBytes(fp, nameBuffer, 32);
+        info.name = nameBuffer;
+        TileInfo::add(info);
+
+        PHYSFS_readSLE32(fp, &ident);
+    }
+    log.info("Loaded " + std::to_string(TileInfo::types.size()) + " tile types.");
     return true;
 }
 
