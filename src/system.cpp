@@ -40,6 +40,7 @@ void System::endGame() {
     for (auto boardIter : mBoards) {
         delete boardIter.second;
     }
+    mBoards.clear();
 }
 
 void System::requestTick() {
