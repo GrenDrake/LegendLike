@@ -198,7 +198,7 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
     int maxLines = (screenHeight - firstLineY) / lineHeight - 2;
 
     bool pauseScroll = !autoscroll;
-    int firstLine = 0, subScroll = 0;
+    int firstLine = -numLines, subScroll = 0;
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     while (!state.wantsToQuit) {
         if (!pauseScroll) {

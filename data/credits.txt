@@ -5,7 +5,7 @@ Track 2: "Holiday Weasel" by Kevin MacLeod (https://incompetech.com)
 Track 3: "Nervous" by Kevin MacLeod (https://incompetech.com)
 #
 #
-Tile, map sprite, portrait graphics, and sound effects from kenney.nl
+Tile and map sprite graphics and sound effects from kenney.nl
 License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 https://kenney.nl/
 #
@@ -14,5 +14,3 @@ Font design based on Mozilla's Fira Family
 https://github.com/mozilla/Fira
 #
 #
-Some beast art by Stephen Challener (Redshrike).
-https://opengameart.org/content/more-rpg-enemies
