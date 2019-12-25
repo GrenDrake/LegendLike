@@ -8,7 +8,7 @@
 #include "textutil.h"
 
 
-void gfx_MessageBox(System &state, std::string text, const std::string &portrait, int portraitSide) {
+void gfx_MessageBox(System &state, std::string text) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -39,29 +39,6 @@ void gfx_MessageBox(System &state, std::string text, const std::string &portrait
             if (lineNo >= lines.size()) break;
             state.smallFont->out(left + 8, top + 8 + i * lineHeight, lines[lineNo]);
         }
-
-        if (portraitSide != portraitNone) {
-            SDL_Rect portraitDest = { 0, top - portraitHeight, portraitWidth, portraitHeight };
-            if (portraitSide == portraitLeft) {
-                portraitDest.x = left + portraitOffset;
-            } else if (portraitSide == portraitCentre) {
-                portraitDest.x = left + width / 2 - portraitWidth / 2;
-            } else {
-                portraitDest.x = left + width - portraitOffset - portraitWidth;
-            }
-            SDL_Rect portraitBox = {
-                portraitDest.x - 2, portraitDest.y - 2,
-                portraitDest.w + 4, portraitDest.h + 4
-            };
-
-            SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-            SDL_RenderFillRect(state.renderer, &portraitBox);
-            SDL_Texture *portraitTex = state.getImage(portrait);
-            if (portraitTex) {
-                SDL_RenderCopy(state.renderer, portraitTex, nullptr, &portraitDest);
-            }
-        }
-
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;

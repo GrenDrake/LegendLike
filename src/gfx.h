@@ -136,19 +136,6 @@ private:
     int mCharWidth, mCharHeight, mLineSpace;
 };
 
-const int portraitWidth = 128;
-const int portraitHeight = 128;
-const int portraitOffset = 48;
-
-const int portraitNone = 0;
-const int portraitLeft = 1;
-const int portraitCentre = 2;
-const int portraitRight = 3;
-
-const int symbolNone = 0;
-const int symbolExclaim = 1;
-const int symbolQuestion = 2;
-
 const int charStats = 0;
 const int charAbilities = 1;
 const int charInventory = 2;
@@ -162,7 +149,7 @@ void doCharInfo(System &system, int initialMode);
 void doGameMenu(System &state);
 void doCredits(System &state);
 
-void gfx_MessageBox(System &state, std::string text, const std::string &portrait, int portraitSide);
+void gfx_MessageBox(System &state, std::string text);
 void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
