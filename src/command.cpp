@@ -40,7 +40,7 @@ CommandDef gameCommands[] = {
     { Command::None }
 };
 
-CommandDef partyCommands[] = {
+CommandDef characterCommands[] = {
     { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
     { Command::Move,        Dir::North, SDLK_UP },
     { Command::Move,        Dir::South, SDLK_DOWN },
@@ -74,20 +74,6 @@ CommandDef mapCommands[] = {
     { Command::None }
 };
 
-CommandDef combatCommands[] = {
-    { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
-    { Command::Move,        Dir::North, SDLK_UP },
-    { Command::Move,        Dir::South, SDLK_DOWN },
-    { Command::Interact,    Dir::None,  SDLK_RIGHT },
-    { Command::Interact,    Dir::None,  SDLK_SPACE },
-    { Command::Interact,    Dir::None,  SDLK_RETURN },
-    { Command::Cancel,      Dir::None,  SDLK_LEFT },
-    { Command::Cancel,      Dir::None,  SDLK_ESCAPE },
-    { Command::Debug_ShowFPS,  Dir::None, SDLK_F7 },
-    { Command::Debug_Heal,  Dir::None,  SDLK_F9 },
-
-    { Command::None }
-};
 
 const CommandDef& getCommand(SDL_Event &event, const CommandDef *commandList) {
     if (event.type == SDL_QUIT)     return commandQuit;

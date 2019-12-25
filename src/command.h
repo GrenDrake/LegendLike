@@ -41,8 +41,7 @@ const CommandDef& getCommand(SDL_Event &event, const CommandDef *commandList);
 std::ostream& operator<<(std::ostream &out, const Command &cmd);
 
 extern CommandDef gameCommands[];
-extern CommandDef combatCommands[];
 extern CommandDef mapCommands[];
-extern CommandDef partyCommands[];
+extern CommandDef characterCommands[];
 
 #endif

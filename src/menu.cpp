@@ -22,7 +22,6 @@ MenuOption mainMenu[] = {
     { "Resume Game",            0,      3,                  MenuType::Disabled },
     { "",                       0,      0,                  MenuType::Disabled },
     { "General Options",        0,      5,                  MenuType::Choice },
-    { "View Keybindings",       0,      6,                  MenuType::Choice },
     { "",                       0,      0,                  MenuType::Disabled },
     { "Credits",                0,      7,                  MenuType::Choice },
     { "Quit",                   SDLK_q, menuQuit,           MenuType::Choice },
@@ -38,8 +37,6 @@ MenuOption optionsMenu[] = {
     { "Discard Changes",        0,      0,                  MenuType::Choice },
     { "",                       0,      menuEnd,            MenuType::Choice }
 };
-
-void doControlsList(System &system);
 
 static std::string getRandomName(Random &rng) {
     switch(rng.next32() % 21) {
@@ -112,57 +109,10 @@ void doGameMenu(System &state) {
                     state.setMusicVolume(initialMusicVolume);
                 }
                 break; }
-            case 6:
-                doControlsList(state);
-                break;
             case 7:
                 doCredits(state);
-                defOpt = 9;
+                defOpt = 8;
                 break;
         }
     }
-}
-
-static std::string makeCommandEntry(const CommandDef &cmd) {
-    std::stringstream left, right;
-    left << cmd.command;
-    if (cmd.direction != Dir::None) {
-        left << ' ' << cmd.direction;
-    }
-    right << std::setw(15) << left.str();
-    right << ": ";
-    if (cmd.mod != 0) {
-        if (cmd.mod & KMOD_LSHIFT)  right << "left shift + ";
-        if (cmd.mod & KMOD_LCTRL)   right << "left ctrl + ";
-        if (cmd.mod & KMOD_LALT)    right << "left alt + ";
-        if (cmd.mod & KMOD_LGUI)    right << "left gui + ";
-        if (cmd.mod & KMOD_RSHIFT)  right << "right shift + ";
-        if (cmd.mod & KMOD_RCTRL)   right << "right ctrl + ";
-        if (cmd.mod & KMOD_RALT)    right << "right alt + ";
-        if (cmd.mod & KMOD_RGUI)    right << "right gui + ";
-    }
-    right << SDL_GetKeyName(cmd.key);
-    return right.str();
-}
-
-void doControlsList(System &system) {
-    std::vector<std::string> list;
-
-    list.push_back("        * MAP COMMANDS *");
-    for (int i = 0; gameCommands[i].command != Command::None; ++i ) {
-        list.push_back(makeCommandEntry(gameCommands[i]));
-    }
-
-    list.push_back("");
-    list.push_back("    * PARTY SCREEN COMMANDS *");
-    for (int i = 0; partyCommands[i].command != Command::None; ++i ) {
-        list.push_back(makeCommandEntry(partyCommands[i]));
-    }
-
-    list.push_back("");
-    list.push_back("      * COMBAT COMMANDS *");
-    for (int i = 0; combatCommands[i].command != Command::None; ++i ) {
-        list.push_back(makeCommandEntry(combatCommands[i]));
-    }
-    gfx_RunInfo(system, list, false);
 }

@@ -149,7 +149,7 @@ void doCharInfo(System &system, int initialMode) {
                     break;
                 }
             } else {
-                const CommandDef &cmd = getCommand(event, partyCommands);
+                const CommandDef &cmd = getCommand(event, characterCommands);
                 if (cmd.command == Command::Quit) {
                     system.wantsToQuit = true;
                     return;
