@@ -15,6 +15,10 @@
 #include "textutil.h"
 
 void repaint(System &state, bool callPresent) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+
     const int sidebarWidth = 30 * state.smallFont->getCharWidth();
     const int sidebarX = screenWidth - sidebarWidth;
     const int mapOffsetX = tileWidth / 3 * 2;

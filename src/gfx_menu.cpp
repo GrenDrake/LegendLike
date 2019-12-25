@@ -18,6 +18,9 @@ static int checkPosInMenu(MenuOption *menu, int x, int y) {
 }
 
 void showVersion(System &state) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
     std::string text = versionString();
     state.smallFont->out(
             screenWidth - state.smallFont->getCharWidth() * (text.size() + 1),
@@ -26,6 +29,10 @@ void showVersion(System &state) {
 }
 
 int runMenu(System &state, MenuOption *menu, int defaultOption) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+
     int option = defaultOption;
 
     SDL_Texture *logoArt = state.getImage("logo.png");
@@ -182,6 +189,9 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
 }
 
 void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autoscroll) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
     const int lineHeight = state.smallFont->getLineHeight();
     const int numLines = text.size();
     int firstLineY = 20 + lineHeight;

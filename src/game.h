@@ -10,9 +10,6 @@
 #include <string>
 #include <vector>
 
-const int screenWidth = 960;
-const int screenHeight = 540;
-
 class System;
 class VM;
 

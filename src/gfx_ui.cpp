@@ -9,6 +9,9 @@
 
 
 void gfx_MessageBox(System &state, std::string text, const std::string &portrait, int portraitSide) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
     const int lineHeight = state.smallFont->getLineHeight();
     const int textOffset = 8;
     const int targetHeight = (screenHeight - 200) / 2;
@@ -152,6 +155,9 @@ void gfx_DrawBar(System &system, int x, int y, int length, int height, double pe
 }
 
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(system.renderer, &screenWidth, &screenHeight);
     const int lineHeight = system.smallFont->getLineHeight();
     const int textOffset = 8;
     const int height = lineHeight + 2 * textOffset;
@@ -202,6 +208,9 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
 }
 
 void gfx_DrawTooltip(System &system, int x, int y, const std::string &text) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(system.renderer, &screenWidth, &screenHeight);
     std::vector<std::string> lines = explode(text, "\n");
     unsigned longestLine = 0;
     for (const std::string &s : lines) {

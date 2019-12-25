@@ -21,8 +21,6 @@
 bool printVersions();
 int innerMain(System &renderState);
 
-const int defaultScreenWidth = 1366;
-const int defaultScreenHeight = 768;
 
 std::string versionString() {
     std::string text = GAME_NAME;
@@ -62,9 +60,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    const int displayNum = config.getInt("display", 0);
+    int defaultScreenWidth = 1920;
+    int defaultScreenHeight = 1080;
+    SDL_Rect bounds;
+    SDL_GetDisplayUsableBounds(0, &bounds);
+    if (bounds.w < defaultScreenWidth)  defaultScreenWidth = bounds.w * 0.9;
+    if (bounds.h < defaultScreenHeight) defaultScreenHeight = bounds.h * 0.9;
     int initialXRes = config.getInt("xres", defaultScreenWidth);
     int initialYRes = config.getInt("yres", defaultScreenHeight);
-    int displayNum = config.getInt("display", 0);
     unsigned flags = SDL_WINDOW_SHOWN;
     if (config.getSBool("fullscreen", false)) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_Window *win = SDL_CreateWindow(GAME_NAME,
@@ -85,13 +89,6 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return 1;
     }
-    // SDL_RenderSetLogicalSize(renderer, 960, 540);
-    double scaleX = initialXRes / static_cast<double>(screenWidth);
-    double scaleY = initialYRes / static_cast<double>(screenHeight);
-    log.info("Setting render scale: " + std::to_string(scaleX) + "x" + std::to_string(scaleY));
-    SDL_RenderSetScale(renderer, scaleX, scaleY);
-    // "nearest" "linear" "best" (direct3d only)
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
 
     int result = IMG_Init(IMG_INIT_PNG);
     if (!result) {
