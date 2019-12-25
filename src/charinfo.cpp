@@ -16,7 +16,7 @@
 #include "textutil.h"
 
 static int mode = charStats;
-std::vector<SDL_Rect> tabButtons;
+static std::vector<SDL_Rect> tabButtons;
 
 void gfx_drawCharInfo(System &state, bool callPresent) {
     int screenWidth = 0;

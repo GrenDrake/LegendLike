@@ -143,16 +143,17 @@ const int charModeCount = 3;
 
 void repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);
-void showFullMap(System &renderState);
-void doCharInfo(System &system, int initialMode);
 
-void doGameMenu(System &state);
+void doCharInfo(System &system, int initialMode);
 void doCredits(System &state);
+void doGameMenu(System &state);
+void doShowMap(System &system);
 
 void gfx_MessageBox(System &state, std::string text);
 void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
+void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, const std::string &text);
 
 #endif

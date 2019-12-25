@@ -117,7 +117,7 @@ void gameloop(System &state) {
                     state.requestTick();
                     break;
                 case Command::ShowMap:
-                    showFullMap(state);
+                    doShowMap(state);
                     break;
                 case Command::ShowTooltip:
                     state.showTooltip = !state.showTooltip;
