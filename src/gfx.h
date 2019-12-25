@@ -149,10 +149,15 @@ const int symbolNone = 0;
 const int symbolExclaim = 1;
 const int symbolQuestion = 2;
 
+const int charStats = 0;
+const int charAbilities = 1;
+const int charInventory = 2;
+const int charModeCount = 3;
+
 void repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);
 void showFullMap(System &renderState);
-void doPartyScreen(System &system);
+void doCharInfo(System &system, int initialMode);
 
 void doGameMenu(System &state);
 void doCredits(System &state);

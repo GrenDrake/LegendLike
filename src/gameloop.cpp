@@ -123,6 +123,16 @@ void gameloop(System &state) {
                     state.showTooltip = !state.showTooltip;
                     break;
 
+                case Command::CharacterInfo:
+                    doCharInfo(state, charStats);
+                    break;
+                case Command::Inventory:
+                    doCharInfo(state, charInventory);
+                    break;
+                case Command::AbilityList:
+                    doCharInfo(state, charAbilities);
+                    break;
+
                 case Command::Debug_Reveal:
                     state.getBoard()->dbgRevealAll();
                     break;

@@ -28,7 +28,9 @@ CommandDef gameCommands[] = {
     { Command::Wait,        Dir::None,  SDLK_PERIOD },
     { Command::Wait,        Dir::None,  SDLK_SPACE },
     { Command::ShowMap,     Dir::None,  SDLK_m },
-    { Command::PartyInfo,   Dir::None,  SDLK_p },
+    { Command::CharacterInfo,   Dir::None,  SDLK_c },
+    { Command::Inventory,   Dir::None,  SDLK_i },
+    { Command::AbilityList, Dir::None,  SDLK_a },
     { Command::ShowTooltip, Dir::None,  SDLK_t },
     { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
     { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
@@ -49,6 +51,8 @@ CommandDef partyCommands[] = {
     { Command::Cancel,      Dir::None,  SDLK_ESCAPE },
     { Command::Cancel,      Dir::None,  SDLK_z },
     { Command::Rename,      Dir::None,  SDLK_r },
+    { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
+    { Command::NextMode,    Dir::None,  SDLK_TAB },
 
     { Command::None }
 };
@@ -108,9 +112,14 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Wait:             out << "wait"; break;
         case Command::ShowMap:          out << "full map"; break;
         case Command::ReturnToMenu:     out << "return to menu"; break;
-        case Command::PartyInfo:        out << "party info"; break;
+        case Command::CharacterInfo:    out << "character info"; break;
+        case Command::Inventory:        out << "inventory"; break;
+        case Command::AbilityList:      out << "ability list"; break;
         case Command::Rename:           out << "rename"; break;
         case Command::ShowTooltip:      out << "show tooltip"; break;
+
+        case Command::NextMode:         out << "next mode"; break;
+        case Command::PrevMode:         out << "prev mode"; break;
 
         case Command::Debug_Reveal:     out << "reveal full map (debug)"; break;
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;
