@@ -64,6 +64,8 @@ CommandDef mapCommands[] = {
     { Command::Move,        Dir::West,  SDLK_LEFT },
     { Command::Move,        Dir::East,  SDLK_RIGHT },
     { Command::Cancel,      Dir::None,  SDLK_ESCAPE },
+    { Command::Cancel,      Dir::None,  SDLK_SPACE },
+    { Command::Cancel,      Dir::None,  SDLK_RETURN },
     { Command::Cancel,      Dir::None,  SDLK_m },
     { Command::Cancel,      Dir::None,  SDLK_z },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
