@@ -257,7 +257,6 @@ bool System::loadMoveData() {
 
             int nameId          = moves.readWord();
             auto nameStr = strings.find(nameId);
-            log.warn(std::to_string(nameId));
             if (nameStr == strings.end()) {
                 type.name = "attack #" + std::to_string(ident);
             } else {
