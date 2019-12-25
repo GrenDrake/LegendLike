@@ -11,6 +11,8 @@
 #include "menu.h"
 #include "vm.h"
 #include "config.h"
+#include "creature.h"
+#include "random.h"
 
 MenuOption mainMenu[] = {
     { "Start Standard Game",    0,      0,                  MenuType::Choice },
@@ -39,6 +41,33 @@ MenuOption optionsMenu[] = {
 
 void doControlsList(System &system);
 
+static std::string getRandomName(Random &rng) {
+    switch(rng.next32() % 21) {
+        case  0: return "Eadweard";
+        case  1: return "Gery";
+        case  2: return "Cuthbaeld";
+        case  3: return "Stephye";
+        case  4: return "Guthre";
+        case  5: return "Gauwalt";
+        case  6: return "Witheab";
+        case  7: return "Walda";
+        case  8: return "Jamund";
+        case  9: return "Lafa";
+        case 10: return "Wise";
+        case 11: return "Mera";
+        case 12: return "Burne";
+        case 13: return "Elith";
+        case 14: return "Eryel";
+        case 15: return "Frythiue";
+        case 16: return "Sane";
+        case 17: return "Aengyth";
+        case 18: return "Eyter";
+        case 19: return "Ridget";
+        case 20: return "Alyn";
+    }
+    return "Fred";
+}
+
 void doGameMenu(System &state) {
     int optBool = 1;
     int defOpt = 0;
@@ -55,6 +84,8 @@ void doGameMenu(System &state) {
                 mainMenu[4].type = MenuType::Choice;
                 defOpt = 4;
                 state.reset();
+                state.getPlayer()->name = getRandomName(state.coreRNG);
+                gfx_EditText(state, "Name?", state.getPlayer()->name, 16);
                 state.vm->runFunction("start");
                 gameloop(state);
                 state.playMusic(0);
