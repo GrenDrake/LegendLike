@@ -109,3 +109,9 @@ std::string& unescapeString(std::string &text) {
     return text;
 }
 
+std::string upperFirst(std::string text) {
+    if (text[0] >= 'a' && text[0] <= 'z') {
+        text[0] -= 'a' - 'A';
+    }
+    return text;
+}

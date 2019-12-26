@@ -219,3 +219,36 @@ void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, c
     const int offset = (w - text.size() * charWidth) / 2;
     system.smallFont->out(x + 4 + offset, y + 4, text);
 }
+
+int keyToIndex(const SDL_Keysym &key) {
+    if (key.mod & (KMOD_SHIFT | KMOD_ALT | KMOD_CTRL | KMOD_GUI)) return -1;
+    switch(key.sym) {
+        case SDLK_a:    return 0;
+        case SDLK_b:    return 1;
+        case SDLK_c:    return 2;
+        case SDLK_d:    return 3;
+        case SDLK_e:    return 4;
+        case SDLK_f:    return 5;
+        case SDLK_g:    return 6;
+        case SDLK_h:    return 7;
+        case SDLK_i:    return 8;
+        case SDLK_j:    return 9;
+        case SDLK_k:    return 10;
+        case SDLK_l:    return 11;
+        case SDLK_m:    return 12;
+        case SDLK_n:    return 13;
+        case SDLK_o:    return 14;
+        case SDLK_p:    return 15;
+        case SDLK_q:    return 16;
+        case SDLK_r:    return 17;
+        case SDLK_s:    return 18;
+        case SDLK_t:    return 19;
+        case SDLK_u:    return 20;
+        case SDLK_v:    return 21;
+        case SDLK_w:    return 22;
+        case SDLK_x:    return 23;
+        case SDLK_y:    return 24;
+        case SDLK_z:    return 25;
+        default:        return -1;
+    }
+}

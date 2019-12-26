@@ -22,6 +22,19 @@ const int aiPaceBox         = 4;
 const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
 
+const int shapeSquare       = 0;
+const int shapeCircle       = 1;
+const int shapeLong         = 2;
+const int shapeWide         = 3;
+const int shapeCone         = 4;
+
+const int formSelf          = 0;
+const int formBullet        = 1;
+const int formMelee         = 2;
+const int formLobbed        = 3;
+const int formFourway       = 4;
+
+
 const int damageTypeCount = 8;
 enum class DamageType {
     Physical, Cold,   Fire,     Electric,
@@ -120,7 +133,12 @@ public:
 
 const char* getAbbrev(const Stat &stat);
 const char* getAbbrev(const DamageType &stat);
+
+std::string statName(const Stat &stat);
 std::ostream& operator<<(std::ostream &out, const Stat &stat);
+std::string damageTypeName(const DamageType &type);
 std::ostream& operator<<(std::ostream &out, const DamageType &stat);
+std::string damageFormName(const int &form);
+std::string damageShapeName(const int &shape);
 
 #endif

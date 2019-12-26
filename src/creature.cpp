@@ -142,32 +142,64 @@ const char* getAbbrev(const DamageType &stat) {
     return "?";
 }
 
-std::ostream& operator<<(std::ostream &out, const Stat &stat) {
+std::string statName(const Stat &stat) {
     switch(stat) {
-        case Stat::Speed:       out << "speed"; break;
-        case Stat::Health:      out << "health"; break;
-        case Stat::Energy:      out << "energy"; break;
-        case Stat::Accuracy:    out << "accuracy"; break;
-        case Stat::Evasion:     out << "evasion"; break;
-        case Stat::DR:          out << "damage reduction"; break;
-        case Stat::DB:          out << "damage bonus"; break;
+        case Stat::Speed:       return "speed";
+        case Stat::Health:      return "health";
+        case Stat::Energy:      return "energy";
+        case Stat::Accuracy:    return "accuracy";
+        case Stat::Evasion:     return "evasion";
+        case Stat::DR:          return "damage reduction";
+        case Stat::DB:          return "damage bonus";
     }
+    return "Stat" + std::to_string(static_cast<int>(stat));
+}
+
+std::ostream& operator<<(std::ostream &out, const Stat &stat) {
     return out;
 }
 
-std::ostream& operator<<(std::ostream &out, const DamageType &stat) {
-    switch(stat) {
-        case DamageType::Physical:  out << "physical"; break;
-        case DamageType::Fire:      out << "fire"; break;
-        case DamageType::Cold:      out << "cold"; break;
-        case DamageType::Electric:  out << "electric"; break;
-        case DamageType::Divine:    out << "divine"; break;
-        case DamageType::Infernal:  out << "infernal"; break;
-        case DamageType::Void:      out << "void"; break;
-        case DamageType::Toxic:     out << "toxic"; break;
+std::string damageTypeName(const DamageType &type) {
+    switch(type) {
+        case DamageType::Physical:  return "physical";
+        case DamageType::Fire:      return "fire";
+        case DamageType::Cold:      return "cold";
+        case DamageType::Electric:  return "electric";
+        case DamageType::Divine:    return "divine";
+        case DamageType::Infernal:  return "infernal";
+        case DamageType::Void:      return "void";
+        case DamageType::Toxic:     return "toxic";
     }
+    return "DamageType" + std::to_string(static_cast<int>(type));
+}
+
+std::ostream& operator<<(std::ostream &out, const DamageType &stat) {
+    out << damageTypeName(stat);
     return out;
 }
+
+std::string damageShapeName(const int &shape) {
+    switch(shape) {
+        case shapeSquare:           return "square";
+        case shapeCircle:           return "circle";
+        case shapeLong:             return "long";
+        case shapeWide:             return "wide";
+        case shapeCone:             return "cone";
+    }
+    return "DamageShape" + std::to_string(shape);
+}
+
+std::string damageFormName(const int &form) {
+    switch(form) {
+        case formSelf:              return "self";
+        case formBullet:            return "bullet";
+        case formMelee:             return "melee";
+        case formLobbed:            return "lobbed";
+        case formFourway:           return "fourway";
+    }
+    return "DamageForm" + std::to_string(form);
+}
+
 
 void Creature::ai(Board *board) {
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };

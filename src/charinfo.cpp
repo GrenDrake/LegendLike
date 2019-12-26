@@ -16,7 +16,9 @@
 #include "textutil.h"
 
 static int mode = charStats;
+static int selection = 0;
 static std::vector<SDL_Rect> tabButtons;
+
 
 void gfx_drawCharInfo(System &state, bool callPresent) {
     int screenWidth = 0;
@@ -27,7 +29,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     const int lineHeight = state.smallFont->getLineHeight();
     const int barHeight = lineHeight / 2;
     const int barWidth = charWidth * 40;
-    const int column2 = charWidth * 20;
+    const int column2 = charWidth * 30;
 
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(state.renderer);
@@ -47,7 +49,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     yPos += barHeight * 2;
 
     state.smallFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->getStat(Stat::Health)));
-    state.smallFont->out(column2, yPos, "      EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
+    state.smallFont->out(column2, yPos, "    Energy: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
     yPos += lineHeight * 2;
     const int paneTop = yPos;
 
@@ -69,22 +71,56 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
             DamageType damageType = static_cast<DamageType>(i);
             std::stringstream line;
             line << std::fixed << std::setprecision(3);
-            line << std::setw(8) << damageType << ": " << player->getResist(damageType);
+            line << std::setw(10) << damageType << ": " << player->getResist(damageType);
             state.smallFont->out(column2, yPos, line.str());
             yPos += lineHeight;
         }
 
     } else if (mode == charAbilities) {
-        state.smallFont->out(xPos, yPos, "CURRENT");
+        state.smallFont->out(xPos, yPos, "KNOWN MOVES");
         yPos += lineHeight;
-
-        yPos = paneTop;
-        state.smallFont->out(column2, yPos, "KNOWN");
-        yPos += lineHeight;
+        const int costPos = column2 - 4 * charWidth;
         for (unsigned i = 0; i < player->moves.size(); ++i) {
             const MoveType &move = MoveType::get(player->moves[i]);
-            state.smallFont->out(column2, yPos, move.name);
+            if (i == selection) {
+                SDL_Rect highlight = {
+                    xPos, yPos,
+                    column2 - xPos - charWidth, lineHeight
+                };
+                SDL_SetRenderDrawColor(state.renderer, 127, 127, 127, SDL_ALPHA_OPAQUE);
+                SDL_RenderFillRect(state.renderer, &highlight);
+            }
+            char buffer[4] = { 0, ':', ' ', 0 };
+            buffer[0] = i + 'A';
+            state.smallFont->out(xPos, yPos, buffer + move.name);
+            state.smallFont->out(costPos, yPos, std::to_string(move.cost));
             yPos += lineHeight;
+        }
+
+        if (selection >= 0 && selection < static_cast<int>(player->moves.size())) {
+            yPos = paneTop;
+            const MoveType &move = MoveType::get(player->moves[selection]);
+            state.smallFont->out(column2, yPos, "* " + upperFirst(move.name) + " *");
+            yPos += lineHeight * 2;
+            state.smallFont->out(column2, yPos, "  Accuracy: " + std::to_string(move.accuracy));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "     Speed: " + std::to_string(move.speed));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "      Cost: " + std::to_string(move.cost));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "      Type: " + damageTypeName(static_cast<DamageType>(move.type)));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "Min. Range: " + std::to_string(move.minRange));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "Max. Range: " + std::to_string(move.maxRange));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "    Damage: " + std::to_string(move.damage));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "      Size: " + std::to_string(move.damageSize));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "     Shape: " + damageShapeName(move.damageShape));
+            yPos += lineHeight;
+            state.smallFont->out(column2, yPos, "      Type: " + damageFormName(move.damageType));
         }
     } else if (mode == charInventory) {
         state.smallFont->out(xPos, yPos, "CARRYING");
@@ -131,6 +167,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
 void doCharInfo(System &system, int initialMode) {
     if (initialMode < 0 || initialMode >= charModeCount) mode = charStats;
     else mode = initialMode;
+    selection = 0;
 
     while (1) {
         gfx_drawCharInfo(system, true);
@@ -148,6 +185,11 @@ void doCharInfo(System &system, int initialMode) {
                     mode = i;
                     break;
                 }
+            } else if (event.type == SDL_KEYDOWN && keyToIndex(event.key.keysym) >= 0) {
+                int choice = keyToIndex(event.key.keysym);
+                if (choice < static_cast<int>(system.getPlayer()->moves.size())) {
+                    selection = choice;
+                }
             } else {
                 const CommandDef &cmd = getCommand(event, characterCommands);
                 if (cmd.command == Command::Quit) {
@@ -158,15 +200,31 @@ void doCharInfo(System &system, int initialMode) {
                     return;
                 }
                 if (cmd.command == Command::NextMode) {
+                    selection = 0;
                     ++mode;
                     if (mode >= charModeCount) {
                         mode = 0;
                     }
                 }
                 if (cmd.command == Command::PrevMode) {
+                    selection = 0;
                     --mode;
                     if (mode < 0) {
                         mode = charModeCount - 1;
+                    }
+                }
+
+                if (cmd.command == Command::Move) {
+                    if (mode == charAbilities) {
+                        if (cmd.direction == Dir::North) {
+                            if (selection > 0) {
+                                --selection;
+                            }
+                        } else if (cmd.direction == Dir::South) {
+                            if (selection < static_cast<int>(system.getPlayer()->moves.size()) - 1) {
+                                ++selection;
+                            }
+                        }
                     }
                 }
             }

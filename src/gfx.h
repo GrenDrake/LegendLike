@@ -17,6 +17,7 @@ class VM;
 class ResourceManager;
 struct Mix_Chunk;
 class Config;
+struct SDL_Keysym;
 
 
 struct Color {
@@ -155,5 +156,6 @@ void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
 void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, const std::string &text);
+int keyToIndex(const SDL_Keysym &key);
 
 #endif
