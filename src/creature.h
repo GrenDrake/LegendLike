@@ -38,6 +38,7 @@ class MoveType {
 public:
     static void add(const MoveType &type);
     static const MoveType& get(int ident);
+    static bool valid(int ident);
     static int typeCount();
 
     std::string name;
@@ -112,7 +113,9 @@ public:
     void takeDamage(int amount, DamageType type);
     bool isKOed() const;
     void autolevel(int toLevel, Random &rng);
-    int getEmptyMove();
+    void learnMove(int moveId);
+    bool knowsMove(int moveId);
+    void forgetMove(int moveId);
 };
 
 const char* getAbbrev(const Stat &stat);

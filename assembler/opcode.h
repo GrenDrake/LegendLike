@@ -56,6 +56,9 @@ enum opcode {
     op_p_stat,
     op_p_reset,
     op_p_damage,
+    op_p_learn,
+    op_p_forget,
+    op_p_knows,
 
     op_warpto,
 

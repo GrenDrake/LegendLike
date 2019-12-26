@@ -18,6 +18,13 @@ const MoveType& MoveType::get(int ident) {
     throw GameError("Tried to get nonexistant move type " + std::to_string(ident));
 }
 
+bool MoveType::valid(int ident) {
+    for (const MoveType &mt : types) {
+        if (mt.ident == ident) return true;
+    }
+    return false;
+}
+
 int MoveType::typeCount() {
     return types.size();
 }
@@ -81,6 +88,31 @@ bool Creature::isKOed() const {
 
 void Creature::autolevel(int toLevel, Random &rng) {
     level = toLevel;
+}
+
+void Creature::learnMove(int moveId) {
+    if (!MoveType::valid(moveId)) return;
+    for (int oldId : moves) {
+        if (oldId == moveId) return;
+    }
+    moves.push_back(moveId);
+}
+
+bool Creature::knowsMove(int moveId) {
+    for (int oldId : moves) {
+        if (oldId == moveId) return true;
+    }
+    return false;
+}
+
+void Creature::forgetMove(int moveId) {
+    for (auto iter = moves.begin(); iter != moves.end(); ) {
+        if (*iter == moveId) {
+            iter = moves.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
 }
 
 const char* getAbbrev(const Stat &stat) {

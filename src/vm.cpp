@@ -626,6 +626,19 @@ bool VM::run(unsigned address) {
                     state->getPlayer()->takeDamage(amnt, static_cast<DamageType>(type));
                 }
                 break; }
+            case Opcode::p_learn: {
+                int moveNo = pop();
+                state->getPlayer()->learnMove(moveNo);
+                break; }
+            case Opcode::p_forget: {
+                int moveNo = pop();
+                state->getPlayer()->forgetMove(moveNo);
+                break; }
+            case Opcode::p_knows: {
+                int moveNo = pop();
+                bool result = state->getPlayer()->knowsMove(moveNo);
+                push(result ? 1 : 0);
+                break; }
 
             case Opcode::warpto: {
                 int map = pop();

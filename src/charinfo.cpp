@@ -81,7 +81,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
         yPos = paneTop;
         state.smallFont->out(column2, yPos, "KNOWN");
         yPos += lineHeight;
-        for (unsigned i = 0; i < 4 && i < player->moves.size(); ++i) {
+        for (unsigned i = 0; i < player->moves.size(); ++i) {
             const MoveType &move = MoveType::get(player->moves[i]);
             state.smallFont->out(column2, yPos, move.name);
             yPos += lineHeight;

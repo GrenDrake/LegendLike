@@ -49,11 +49,17 @@ map0_talk_gateguard_havebeast:
     ret
 
 map0_test_giveparty:
+    @p_learn        3
+    @p_learn        4
+    @p_learn        5
+    @p_learn        6
+    @p_learn        7
     @saystr         map0_str_giftparty
     textbox
     ret
 
 map0_test_fight:
+    @p_forget       5
     @saystr         map0_str_fledTestFight
     textbox
     ret
