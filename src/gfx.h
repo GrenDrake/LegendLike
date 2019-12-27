@@ -19,6 +19,10 @@ struct Mix_Chunk;
 class Config;
 struct SDL_Keysym;
 
+const int quickSlotUnused = 0;
+const int quickSlotAbility = 1;
+const int quickSlotItem = 2;
+const int quickSlotCount = 4;
 
 struct Color {
     int r, g, b;
@@ -29,6 +33,11 @@ struct TrackInfo {
     std::string file;
     std::string name;
     std::string artist;
+};
+
+struct QuickSlot {
+    int type;
+    int action;
 };
 
 class System {
@@ -82,6 +91,7 @@ public:
     Board *mCurrentBoard;
     Creature *mPlayer;
     std::map<int, Board*> mBoards;
+    QuickSlot quickSlots[quickSlotCount];
 
     // game resources
     Font *smallFont;

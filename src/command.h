@@ -24,6 +24,10 @@ enum class Command {
     ShowTooltip,
     PrevMode,
     NextMode,
+    QuickKey_1,
+    QuickKey_2,
+    QuickKey_3,
+    QuickKey_4,
 
     Debug_Reveal,
     Debug_NoFOV,

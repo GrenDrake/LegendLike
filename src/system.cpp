@@ -6,7 +6,7 @@
 
 System::System(SDL_Renderer *renderer, Random &rng)
 : turnNumber(1), depth(0), mCurrentBoard(nullptr),  mPlayer(nullptr),
-  smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
+  quickSlots{0}, smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
   mCurrentMusic(nullptr), renderer(renderer), coreRNG(rng), vm(nullptr),
   config(nullptr), wantsToQuit(false), showTooltip(false), showInfo(false),
   showFPS(false), wantsTick(false), fpsManager(nullptr), fps(0)

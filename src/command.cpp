@@ -53,6 +53,10 @@ CommandDef characterCommands[] = {
     { Command::Rename,      Dir::None,  SDLK_r },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
     { Command::NextMode,    Dir::None,  SDLK_TAB },
+    { Command::QuickKey_1,  Dir::None,  SDLK_1 },
+    { Command::QuickKey_2,  Dir::None,  SDLK_2 },
+    { Command::QuickKey_3,  Dir::None,  SDLK_3 },
+    { Command::QuickKey_4,  Dir::None,  SDLK_4 },
 
     { Command::None }
 };
@@ -126,6 +130,10 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
 
         case Command::NextMode:         out << "next mode"; break;
         case Command::PrevMode:         out << "prev mode"; break;
+        case Command::QuickKey_1:       out << "quick key 1"; break;
+        case Command::QuickKey_2:       out << "quick key 2"; break;
+        case Command::QuickKey_3:       out << "quick key 3"; break;
+        case Command::QuickKey_4:       out << "quick key 4"; break;
 
         case Command::Debug_Reveal:     out << "reveal full map (debug)"; break;
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;

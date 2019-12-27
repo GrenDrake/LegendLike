@@ -110,9 +110,17 @@ void repaint(System &state, bool callPresent) {
         state.tinyFont->out(xPos, yPos, line.str());
         yPos += tinyLineHeight;
     }
-    for (unsigned i = 0; i < 4 && i < player->moves.size(); ++i) {
-        const MoveType &move = MoveType::get(player->moves[i]);
-        state.tinyFont->out(xPos, yPos, move.name);
+    for (unsigned i = 0; i < quickSlotCount; ++i) {
+        std::string content = "";
+        switch(state.quickSlots[i].type) {
+            case quickSlotAbility:
+                content = MoveType::get(state.quickSlots[i].action).name;
+                break;
+            case quickSlotItem:
+                content = "item";
+                break;
+        }
+        state.tinyFont->out(xPos, yPos, std::to_string(i+1) + ": " + content);
         yPos += tinyLineHeight;
     }
     yPos = statTop;
