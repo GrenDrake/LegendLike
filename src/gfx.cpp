@@ -2,8 +2,6 @@
 #include <sstream>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_framerate.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
 
 #include "creature.h"
@@ -28,11 +26,9 @@ void repaint(System &state, bool callPresent) {
     const int mapWidthTiles = mapWidthPixels / tileWidth + 2;
     const int mapHeightTiles = mapHeightPixels / tileHeight + 2;
 
-    const std::uint32_t uiColor = 0xF0F0F0FF;
+    const Color uiColor{255, 255, 255};
 
-    state.fps = SDL_getFramerate(static_cast<FPSmanager*>(state.fpsManager));
-    SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(state.renderer);
+    gfx_Clear(state);
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     // DRAW MAP
@@ -152,7 +148,7 @@ void repaint(System &state, bool callPresent) {
         }
         bool wasRule = false;
         if (m.text == "---") {
-            hlineRGBA(state.renderer, sidebarX + 8, screenWidth - 8, yPos + tinyLineHeight / 2, 160, 160, 160, SDL_ALPHA_OPAQUE);
+            gfx_HLine(state, sidebarX + 8, screenWidth - 8, yPos + tinyLineHeight / 2, Color{160, 160, 160});
             yPos -= tinyLineHeight;
             wasRule = true;
         } else {
@@ -174,7 +170,7 @@ void repaint(System &state, bool callPresent) {
         if (yPos < logTop - tinyLineHeight) break;
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
-    hlineRGBA(state.renderer, sidebarX, screenWidth, logTop - 1, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    gfx_HLine(state, sidebarX, screenWidth, logTop - 1, uiColor);
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  FPS INFO
@@ -221,12 +217,12 @@ void repaint(System &state, bool callPresent) {
     }
     if (state.showFPS) {
         std::stringstream ss;
-        ss << "  FPS: " << state.fps;
+        ss << "  FPS: " << state.getActualFps();
         state.smallFont->out(0, 0, ss.str().c_str());
     }
 
-    hlineColor(state.renderer, 0, screenWidth, mapHeightPixels, uiColor);
-    vlineColor(state.renderer, mapWidthPixels, 0, mapHeightPixels, uiColor);
+    gfx_HLine(state, 0, screenWidth, mapHeightPixels, uiColor);
+    gfx_VLine(state, mapWidthPixels, 0, mapHeightPixels, uiColor);
 
 
     if (callPresent) SDL_RenderPresent(state.renderer);
@@ -242,5 +238,5 @@ void gfx_frameDelay(System &state) {
             return;
         }
     }
-    SDL_framerateDelay(static_cast<FPSmanager*>(state.fpsManager));
+    state.waitFrame();
 }

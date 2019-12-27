@@ -2,8 +2,6 @@
 #include <sstream>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_framerate.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
 
 #include "creature.h"
@@ -82,7 +80,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
         const int costPos = column2 - 4 * charWidth;
         for (unsigned i = 0; i < player->moves.size(); ++i) {
             const MoveType &move = MoveType::get(player->moves[i]);
-            if (i == selection) {
+            if (static_cast<int>(i) == selection) {
                 SDL_Rect highlight = {
                     xPos, yPos,
                     column2 - xPos - charWidth, lineHeight
@@ -176,7 +174,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     //  FPS INFO
     if (state.showFPS) {
         std::stringstream ss;
-        ss << "  FPS: " << state.fps;
+        ss << "  FPS: " << state.getActualFps();
         state.smallFont->out(0, 0, ss.str().c_str());
     }
 
@@ -262,7 +260,7 @@ void doCharInfo(System &system, int initialMode) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(system.fpsManager));
+        system.waitFrame();
     }
 
 }

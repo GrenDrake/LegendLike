@@ -3,7 +3,7 @@ PHYSFS=../physfs-3.0.2/
 
 CFLAGS=-Wall -g -std=c99 -pedantic -I$(PHYSFS)src
 CXXFLAGS=-Wall -g -std=c++11 -pedantic `sdl-config --cflags` -I$(LIBFOV) -I$(PHYSFS)src
-GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS) -lfov -lphysfs -lSDL2_gfx -lSDL2_mixer -lSDL2_image `sdl2-config --libs`
+GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS) -lfov -lphysfs -lSDL2_mixer -lSDL2_image `sdl2-config --libs`
 
 GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o \
 	 src/gen_dungeon.o src/system.o src/gfx.o src/command.o src/dataload.o \

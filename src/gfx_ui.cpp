@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_framerate.h>
 
 #include "game.h"
 #include "gfx.h"
@@ -76,7 +75,7 @@ void gfx_MessageBox(System &state, std::string text) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(state.fpsManager));
+        state.waitFrame();
     }
 }
 
@@ -161,7 +160,7 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
             return false;
         }
         if (event.type == SDL_TEXTINPUT) {
-            if (text.size() < maxLength) {
+            if (static_cast<int>(text.size()) < maxLength) {
                 text += event.text.text;
             }
         }
@@ -180,7 +179,7 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(system.fpsManager));
+        system.waitFrame();
     }
 }
 
@@ -251,4 +250,33 @@ int keyToIndex(const SDL_Keysym &key) {
         case SDLK_z:    return 25;
         default:        return -1;
     }
+}
+
+void gfx_Clear(System &system) {
+    SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(system.renderer);
+}
+
+void gfx_DrawRect(System &system, int x, int y, int x2, int y2, const Color &color) {
+    SDL_Rect box = {x, y, x2 - x, y2 - y };
+    SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &box);
+}
+
+void gfx_FillRect(System &system, int x, int y, int x2, int y2, const Color &color) {
+    SDL_Rect box = {x, y, x2 - x, y2 - y };
+    SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &box);
+}
+
+void gfx_HLine(System &system, int x, int x2, int y, const Color &color) {
+    SDL_Rect box = {x, y, x2 - x, 1 };
+    SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &box);
+}
+
+void gfx_VLine(System &system, int x, int y, int y2, const Color &color) {
+    SDL_Rect box = {x, y, 1, y2 - y };
+    SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(system.renderer, &box);
 }

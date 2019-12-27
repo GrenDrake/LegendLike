@@ -1,7 +1,4 @@
-
-
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_framerate.h>
 
 #include "creature.h"
 #include "board.h"
@@ -167,7 +164,7 @@ void doShowMap(System &system) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(system.fpsManager));
+        system.waitFrame();
     }
 
 }

@@ -78,6 +78,10 @@ public:
     bool hasTick() const;
     void tick();
 
+    void setTarget(int targetFps);
+    void waitFrame();
+    int getActualFps();
+
     Board* getBoard() {
         return mCurrentBoard;
     }
@@ -125,18 +129,15 @@ public:
     bool showFPS;
     bool wantsTick;
 
-    // fps management
-    // we declared this as a void* to avoid needing to include the often
-    // unneccesary header file or dealing with the typedef FPSManager
-    void *fpsManager;
-    int fps;
-
 private:
     bool loadCreatureData();
     bool loadMoveData();
     bool loadStringData();
     bool loadTileData();
 
+    int framecount, framerate, baseticks, lastticks, fps;
+    int timerFrames, timerTime, actualFPS;
+    double tickrate;
 };
 
 class Font {
@@ -174,5 +175,10 @@ void gfx_DrawBar(System &system, int x, int y, int length, int height, double pe
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
 void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, const std::string &text);
 int keyToIndex(const SDL_Keysym &key);
+void gfx_Clear(System &system);
+void gfx_DrawRect(System &system, int x, int y, int x2, int y2, const Color &color);
+void gfx_FillRect(System &system, int x, int y, int x2, int y2, const Color &color);
+void gfx_HLine(System &system, int x, int y, int y2, const Color &color);
+void gfx_VLine(System &system, int x, int x2, int y, const Color &color);
 
 #endif

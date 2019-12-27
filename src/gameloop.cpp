@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_framerate.h>
 
 #include "command.h"
 #include "creature.h"
@@ -204,6 +203,6 @@ void gameloop(System &state) {
             }
         }
 
-        SDL_framerateDelay(static_cast<FPSmanager*>(state.fpsManager));
+        state.waitFrame();
     }
 }

@@ -1,3 +1,5 @@
+#include <SDL2/SDL.h>
+
 #include "creature.h"
 #include "board.h"
 #include "vm.h"
@@ -9,7 +11,8 @@ System::System(SDL_Renderer *renderer, Random &rng)
   quickSlots{ {0} }, smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
   mCurrentMusic(nullptr), renderer(renderer), coreRNG(rng), vm(nullptr),
   config(nullptr), wantsToQuit(false), showTooltip(false), showInfo(false),
-  showFPS(false), wantsTick(false), fpsManager(nullptr), fps(0)
+  showFPS(false), wantsTick(false),
+  framecount(0), framerate(0), baseticks(0), lastticks(0), fps(0)
 {
 }
 
@@ -74,6 +77,46 @@ void System::tick() {
         mCurrentBoard->tick();
         ++turnNumber;
     }
+}
+
+// Framerate management system based on:
+// http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/
+// with a couple of minor modifications
+void System::setTarget(int targetFps) {
+    if (targetFps > 0) {
+        framerate = targetFps;
+        tickrate = 1000.0 / targetFps;
+        timerFrames = 0;
+        timerTime = SDL_GetTicks();
+        actualFPS = 0;
+    }
+}
+
+void System::waitFrame() {
+
+    ++framecount;
+    ++timerFrames;
+    unsigned current = SDL_GetTicks();
+    lastticks = current;
+    unsigned target = baseticks + (static_cast<double>(framecount) * tickrate);
+
+    if (current <= target) {
+        unsigned theDelay = target - current;
+        SDL_Delay(theDelay);
+    } else {
+        framecount = 0;
+        baseticks = SDL_GetTicks();
+    }
+
+    if (current - timerTime > 1000) {
+        timerTime = SDL_GetTicks();
+        actualFPS = timerFrames;
+        timerFrames = 0;
+    }
+}
+
+int System::getActualFps() {
+    return actualFPS;
 }
 
 bool System::warpTo(int boardIndex, int x, int y) {

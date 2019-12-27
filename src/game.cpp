@@ -1,11 +1,8 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
-#include <SDL2/SDL2_framerate.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -193,10 +190,7 @@ int innerMain(System &renderState) {
         return 1;
     }
 
-    FPSmanager fpsManager;
-    SDL_initFramerate(&fpsManager);
-    SDL_setFramerate(&fpsManager, renderState.config->getInt("fps", 60));
-    renderState.fpsManager = &fpsManager;
+    renderState.setTarget(renderState.config->getInt("fps", 60));
 
     try {
         doGameMenu(renderState);
