@@ -68,6 +68,7 @@ static std::string getRandomName(Random &rng) {
 void doGameMenu(System &state) {
     int optBool = 1;
     int defOpt = 0;
+    bool gameInProgress = false;
 
     state.playMusic(0);
 
@@ -78,6 +79,7 @@ void doGameMenu(System &state) {
                 state.wantsToQuit = true;
                 break;
             case 0:
+                gameInProgress = true;
                 mainMenu[4].type = MenuType::Choice;
                 defOpt = 4;
                 state.reset();
@@ -88,9 +90,12 @@ void doGameMenu(System &state) {
                 state.playMusic(0);
                 break;
             case 3:
-                gameloop(state);
-                state.playMusic(0);
-                defOpt = 4;
+            case menuClose:
+                if (gameInProgress) {
+                    gameloop(state);
+                    state.playMusic(0);
+                    defOpt = 4;
+                }
                 break;
             case 5: {
                 int initialMusicVolume = Mix_VolumeMusic(-1);

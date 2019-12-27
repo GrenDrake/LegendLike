@@ -10,6 +10,7 @@ const int menuQuit = -1;
 const int menuEnd = -2;
 const int menuMusicVolume = -3;
 const int menuAudioVolume = -4;
+const int menuClose = -6;
 
 enum class MenuType {
     Choice,
