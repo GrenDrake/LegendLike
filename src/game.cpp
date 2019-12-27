@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     int initialXRes = config.getInt("xres", defaultScreenWidth);
     int initialYRes = config.getInt("yres", defaultScreenHeight);
     unsigned windowFlags = SDL_WINDOW_SHOWN;
-    if (config.getSBool("fullscreen", false)) windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    if (config.getBool("fullscreen", false)) windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_Window *win = SDL_CreateWindow(GAME_NAME,
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     }
 
     unsigned rendererFlags = SDL_RENDERER_ACCELERATED;
-    if (config.getSBool("vsync", true)) {
+    if (config.getBool("vsync", true)) {
         std::cerr << "X\n";
         rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
     }

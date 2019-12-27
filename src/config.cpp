@@ -70,7 +70,7 @@ int Config::getInt(const std::string &key, int defValue) const {
 
 }
 
-bool Config::getSBool(const std::string &key, bool defValue) const {
+bool Config::getBool(const std::string &key, bool defValue) const {
     auto iter = mKeys.find(key);
     if (iter == mKeys.end()) return defValue;
 
