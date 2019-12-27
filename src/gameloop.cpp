@@ -57,6 +57,7 @@ bool tryInteract(System &state, const Point &target) {
         return true;
     } else if (event && event->type == eventTypeManual) {
         state.vm->run(event->funcAddr);
+        state.requestTick();
     } else {
         const TileInfo &info = TileInfo::get(state.getBoard()->getTile(target));
         int to = info.interactTo;
