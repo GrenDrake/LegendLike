@@ -1,6 +1,7 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
     config.loadFromFile("/save/game.cfg");
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        log.error(std::string("SDL_Init Error: ") + SDL_GetError());
         return 1;
     }
 
@@ -73,23 +74,29 @@ int main(int argc, char *argv[]) {
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
                                        initialXRes, initialYRes,
                                        flags);
-    if (win == nullptr){
-        std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+    if (win == nullptr) {
+        log.error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
         SDL_Quit();
         return 1;
     }
 
     SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr){
-        std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        log.error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
         SDL_DestroyWindow(win);
         SDL_Quit();
         return 1;
     }
+    SDL_RendererInfo renderInfo;
+    if (SDL_GetRendererInfo(renderer, &renderInfo) != 0) {
+        log.error(std::string("SDL_GetRenderInfo Error: ") + SDL_GetError());
+    } else {
+        log.info(std::string("Renderer is ") + renderInfo.name + ".");
+    }
 
     int result = IMG_Init(IMG_INIT_PNG);
     if (!result) {
-        std::cerr << "Failed to initialize SDL_image: " << IMG_GetError() << "\n";
+        log.error(std::string("Failed to initialize SDL_image: ") + IMG_GetError());
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(win);
         SDL_Quit();
@@ -97,7 +104,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        std::cerr << "Failed to initialize SDL_mixer: " << Mix_GetError() << "\n";
+        log.error(std::string("Failed to initialize SDL_mixer: ") + Mix_GetError());
         IMG_Quit();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(win);
@@ -195,7 +202,8 @@ int innerMain(System &renderState) {
     try {
         doGameMenu(renderState);
     } catch (GameError &e) {
-        std::cerr << "Fatal Error: " << e.what() << "\n";
+        Logger &log = Logger::getInstance();
+        log.error(std::string("Fatal Error: ") + e.what());
     }
 
     renderState.unloadAll();
