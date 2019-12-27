@@ -48,8 +48,8 @@ CommandDef characterCommands[] = {
     { Command::Move,        Dir::East,  SDLK_RIGHT },
     { Command::Interact,    Dir::None,  SDLK_SPACE },
     { Command::Interact,    Dir::None,  SDLK_RETURN },
-    { Command::Cancel,      Dir::None,  SDLK_ESCAPE },
-    { Command::Cancel,      Dir::None,  SDLK_z },
+    { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
     { Command::Rename,      Dir::None,  SDLK_r },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
     { Command::NextMode,    Dir::None,  SDLK_TAB },
@@ -63,11 +63,11 @@ CommandDef mapCommands[] = {
     { Command::Move,        Dir::South, SDLK_DOWN },
     { Command::Move,        Dir::West,  SDLK_LEFT },
     { Command::Move,        Dir::East,  SDLK_RIGHT },
-    { Command::Cancel,      Dir::None,  SDLK_ESCAPE },
-    { Command::Cancel,      Dir::None,  SDLK_SPACE },
-    { Command::Cancel,      Dir::None,  SDLK_RETURN },
-    { Command::Cancel,      Dir::None,  SDLK_m },
-    { Command::Cancel,      Dir::None,  SDLK_z },
+    { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_SPACE },
+    { Command::Close,       Dir::None,  SDLK_RETURN },
+    { Command::Close,       Dir::None,  SDLK_m },
+    { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
     { Command::NextMode,    Dir::None,  SDLK_TAB },
     { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
@@ -110,6 +110,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
     switch(cmd) {
         case Command::None:             out << "nothing"; break;
         case Command::Cancel:           out << "cancel"; break;
+        case Command::Close:            out << "close"; break;
         case Command::Quit:             out << "quit"; break;
         case Command::Move:             out << "move"; break;
         case Command::Run:              out << "run"; break;

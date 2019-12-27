@@ -196,7 +196,7 @@ void doCharInfo(System &system, int initialMode) {
                     system.wantsToQuit = true;
                     return;
                 }
-                if (cmd.command == Command::Cancel) {
+                if (cmd.command == Command::Close) {
                     return;
                 }
                 if (cmd.command == Command::NextMode) {

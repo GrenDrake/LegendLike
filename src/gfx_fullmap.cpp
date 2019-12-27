@@ -140,7 +140,7 @@ void doShowMap(System &system) {
                 switch(cmd.command) {
                     case Command::Quit:
                         system.wantsToQuit = true;
-                    case Command::Cancel:
+                    case Command::Close:
                         return;
 
                     case Command::Move:

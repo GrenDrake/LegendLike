@@ -9,6 +9,7 @@ union SDL_Event;
 enum class Command {
     None,
     Cancel,
+    Close,
     Quit,
     Move,
     Run,
