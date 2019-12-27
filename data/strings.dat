@@ -7,7 +7,7 @@
 6=Man: "The depths too much for you, eh?"
 7=Woman: "I am the stablemaster."
 8=There is a rumbling sound as the walls shift.
-9=The scorpian greets you cheerfully.\nYou respond politely.
+9=Sage: Hello! It is a pleasant morning, is it not?
 10=---
 11=tackle
 12=whirlwind
@@ -15,3 +15,5 @@
 14=immolate
 15=poison spray
 16=godbolt
+17=The well is full of fresh, clean water.
+18=Ouch! The fire is hot!

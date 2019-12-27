@@ -7,7 +7,7 @@ map0_str_partygifter:   .string "party gifter guy"
 map0_str_archdean:      .string "archdean"
 map0_str_sign:          .string "sign"
 map0_strActor:          .string "actor"
-map0_strScorpian:       .string "scorpian"
+map0_strSage:           .string "sage"
 
 .define map0_str_academysign_text       5
 .define map0_str_gateguard_nopass       4
@@ -18,7 +18,9 @@ map0_strScorpian:       .string "scorpian"
 .define map0_str_giftparty              7
 
 .define map0_strRumblingNoise           8
-.define map0_strScorpianSaysHi          9
+.define map0_strSageSaysHi              9
+.define map0_strTalkWell                17
+.define map0_strTalkFire                18
 
 map0_gotfirst_flag:
     .byte 0
@@ -45,6 +47,14 @@ map0_talk_gateguard:
     ret
 map0_talk_gateguard_havebeast:
     @saystr         map0_str_gateguard_allowpass
+    textbox
+    ret
+map0_talkwell:
+    @saystr         map0_strTalkWell
+    textbox
+    ret
+map0_talkfire:
+    @saystr         map0_strTalkFire
     textbox
     ret
 
@@ -114,7 +124,7 @@ map0_build:
     @mf_settile     14 39 tileWindow
     @mf_settile     17 41 tileLabSignLeft
     @mf_settile     17 42 tileLabSignRight
-    @mf_addactor    aiStill         14 46 8632 map0_talk_professor map0_str_professor 0
+    @mf_addactor    aiStill         14 46 2 map0_talk_professor map0_str_professor 0
 
     ; the academy
     @mf_drawbox     28 54 20 48 tileWall
@@ -125,9 +135,9 @@ map0_build:
     @mf_settile     26 48 tileWindow
     @mf_settile     25 47 tileSign
     @mf_addevent    24 50 map0_downToAcademyCellar eventManual
-    @mf_addactor    aiPaceBox       21 51 1 map0_talk_archdean map0_str_archdean 0
-    @mf_addactor    aiAvoidPlayer   23 51 1 0 map0_strActor 0
-    @mf_addactor    aiStill         25 47 1 map0_talk_academysign map0_str_sign 0
+    @mf_addactor    aiPaceBox       21 51 2 map0_talk_archdean map0_str_archdean 0
+    @mf_addactor    aiAvoidPlayer   23 51 4 0 map0_strActor 0
+    @mf_addevent    25 47 map0_talk_academysign eventManual
 
     ; your home
     @mf_drawbox     25 19 20 13 tileWall
@@ -149,18 +159,18 @@ map0_build:
     ; beast pens
     @mf_drawbox     17 36 10 27 tileFence
     @mf_settile     14 22 tileSkull
-    @mf_addactor    aiPaceHorz     11 19 1 0 map0_strActor 0
-    @mf_addactor    aiPaceVert     14 24 1 0 map0_strActor 0
+    @mf_addactor    aiPaceHorz     11 19 4 0 map0_strActor 0
+    @mf_addactor    aiPaceVert     14 24 4 0 map0_strActor 0
 
     @mf_drawbox     17 27 10 17 tileFence
     @mf_settile     14 31 tileLargeSkull
-    @mf_addactor    aiRandom       15 30 1 0 map0_strActor 0
-    @mf_addactor    aiFollowPlayer 13 33 1 0 map0_strActor 0
+    @mf_addactor    aiRandom       15 30 4 0 map0_strActor 0
+    @mf_addactor    aiFollowPlayer 13 33 4 0 map0_strActor 0
 
     ; party gifter tester
-    @mf_addactor    aiStill 18 27 1 map0_test_giveparty map0_str_partygifter 0
+    @mf_addactor    aiStill 18 27 2 map0_test_giveparty map0_str_partygifter 0
     ; combat tester
-    @mf_addactor    aiStill 21 28 1 map0_test_fight map0_str_combatdemoguy 0
+    @mf_addactor    aiStill 21 28 4 map0_test_fight map0_str_combatdemoguy 0
 
     ; dungeon guard house
     @mf_drawbox     32 31 26 25 tileWall
@@ -170,14 +180,16 @@ map0_build:
     @mf_settile     26 27 tileFence
     @mf_settile     26 28 tileClosedGate
     @mf_settile     26 29 tileFence
-    @mf_addactor    aiStill 25 29 1 map0_talk_gateguard map0_str_gateguard 0
+    @mf_addactor    aiStill 25 29 4 map0_talk_gateguard map0_str_gateguard 0
 
     ; village green
     .push_count     tileGrass tileGrass tileGrass2 tileGrass3
     @mf_fillrand    30 43 23 34
     @mf_settile     26 40 tileWell
+    @mf_addevent    26 40 map0_talkwell eventManual
     @mf_settile     28 36 tileFire
-    @mf_addactor    aiStill 25 37 1 map0_talkScorpian map0_strScorpian 0
+    @mf_addevent    28 36 map0_talkfire eventManual
+    @mf_addactor    aiStill 25 37 2 map0_talkSage map0_strSage 0
 
     ; draw roads
     @mf_vertline    40 18 44 tileNSRoad
@@ -190,7 +202,7 @@ map0_build:
     @mf_settile     32 44 tileNESRoad
     @mf_settile     22 28 tileESWRoad
     @mf_settile     32 56 tileClosedGate
-    @mf_addactor    aiStill 31 55 1 map0_talk_gateguard map0_str_gateguard 0
+    @mf_addactor    aiStill 31 55 4 map0_talk_gateguard map0_str_gateguard 0
 
     ; event demo
     @mf_fillbox     43 51 37 45 tileWall
@@ -292,8 +304,8 @@ map0_townTeleportBottom:
     ret
 
 
-map0_talkScorpian:
-    @saystr     map0_strScorpianSaysHi
+map0_talkSage:
+    @saystr     map0_strSageSaysHi
     textbox
     ret
 
