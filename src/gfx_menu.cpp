@@ -128,8 +128,8 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                         }
                         break;
                     case SDLK_z:
+                    case SDLK_ESCAPE:
                         return menuClose;
-                        break;
                     case SDLK_a:
                     case SDLK_RIGHT:
                         if (menu[option].type == MenuType::Bool) {

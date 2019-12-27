@@ -107,7 +107,8 @@ void doGameMenu(System &state) {
                 optionsMenu[0].value = initialMusicVolume;
                 optionsMenu[1].value = initialAudioVolume;
                 optionsMenu[2].value = optBool;
-                if (runMenu(state, optionsMenu)) {
+                int result = runMenu(state, optionsMenu);
+                if (result >= 0) {
                     state.setMusicVolume(optionsMenu[0].value);
                     state.setAudioVolume(optionsMenu[1].value);
                     state.config->set("music", optionsMenu[0].value);
@@ -117,6 +118,7 @@ void doGameMenu(System &state) {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);
                 }
+                if (result == menuQuit) state.wantsToQuit = true;
                 break; }
             case 7:
                 if (creditsText.empty()) loadCredits();
