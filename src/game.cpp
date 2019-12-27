@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
     printVersions();
 
     Config config;
-    config.loadFromFile("/root/game.cfg");
     config.loadFromFile("/save/game.cfg");
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
@@ -67,20 +66,26 @@ int main(int argc, char *argv[]) {
     if (bounds.h < defaultScreenHeight) defaultScreenHeight = bounds.h * 0.9;
     int initialXRes = config.getInt("xres", defaultScreenWidth);
     int initialYRes = config.getInt("yres", defaultScreenHeight);
-    unsigned flags = SDL_WINDOW_SHOWN;
-    if (config.getSBool("fullscreen", false)) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    unsigned windowFlags = SDL_WINDOW_SHOWN;
+    if (config.getSBool("fullscreen", false)) windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     SDL_Window *win = SDL_CreateWindow(GAME_NAME,
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
                                        initialXRes, initialYRes,
-                                       flags);
+                                       windowFlags);
     if (win == nullptr) {
         log.error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
         SDL_Quit();
         return 1;
     }
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    unsigned rendererFlags = SDL_RENDERER_ACCELERATED;
+    if (config.getSBool("vsync", true)) {
+        std::cerr << "X\n";
+        rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+    }
+    std::cerr << rendererFlags << "\n";
+    SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, rendererFlags);
     if (renderer == nullptr){
         log.error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
         SDL_DestroyWindow(win);
