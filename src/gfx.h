@@ -40,6 +40,11 @@ struct QuickSlot {
     int action;
 };
 
+struct Message {
+    int newTurns;
+    std::string text;
+};
+
 class System {
 public:
     System(SDL_Renderer *renderer, Random &rng);
@@ -66,6 +71,8 @@ public:
     void playEffect(int effectNumber);
     void setAudioVolume(int volume);
 
+    void addMessage(const std::string &text);
+    void appendMessage(const std::string &newText);
 
     void requestTick();
     bool hasTick() const;
@@ -83,7 +90,7 @@ public:
     bool build(int forIndex);
 
     // message log
-    std::vector<std::string> messages;
+    std::vector<Message> messages;
 
     // Map data
     int turnNumber;

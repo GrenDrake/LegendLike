@@ -118,7 +118,7 @@ void Creature::forgetMove(int moveId) {
 
 void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
     const MoveType &move = MoveType::get(abilityNumber);
-    system.messages.push_back(getName() + " uses " + move.name + ".");
+    system.addMessage(getName() + " uses " + move.name + ".");
 }
 
 const char* getAbbrev(const Stat &stat) {

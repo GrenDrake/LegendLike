@@ -146,16 +146,19 @@ void repaint(System &state, bool callPresent) {
     yPos = screenHeight - tinyLineHeight;
     for (int i = state.messages.size() - 1; i >= 0; --i) {
         Color lineColour = Color{160,160,160};
-        if (i == state.messages.size() - 1) lineColour = {255, 255, 255};
-        std::string m = state.messages[i];
+        const Message &m = state.messages[i];
+        if (m.newTurns >= state.turnNumber - 1) {
+            lineColour = {255, 255, 255};
+        }
         bool wasRule = false;
-        if (m == "---") {
+        if (m.text == "---") {
             hlineRGBA(state.renderer, sidebarX + 8, screenWidth - 8, yPos + tinyLineHeight / 2, 160, 160, 160, SDL_ALPHA_OPAQUE);
             yPos -= tinyLineHeight;
             wasRule = true;
         } else {
             std::vector<std::string> lines;
-            wordwrap(m, wrapWidth, lines);
+            std::string text = m.text;
+            wordwrap(text, wrapWidth, lines);
             for (int j = lines.size() - 1; j >= 0; --j) {
                 const std::string &line = lines[j];
                 if (j == 0) {

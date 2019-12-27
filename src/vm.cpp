@@ -387,7 +387,7 @@ bool VM::run(unsigned address) {
                     currentText.str("");
                     std::vector<std::string> lines = explode(text, "\n");
                     for (const std::string &s : lines) {
-                        state->messages.push_back(s);
+                        state->addMessage(s);
                     }
                 }
                 break; }

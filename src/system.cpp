@@ -45,6 +45,21 @@ void System::endGame() {
     mBoards.clear();
 }
 
+void System::addMessage(const std::string &text) {
+    messages.push_back(Message{
+        turnNumber,
+        text
+    });
+}
+
+void System::appendMessage(const std::string &newText) {
+    if (messages.empty()) {
+        addMessage(newText);
+    } else {
+        messages.back().text += newText;
+    }
+}
+
 void System::requestTick() {
     wantsTick = true;
 }
@@ -56,8 +71,8 @@ bool System::hasTick() const {
 void System::tick() {
     wantsTick = false;
     if (mCurrentBoard) {
-        ++turnNumber;
         mCurrentBoard->tick();
+        ++turnNumber;
     }
 }
 

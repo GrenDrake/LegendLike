@@ -17,7 +17,7 @@
 #include "gfx.h"
 
 Dir gfx_GetDirection(System &system) {
-    system.messages.push_back("Which way?");
+    system.addMessage("Which way?");
     while (1) {
         repaint(system);
         SDL_Event event;
@@ -25,10 +25,10 @@ Dir gfx_GetDirection(System &system) {
             const CommandDef &cmd = getCommand(event, gameCommands);
             switch(cmd.command) {
                 case Command::Move:
-                    system.messages.back() += " " + dirName(cmd.direction);
+                    system.appendMessage(" " + dirName(cmd.direction));
                     return cmd.direction;
                 case Command::Cancel:
-                    system.messages.back() += " Cancelled";
+                    system.appendMessage(" Cancelled");
                     return Dir::None;
                 default:
                     /* we don't need to handle most of the commands */
@@ -50,7 +50,7 @@ bool tryInteract(System &state, const Point &target) {
             if (state.quickSlots[0].type == quickSlotAbility) {
                 state.getPlayer()->useAbility(state, state.quickSlots[0].action, state.getPlayer()->position.directionTo(target));
             } else {
-                state.messages.push_back("They have nothing to say.");
+                state.addMessage("They have nothing to say.");
             }
         }
         state.requestTick();
