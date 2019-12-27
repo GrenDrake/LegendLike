@@ -3,6 +3,7 @@
 #include "creature.h"
 #include "game.h"
 #include "random.h"
+#include "gfx.h"
 
 std::vector<CreatureType> CreatureType::types;
 std::vector<MoveType> MoveType::types;
@@ -113,6 +114,11 @@ void Creature::forgetMove(int moveId) {
             ++iter;
         }
     }
+}
+
+void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
+    const MoveType &move = MoveType::get(abilityNumber);
+    system.messages.push_back(getName() + " uses " + move.name + ".");
 }
 
 const char* getAbbrev(const Stat &stat) {

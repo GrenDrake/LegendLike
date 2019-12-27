@@ -93,7 +93,7 @@ dungeon_fight_2:
 dungeon_foe_info:
     .word   100     ; foes to add to map
 
-    .word   11      ; map actor art ID
+    .word   10      ; map actor art ID
     .word   aiRandom ; map actor AI
     .word   random_foe_name ; map actor name
     .word   dungeon_fight_1

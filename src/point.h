@@ -48,6 +48,7 @@ private:
 Dir flipDirection(Dir original);
 Dir rotateDirection(Dir original);
 Dir randomDirection(Random &rng);
+std::string dirName(const Dir &d);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
 
 #endif

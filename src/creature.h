@@ -129,6 +129,7 @@ public:
     void learnMove(int moveId);
     bool knowsMove(int moveId);
     void forgetMove(int moveId);
+    void useAbility(System &system, int abilityNumber, const Dir &d);
 };
 
 const char* getAbbrev(const Stat &stat);

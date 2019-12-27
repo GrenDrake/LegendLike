@@ -16,16 +16,42 @@
 #include "random.h"
 #include "gfx.h"
 
-
+Dir gfx_GetDirection(System &system) {
+    system.messages.push_back("Which way?");
+    while (1) {
+        repaint(system);
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            const CommandDef &cmd = getCommand(event, gameCommands);
+            switch(cmd.command) {
+                case Command::Move:
+                    system.messages.back() += " " + dirName(cmd.direction);
+                    return cmd.direction;
+                case Command::Cancel:
+                    system.messages.back() += " Cancelled";
+                    return Dir::None;
+                default:
+                    /* we don't need to handle most of the commands */
+                    break;
+            }
+        }
+    }
+}
 
 bool tryInteract(System &state, const Point &target) {
     Creature *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
         if (actor->talkFunc) {
+            // has talk function, is friendly
             state.vm->run(actor->talkFunc);
         } else {
-            state.messages.push_back("They have nothing to say.");
+            // no talk function, presume hostile
+            if (state.quickSlots[0].type == quickSlotAbility) {
+                state.getPlayer()->useAbility(state, state.quickSlots[0].action, state.getPlayer()->position.directionTo(target));
+            } else {
+                state.messages.push_back("They have nothing to say.");
+            }
         }
         state.requestTick();
         return true;
@@ -132,6 +158,31 @@ void gameloop(System &state) {
                 case Command::AbilityList:
                     doCharInfo(state, charAbilities);
                     break;
+
+                case Command::QuickKey_1:
+                case Command::QuickKey_2:
+                case Command::QuickKey_3:
+                case Command::QuickKey_4: {
+                    int slot = static_cast<int>(cmd.command) - static_cast<int>(Command::QuickKey_1);
+                    switch(state.quickSlots[slot].type) {
+                        case quickSlotUnused:
+                            /* do nothing */
+                            break;
+                        case quickSlotItem:
+                            /* not implemented */
+                            break;
+                        case quickSlotAbility: {
+                            int abilityNumber = state.quickSlots[slot].action;
+                            const MoveType &move = MoveType::get(abilityNumber);
+                            Dir d = Dir::Here;
+                            if (move.damageType != formSelf) {
+                                d = gfx_GetDirection(state);
+                            }
+                            state.getPlayer()->useAbility(state, abilityNumber, d);
+                            state.requestTick();
+                            break; }
+                    }
+                    break; }
 
                 case Command::Debug_Reveal:
                     state.getBoard()->dbgRevealAll();

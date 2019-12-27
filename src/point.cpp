@@ -69,18 +69,23 @@ Dir randomDirection(Random &rng) {
     return Dir::Here;
 }
 
-std::ostream& operator<<(std::ostream &out, const Dir &d) {
+std::string dirName(const Dir &d) {
     switch (d) {
-        case Dir::North:        out << "north"; break;
-        case Dir::Northeast:    out << "northeast"; break;
-        case Dir::East:         out << "east"; break;
-        case Dir::Southeast:    out << "southeast"; break;
-        case Dir::South:        out << "south"; break;
-        case Dir::Southwest:    out << "southwest"; break;
-        case Dir::West:         out << "west"; break;
-        case Dir::Northwest:    out << "northwest"; break;
-        case Dir::Here:         out << "here"; break;
-        case Dir::None:         out << "none"; break;
+        case Dir::North:        return "north";
+        case Dir::Northeast:    return "northeast";
+        case Dir::East:         return "east";
+        case Dir::Southeast:    return "southeast";
+        case Dir::South:        return "south";
+        case Dir::Southwest:    return "southwest";
+        case Dir::West:         return "west";
+        case Dir::Northwest:    return "northwest";
+        case Dir::Here:         return "here";
+        case Dir::None:         return "none";
     }
+    return "Dir#" + std::to_string(static_cast<int>(d));
+}
+
+std::ostream& operator<<(std::ostream &out, const Dir &d) {
+    out << dirName(d);
     return out;
 }
