@@ -81,10 +81,8 @@ int main(int argc, char *argv[]) {
 
     unsigned rendererFlags = SDL_RENDERER_ACCELERATED;
     if (config.getBool("vsync", true)) {
-        std::cerr << "X\n";
         rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
     }
-    std::cerr << rendererFlags << "\n";
     SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, rendererFlags);
     if (renderer == nullptr){
         log.error(std::string("SDL_CreateRenderer Error: ") + SDL_GetError());
