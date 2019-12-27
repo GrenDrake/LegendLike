@@ -246,6 +246,7 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
                     case SDLK_SPACE:
                         pauseScroll = !pauseScroll;
                         break;
+                    case SDLK_z:
                     case SDLK_ESCAPE:
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
