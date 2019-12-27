@@ -86,7 +86,7 @@ void gameloop(System &state) {
                 case Command::Cancel:
                     // do nothing
                     break;
-                case Command::ReturnToMenu:
+                case Command::SystemMenu:
                     return;
                 case Command::Quit:
                     state.wantsToQuit = true;

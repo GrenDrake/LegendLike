@@ -9,7 +9,7 @@ CommandDef commandNone = { Command::None };
 
 CommandDef gameCommands[] = {
     { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
-    { Command::ReturnToMenu,Dir::None,  SDLK_ESCAPE },
+    { Command::SystemMenu,  Dir::None,  SDLK_ESCAPE },
     { Command::Cancel,      Dir::None,  SDLK_z },
     { Command::Move,        Dir::North, SDLK_UP },
     { Command::Move,        Dir::East,  SDLK_RIGHT },
@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Interact:         out << "interact"; break;
         case Command::Wait:             out << "wait"; break;
         case Command::ShowMap:          out << "full map"; break;
-        case Command::ReturnToMenu:     out << "return to menu"; break;
+        case Command::SystemMenu:       out << "system menu"; break;
         case Command::CharacterInfo:    out << "character info"; break;
         case Command::Inventory:        out << "inventory"; break;
         case Command::AbilityList:      out << "ability list"; break;

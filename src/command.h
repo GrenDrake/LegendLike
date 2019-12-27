@@ -16,7 +16,7 @@ enum class Command {
     Interact,
     Wait,
     ShowMap,
-    ReturnToMenu,
+    SystemMenu,
     CharacterInfo,
     Inventory,
     AbilityList,
