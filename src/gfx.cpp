@@ -238,7 +238,7 @@ void gfx_frameDelay(System &state) {
     repaint(state);
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        const CommandDef &cmd = getCommand(event, gameCommands);
+        const CommandDef &cmd = getCommand(state, event, gameCommands);
         if (cmd.command == Command::Quit) {
             state.wantsToQuit = true;
             return;

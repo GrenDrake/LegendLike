@@ -133,7 +133,7 @@ void doShowMap(System &system) {
                     if (scale < maxScale) ++scale;
                 }
             } else {
-                const CommandDef &cmd = getCommand(event, mapCommands);
+                const CommandDef &cmd = getCommand(system, event, mapCommands);
                 switch(cmd.command) {
                     case Command::Quit:
                         system.wantsToQuit = true;

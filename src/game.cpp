@@ -66,8 +66,9 @@ int main(int argc, char *argv[]) {
     if (bounds.h < defaultScreenHeight) defaultScreenHeight = bounds.h * 0.9;
     int initialXRes = config.getInt("xres", defaultScreenWidth);
     int initialYRes = config.getInt("yres", defaultScreenHeight);
-    unsigned windowFlags = SDL_WINDOW_SHOWN;
+    unsigned windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
     if (config.getBool("fullscreen", false)) windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    if (config.getBool("maximized", false))  windowFlags |= SDL_WINDOW_MAXIMIZED;
     SDL_Window *win = SDL_CreateWindow(GAME_NAME,
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),
                                        SDL_WINDOWPOS_CENTERED_DISPLAY(displayNum),

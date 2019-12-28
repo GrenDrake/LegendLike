@@ -1,7 +1,10 @@
 #include <ostream>
 #include <SDL2/SDL.h>
+#include <sstream>
 
 #include "command.h"
+#include "config.h"
+#include "gfx.h"
 #include "point.h"
 
 CommandDef commandQuit = { Command::Quit };
@@ -84,11 +87,22 @@ CommandDef mapCommands[] = {
     { Command::None }
 };
 
-
-const CommandDef& getCommand(SDL_Event &event, const CommandDef *commandList) {
+const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList) {
     if (event.type == SDL_QUIT)     return commandQuit;
-    if (event.type != SDL_KEYDOWN)  return commandNone;
+    if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+            system.config->set("xres", std::to_string(event.window.data1));
+            system.config->set("yres", std::to_string(event.window.data2));
+        }
+        if (event.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
+            system.config->set("maximized", "1");
+        }
+        if (event.window.event == SDL_WINDOWEVENT_RESTORED) {
+            system.config->set("maximized", "0");
+        }
+    }
 
+    if (event.type != SDL_KEYDOWN)  return commandNone;
     event.key.keysym.mod &= KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_GUI;
     // convert right modifier keys into left equivelents
     if (event.key.keysym.mod & KMOD_RSHIFT) {

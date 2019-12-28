@@ -208,7 +208,7 @@ void doCharInfo(System &system, int initialMode) {
                     selection = choice;
                 }
             } else {
-                const CommandDef &cmd = getCommand(event, characterCommands);
+                const CommandDef &cmd = getCommand(system, event, characterCommands);
                 switch(cmd.command) {
                     case Command::Quit:
                         system.wantsToQuit = true;

@@ -21,7 +21,7 @@ Dir gfx_GetDirection(System &system) {
         repaint(system);
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            const CommandDef &cmd = getCommand(event, gameCommands);
+            const CommandDef &cmd = getCommand(system, event, gameCommands);
             switch(cmd.command) {
                 case Command::Move:
                     system.appendMessage(" " + dirName(cmd.direction));
@@ -106,7 +106,7 @@ void gameloop(System &state) {
         // event loop
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            const CommandDef &cmd = getCommand(event, gameCommands);
+            const CommandDef &cmd = getCommand(state, event, gameCommands);
             switch(cmd.command) {
                 case Command::None:
                 case Command::Cancel:
