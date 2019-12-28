@@ -50,7 +50,8 @@ int CreatureType::typeCount() {
 
 
 Creature::Creature(int type)
-: level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false)
+: level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
+  ai_lastDir(Dir::None)
 {
     typeIdent = type;
     typeInfo = &CreatureType::get(type);
@@ -205,7 +206,6 @@ std::string damageFormName(const int &form) {
     }
     return "DamageForm" + std::to_string(form);
 }
-
 
 void Creature::ai(Board *board) {
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };
