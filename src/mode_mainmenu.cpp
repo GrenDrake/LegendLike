@@ -39,13 +39,13 @@ const int menuMusicIndex = 0;
 const int menuAudioIndex = 1;
 const int menuTileIndex = 2;
 const int menuFontIndex = 3;
-const int menuDemoBoolIndex = 4;
+const int menuFullscreenIndex = 4;
 MenuOption optionsMenu[] = {
     { "Music Volume",           0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
     { "Effects Volume",         0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
     { "Tile Scale",             0,      0,                  MenuType::Value,    1,  1, 10 },
     { "Font Scale",             0,      0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
-    { "Demo Bool Option",       0,      0,                  MenuType::Bool },
+    { "Fullscreen",             0,      0,                  MenuType::Bool,     0,  0, 0  },
     { "",                       0,      0,                  MenuType::Disabled },
     { "Save Changes",           0,      1,                  MenuType::Choice },
     { "Discard Changes",        0,      menuDiscard,        MenuType::Choice },
@@ -93,7 +93,6 @@ void adjustFontScale(System &system, int value) {
 }
 
 void doGameMenu(System &state) {
-    int optBool = 1;
     int defOpt = 0;
     bool gameInProgress = false;
 
@@ -132,17 +131,19 @@ void doGameMenu(System &state) {
                 optionsMenu[menuAudioIndex].value = initialAudioVolume;
                 optionsMenu[menuTileIndex].value = state.config->getInt("tile_scale", 1);
                 optionsMenu[menuFontIndex].value = initialFontScale;
-                optionsMenu[menuDemoBoolIndex].value = optBool;
+                optionsMenu[menuFullscreenIndex].value = state.config->getBool("fullscreen", false);
                 int result = runMenu(state, optionsMenu);
                 if (result >= 0) {
                     state.setMusicVolume(optionsMenu[menuMusicIndex].value);
                     state.setAudioVolume(optionsMenu[menuAudioIndex].value);
                     state.setFontScale(optionsMenu[menuFontIndex].value);
+                    SDL_SetWindowFullscreen(state.window,
+                            optionsMenu[menuFullscreenIndex].value ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
                     state.config->set("music", optionsMenu[menuMusicIndex].value);
                     state.config->set("audio", optionsMenu[menuAudioIndex].value);
                     state.config->set("tile_scale", std::to_string(optionsMenu[menuTileIndex].value));
                     state.config->set("font_scale", std::to_string(optionsMenu[menuFontIndex].value));
-                    optBool = optionsMenu[menuDemoBoolIndex].value;
+                    state.config->set("fullscreen", std::to_string(optionsMenu[menuFullscreenIndex].value ? 1 : 0));
                 } else {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);

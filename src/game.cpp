@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
     Random coreRandom;
     coreRandom.seed(time(0));
     System renderState(renderer, coreRandom);
+    renderState.window = win;
     renderState.config = &config;
     innerMain(renderState);
     config.writeToFile();

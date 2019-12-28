@@ -11,6 +11,7 @@ class Creature;
 class Random;
 class GameState;
 struct SDL_Renderer;
+struct SDL_Window;
 struct SDL_Texture;
 class Font;
 class VM;
@@ -119,6 +120,7 @@ public:
 
     // system modules
     SDL_Renderer *renderer;
+    SDL_Window *window;
     Random &coreRNG;
     VM *vm;
     Config *config;
