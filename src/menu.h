@@ -8,8 +8,6 @@ class System;
 
 const int menuQuit = -1;
 const int menuEnd = -2;
-const int menuMusicVolume = -3;
-const int menuAudioVolume = -4;
 const int menuClose = -6;
 
 enum class MenuType {
@@ -30,6 +28,7 @@ struct MenuOption {
     MenuType type;
     int value;
     int min, max;
+    void (*callback)(System&, int);
 
     MenuRect rect;
 };

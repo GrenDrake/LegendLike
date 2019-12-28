@@ -17,6 +17,8 @@
 
 std::vector<std::string> creditsText;
 static void loadCredits();
+void adjustMusicVolume(System &system, int value);
+void adjustAudioVolume(System &system, int value);
 
 MenuOption mainMenu[] = {
     { "Start Standard Game",    0,      0,                  MenuType::Choice },
@@ -33,8 +35,8 @@ MenuOption mainMenu[] = {
 };
 
 MenuOption optionsMenu[] = {
-    { "Music Volume",           0,      menuMusicVolume,    MenuType::Value,    50, 0, MIX_MAX_VOLUME },
-    { "Effects Volume",         0,      menuAudioVolume,    MenuType::Value,    50, 0, MIX_MAX_VOLUME },
+    { "Music Volume",           0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
+    { "Effects Volume",         0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
     { "Tile Scale",             0,      0,                  MenuType::Value,    1,  1, 10 },
     { "Demo Bool Option",       0,      0,                  MenuType::Bool },
     { "",                       0,      0,                  MenuType::Disabled },
@@ -68,6 +70,15 @@ static std::string getRandomName(Random &rng) {
         case 20: return "Alyn";
     }
     return "Fred";
+}
+
+void adjustMusicVolume(System &system, int value) {
+    Mix_VolumeMusic(value);
+}
+
+void adjustAudioVolume(System &system, int value) {
+    Mix_Volume(-1, value);
+    system.playEffect(0);
 }
 
 void doGameMenu(System &state) {

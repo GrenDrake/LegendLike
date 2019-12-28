@@ -139,11 +139,8 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                             if (menu[option].value > menu[option].max) {
                                 menu[option].value = menu[option].min;
                             }
-                            if (menu[option].code == menuMusicVolume) {
-                                Mix_VolumeMusic(menu[option].value);
-                            } else if (menu[option].code == menuAudioVolume) {
-                                Mix_Volume(-1, menu[option].value);
-                                state.playEffect(0);
+                            if (menu[option].callback) {
+                                menu[option].callback(state, menu[option].value);
                             }
                         }
                         break;
@@ -156,11 +153,8 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                             if (menu[option].value < menu[option].min) {
                                 menu[option].value = menu[option].max;
                             }
-                            if (menu[option].code == menuMusicVolume) {
-                                Mix_VolumeMusic(menu[option].value);
-                            } else if (menu[option].code == menuAudioVolume) {
-                                Mix_Volume(-1, menu[option].value);
-                                state.playEffect(0);
+                            if (menu[option].callback) {
+                                menu[option].callback(state, menu[option].value);
                             }
                         }
                         break;
