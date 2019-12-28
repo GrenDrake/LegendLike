@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
+#include "command.h"
 #include "game.h"
 #include "gfx.h"
 #include "menu.h"
@@ -97,12 +98,8 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;
-        SDL_WaitEvent(&event);
-        switch(event.type) {
-            case SDL_QUIT:
-                state.wantsToQuit = true;
-                return menuQuit;
-            case SDL_MOUSEBUTTONUP: {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_MOUSEBUTTONUP) {
                 int choice = checkPosInMenu(menu, event.button.x, event.button.y);
                 if (choice >= 0) {
                     if (menu[choice].type == MenuType::Choice) {
@@ -114,74 +111,74 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                         option = choice;
                     }
                 }
-                break; }
-            case SDL_KEYDOWN:
-                switch(event.key.keysym.sym) {
-                    case SDLK_KP_ENTER:
-                    case SDLK_RETURN:
-                    case SDLK_RETURN2:
-                    case SDLK_SPACE:
-                        if (menu[option].type == MenuType::Choice) {
-                            return menu[option].code;
-                        } else if (menu[option].type == MenuType::Bool) {
-                            menu[option].value = !menu[option].value;
-                        }
-                        break;
-                    case SDLK_z:
-                    case SDLK_ESCAPE:
-                        return menuClose;
-                    case SDLK_a:
-                    case SDLK_RIGHT:
-                        if (menu[option].type == MenuType::Bool) {
-                            menu[option].value = !menu[option].value;
-                        } else if (menu[option].type == MenuType::Value) {
-                            ++menu[option].value;
-                            if (menu[option].value > menu[option].max) {
-                                menu[option].value = menu[option].min;
+                continue;
+            }
+            const CommandDef &cmd = getCommand(state, event, menuCommands);
+            switch(cmd.command) {
+                case Command::Quit:
+                    state.wantsToQuit = true;
+                    return menuQuit;
+                case Command::Interact:
+                    if (menu[option].type == MenuType::Choice) {
+                        return menu[option].code;
+                    } else if (menu[option].type == MenuType::Bool) {
+                        menu[option].value = !menu[option].value;
+                    }
+                    break;
+                case Command::Close:
+                    return menuClose;
+                case Command::Move:
+                    switch(cmd.direction) {
+                        case Dir::East:
+                            if (menu[option].type == MenuType::Bool) {
+                                menu[option].value = !menu[option].value;
+                            } else if (menu[option].type == MenuType::Value) {
+                                ++menu[option].value;
+                                if (menu[option].value > menu[option].max) {
+                                    menu[option].value = menu[option].min;
+                                }
+                                if (menu[option].callback) {
+                                    menu[option].callback(state, menu[option].value);
+                                }
                             }
-                            if (menu[option].callback) {
-                                menu[option].callback(state, menu[option].value);
+                            break;
+                        case Dir::West:
+                            if (menu[option].type == MenuType::Bool) {
+                                menu[option].value = !menu[option].value;
+                            } else if (menu[option].type == MenuType::Value) {
+                                --menu[option].value;
+                                if (menu[option].value < menu[option].min) {
+                                    menu[option].value = menu[option].max;
+                                }
+                                if (menu[option].callback) {
+                                    menu[option].callback(state, menu[option].value);
+                                }
                             }
-                        }
-                        break;
-                    case SDLK_d:
-                    case SDLK_LEFT:
-                        if (menu[option].type == MenuType::Bool) {
-                            menu[option].value = !menu[option].value;
-                        } else if (menu[option].type == MenuType::Value) {
-                            --menu[option].value;
-                            if (menu[option].value < menu[option].min) {
-                                menu[option].value = menu[option].max;
-                            }
-                            if (menu[option].callback) {
-                                menu[option].callback(state, menu[option].value);
-                            }
-                        }
-                        break;
-                    case SDLK_w:
-                    case SDLK_UP:
-                        do {
-                            --option;
-                            if (option < 0) option = menuSize - 1;
-                        } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
-                        state.playEffect(0);
-                        break;
-                    case SDLK_s:
-                    case SDLK_DOWN:
-                        do {
-                            ++option;
-                            if (option >= menuSize) option = 0;
-                        } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
-                        state.playEffect(0);
-                        break;
-                    default:
-                        for (int i = 0; menu[i].code != menuEnd; ++i) {
-                            if (menu[i].key == event.key.keysym.sym) {
-                                return menu[i].code;
-                            }
-                        }
-                }
+                            break;
+                        case Dir::North:
+                            do {
+                                --option;
+                                if (option < 0) option = menuSize - 1;
+                            } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
+                            state.playEffect(0);
+                            break;
+                        case Dir::South:
+                            do {
+                                ++option;
+                                if (option >= menuSize) option = 0;
+                            } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
+                            state.playEffect(0);
+                            break;
+                        default:
+                            /* we don't need to handle the other directions */
+                            break;
+                    }
+                default:
+                    /* we don't need to handle the other commands */
+                    break;
+            }
         }
+        state.waitFrame();
     }
 }
 
@@ -193,10 +190,10 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
     const int numLines = text.size();
     int firstLineY = 20 + lineHeight;
     int maxLines = (screenHeight - firstLineY) / lineHeight - 2;
-
     bool pauseScroll = !autoscroll;
-    int firstLine = -numLines, subScroll = 0;
+    int firstLine = -maxLines + 1, subScroll = 0;
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    const std::string closeLine = "ESCAPE to close";
     while (!state.wantsToQuit) {
         if (!pauseScroll) {
             ++subScroll;
@@ -214,39 +211,38 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
             if (realLine >= numLines) break;
             state.smallFont->out(100, firstLineY + line * state.smallFont->getLineHeight() - subScroll, text[realLine]);
         }
-        state.smallFont->out(0, screenHeight - state.smallFont->getLineHeight(), " RETURN/ESCAPE - Return to menu   SPACE - pause scroll   UP/DOWN - scroll text");
+
+        const int closeLeft = screenWidth - closeLine.size() * state.tinyFont->getCharWidth();
+        const int closeTop  = screenHeight - state.tinyFont->getLineHeight();
+        state.tinyFont->out(closeLeft, closeTop, closeLine);
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;
         if (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                state.wantsToQuit = true;
-                return;
-            }
-            if (event.type == SDL_MOUSEBUTTONUP) return;
-            if (event.type == SDL_KEYDOWN) {
-                switch(event.key.keysym.sym) {
-                    case SDLK_q:
-                        state.wantsToQuit = true;
-                        return;
-                    case SDLK_UP:
+            const CommandDef &cmd = getCommand(state, event, infoCommands);
+            switch(cmd.command) {
+                case Command::Quit:
+                    state.wantsToQuit = true;
+                    return;
+                case Command::Move:
+                    if (cmd.direction == Dir::North) {
                         if (firstLine > 0) --firstLine;
-                        break;
-                    case SDLK_DOWN:
+                    } else if (cmd.direction == Dir::South) {
                         if (firstLine < numLines - maxLines) {
                             ++firstLine;
                         }
-                        break;
-                    case SDLK_SPACE:
-                        pauseScroll = !pauseScroll;
-                        break;
-                    case SDLK_z:
-                    case SDLK_ESCAPE:
-                    case SDLK_RETURN:
-                    case SDLK_KP_ENTER:
-                        return;
-                }
+                    }
+                    break;
+                case Command::Interact:
+                    pauseScroll = !pauseScroll;
+                    break;
+                case Command::Close:
+                    return;
+                default:
+                    /* we don't need to handle the other commands */
+                    break;
             }
         }
+        state.waitFrame();
     }
 }

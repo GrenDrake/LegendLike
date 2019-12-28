@@ -87,6 +87,36 @@ CommandDef mapCommands[] = {
     { Command::None }
 };
 
+CommandDef menuCommands[] = {
+    { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
+    { Command::Interact,    Dir::None,  SDLK_KP_ENTER },
+    { Command::Interact,    Dir::None,  SDLK_RETURN },
+    { Command::Interact,    Dir::None,  SDLK_SPACE },
+    { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_z },
+    { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
+    { Command::Move,        Dir::North, SDLK_UP },
+    { Command::Move,        Dir::South, SDLK_DOWN },
+    { Command::Move,        Dir::West,  SDLK_LEFT },
+    { Command::Move,        Dir::East,  SDLK_RIGHT },
+
+    { Command::None }
+};
+
+CommandDef infoCommands[] = {
+    { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
+    { Command::Interact,    Dir::None,  SDLK_SPACE },
+    { Command::Close,       Dir::None,  SDLK_KP_ENTER },
+    { Command::Close,       Dir::None,  SDLK_RETURN },
+    { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_z },
+    { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
+    { Command::Move,        Dir::North, SDLK_UP },
+    { Command::Move,        Dir::South, SDLK_DOWN },
+
+    { Command::None }
+};
+
 const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList) {
     if (event.type == SDL_QUIT)     return commandQuit;
     if (event.type == SDL_WINDOWEVENT) {

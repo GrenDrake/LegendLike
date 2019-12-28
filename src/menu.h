@@ -24,7 +24,6 @@ struct MenuRect {
 
 struct MenuOption {
     std::string text;
-    int key;
     int code;
     MenuType type;
     int value;

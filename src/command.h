@@ -49,5 +49,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd);
 extern CommandDef gameCommands[];
 extern CommandDef mapCommands[];
 extern CommandDef characterCommands[];
+extern CommandDef menuCommands[];
+extern CommandDef infoCommands[];
 
 #endif

@@ -22,17 +22,17 @@ void adjustAudioVolume(System &system, int value);
 void adjustFontScale(System &system, int value);
 
 MenuOption mainMenu[] = {
-    { "Start Standard Game",    0,      0,                  MenuType::Choice },
-    { "Start Custom Game",      0,      1,                  MenuType::Disabled },
-    { "Load Saved Game",        0,      4,                  MenuType::Disabled },
-    { "",                       0,      0,                  MenuType::Disabled },
-    { "Resume Game",            0,      3,                  MenuType::Disabled },
-    { "",                       0,      0,                  MenuType::Disabled },
-    { "General Options",        0,      5,                  MenuType::Choice },
-    { "",                       0,      0,                  MenuType::Disabled },
-    { "Credits",                0,      7,                  MenuType::Choice },
-    { "Quit",                   SDLK_q, menuQuit,           MenuType::Choice },
-    { "",                       0,      menuEnd,            MenuType::Choice }
+    { "Start Standard Game",    0,                  MenuType::Choice },
+    { "Start Custom Game",      1,                  MenuType::Disabled },
+    { "Load Saved Game",        4,                  MenuType::Disabled },
+    { "",                       0,                  MenuType::Disabled },
+    { "Resume Game",            3,                  MenuType::Disabled },
+    { "",                       0,                  MenuType::Disabled },
+    { "General Options",        5,                  MenuType::Choice },
+    { "",                       0,                  MenuType::Disabled },
+    { "Credits",                7,                  MenuType::Choice },
+    { "Quit",                   menuQuit,           MenuType::Choice },
+    { "",                       menuEnd,            MenuType::Choice }
 };
 
 const int menuMusicIndex = 0;
@@ -41,15 +41,15 @@ const int menuTileIndex = 2;
 const int menuFontIndex = 3;
 const int menuFullscreenIndex = 4;
 MenuOption optionsMenu[] = {
-    { "Music Volume",           0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
-    { "Effects Volume",         0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
-    { "Tile Scale",             0,      0,                  MenuType::Value,    1,  1, 10 },
-    { "Font Scale",             0,      0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
-    { "Fullscreen",             0,      0,                  MenuType::Bool,     0,  0, 0  },
-    { "",                       0,      0,                  MenuType::Disabled },
-    { "Save Changes",           0,      1,                  MenuType::Choice },
-    { "Discard Changes",        0,      menuDiscard,        MenuType::Choice },
-    { "",                       0,      menuEnd,            MenuType::Choice }
+    { "Music Volume",           0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
+    { "Effects Volume",         0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
+    { "Tile Scale",             0,                  MenuType::Value,    1,  1, 10 },
+    { "Font Scale",             0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
+    { "Fullscreen",             0,                  MenuType::Bool,     0,  0, 0  },
+    { "",                       0,                  MenuType::Disabled },
+    { "Save Changes",           1,                  MenuType::Choice },
+    { "Discard Changes",        menuDiscard,        MenuType::Choice },
+    { "",                       menuEnd,            MenuType::Choice }
 };
 
 static std::string getRandomName(Random &rng) {
