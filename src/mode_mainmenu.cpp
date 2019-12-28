@@ -35,6 +35,7 @@ MenuOption mainMenu[] = {
 MenuOption optionsMenu[] = {
     { "Music Volume",           0,      menuMusicVolume,    MenuType::Value,    50, 0, MIX_MAX_VOLUME },
     { "Effects Volume",         0,      menuAudioVolume,    MenuType::Value,    50, 0, MIX_MAX_VOLUME },
+    { "Tile Scale",             0,      0,                  MenuType::Value,    1,  1, 10 },
     { "Demo Bool Option",       0,      0,                  MenuType::Bool },
     { "",                       0,      0,                  MenuType::Disabled },
     { "Save Changes",           0,      1,                  MenuType::Choice },
@@ -106,14 +107,16 @@ void doGameMenu(System &state) {
                 int initialAudioVolume = Mix_Volume(-1, -1);
                 optionsMenu[0].value = initialMusicVolume;
                 optionsMenu[1].value = initialAudioVolume;
-                optionsMenu[2].value = optBool;
+                optionsMenu[2].value = state.config->getInt("tile_scale", 1);
+                optionsMenu[3].value = optBool;
                 int result = runMenu(state, optionsMenu);
                 if (result >= 0) {
                     state.setMusicVolume(optionsMenu[0].value);
                     state.setAudioVolume(optionsMenu[1].value);
                     state.config->set("music", optionsMenu[0].value);
                     state.config->set("audio", optionsMenu[1].value);
-                    optBool = optionsMenu[2].value;
+                    state.config->set("tile_scale", std::to_string(optionsMenu[2].value));
+                    optBool = optionsMenu[3].value;
                 } else {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);

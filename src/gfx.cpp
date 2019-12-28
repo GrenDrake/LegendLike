@@ -11,20 +11,26 @@
 #include "point.h"
 #include "command.h"
 #include "textutil.h"
+#include "config.h"
 
 void repaint(System &state, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
 
+    int tileScale = state.config->getInt("tile_scale", 1);
+    if (tileScale < 1) tileScale = 1;
+    const int scaledTileWidth = tileWidth * tileScale;
+    const int scaledTileHeight = tileHeight * tileScale;
+
     const int sidebarWidth = 30 * state.smallFont->getCharWidth();
     const int sidebarX = screenWidth - sidebarWidth;
-    const int mapOffsetX = tileWidth / 3 * 2;
-    const int mapOffsetY = tileHeight / 3 * 2;
+    const int mapOffsetX = scaledTileWidth / 3 * 2;
+    const int mapOffsetY = scaledTileHeight / 3 * 2;
     const int mapWidthPixels = screenWidth - sidebarWidth;
     const int mapHeightPixels = screenHeight;
-    const int mapWidthTiles = mapWidthPixels / tileWidth + 2;
-    const int mapHeightTiles = mapHeightPixels / tileHeight + 2;
+    const int mapWidthTiles = mapWidthPixels / scaledTileWidth + 2;
+    const int mapHeightTiles = mapHeightPixels / scaledTileHeight + 2;
 
     const Color uiColor{255, 255, 255};
 
@@ -48,9 +54,9 @@ void repaint(System &state, bool callPresent) {
 
             int tileHere = state.getBoard()->getTile(here);
             SDL_Rect texturePosition = {
-                x * tileWidth - mapOffsetX,
-                y * tileHeight - mapOffsetY,
-                tileWidth, tileHeight
+                x * scaledTileWidth - mapOffsetX,
+                y * scaledTileHeight - mapOffsetY,
+                scaledTileWidth, scaledTileHeight
             };
 
             if (tileHere != tileOutOfBounds) {
@@ -179,8 +185,8 @@ void repaint(System &state, bool callPresent) {
     if (mouseX < mapWidthPixels) {
         int mapMouseX = mouseX + mapOffsetX;
         int mapMouseY = mouseY + mapOffsetY;
-        int tileX = viewX + mapMouseX / (tileWidth);
-        int tileY = viewY + mapMouseY / (tileHeight);
+        int tileX = viewX + mapMouseX / (scaledTileWidth);
+        int tileY = viewY + mapMouseY / (scaledTileHeight);
             Point here(tileX, tileY);
         int tileHere = state.getBoard()->getTile(here);
         Creature *creature = state.getBoard()->actorAt(here);
