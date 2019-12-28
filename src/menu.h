@@ -8,6 +8,7 @@ class System;
 
 const int menuQuit = -1;
 const int menuEnd = -2;
+const int menuDiscard = -3;
 const int menuClose = -6;
 
 enum class MenuType {

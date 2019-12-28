@@ -61,6 +61,7 @@ public:
     Mix_Chunk* getAudio(const std::string &name);
     Font* getFont(const std::string &name);
 
+    void setFontScale(int scale);
     SDL_Texture* getTile(unsigned index);
 
     void playMusic(int trackNumber);
@@ -145,6 +146,7 @@ public:
     Font(SDL_Renderer *renderer, SDL_Texture *texture);
     ~Font();
     void setMetrics(int width, int height, int linespace);
+    void setScale(int scale);
     int getCharWidth() const;
     int getCharHeight() const;
     int getLineHeight() const;
@@ -152,7 +154,7 @@ public:
 private:
     SDL_Renderer *mRenderer;
     SDL_Texture *mTexture;
-    int mCharWidth, mCharHeight, mLineSpace;
+    int mScale, mCharWidth, mCharHeight, mLineSpace;
 };
 
 const int charStats = 0;

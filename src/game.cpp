@@ -200,6 +200,7 @@ int innerMain(System &renderState) {
         return 1;
     }
 
+    renderState.setFontScale(renderState.config->getInt("font_scale", 1));
     renderState.setTarget(renderState.config->getInt("fps", 60));
 
     try {

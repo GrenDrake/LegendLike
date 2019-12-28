@@ -48,6 +48,12 @@ void System::endGame() {
     mBoards.clear();
 }
 
+void System::setFontScale(int scale) {
+    for (auto iter : mFonts) {
+        iter.second->setScale(scale);
+    }
+}
+
 void System::addMessage(const std::string &text) {
     messages.push_back(Message{
         turnNumber,

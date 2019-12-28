@@ -19,6 +19,7 @@ std::vector<std::string> creditsText;
 static void loadCredits();
 void adjustMusicVolume(System &system, int value);
 void adjustAudioVolume(System &system, int value);
+void adjustFontScale(System &system, int value);
 
 MenuOption mainMenu[] = {
     { "Start Standard Game",    0,      0,                  MenuType::Choice },
@@ -34,14 +35,20 @@ MenuOption mainMenu[] = {
     { "",                       0,      menuEnd,            MenuType::Choice }
 };
 
+const int menuMusicIndex = 0;
+const int menuAudioIndex = 1;
+const int menuTileIndex = 2;
+const int menuFontIndex = 3;
+const int menuDemoBoolIndex = 4;
 MenuOption optionsMenu[] = {
     { "Music Volume",           0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
     { "Effects Volume",         0,      0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
     { "Tile Scale",             0,      0,                  MenuType::Value,    1,  1, 10 },
+    { "Font Scale",             0,      0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
     { "Demo Bool Option",       0,      0,                  MenuType::Bool },
     { "",                       0,      0,                  MenuType::Disabled },
     { "Save Changes",           0,      1,                  MenuType::Choice },
-    { "Discard Changes",        0,      0,                  MenuType::Choice },
+    { "Discard Changes",        0,      menuDiscard,        MenuType::Choice },
     { "",                       0,      menuEnd,            MenuType::Choice }
 };
 
@@ -81,6 +88,10 @@ void adjustAudioVolume(System &system, int value) {
     system.playEffect(0);
 }
 
+void adjustFontScale(System &system, int value) {
+    system.setFontScale(value);
+}
+
 void doGameMenu(System &state) {
     int optBool = 1;
     int defOpt = 0;
@@ -116,21 +127,26 @@ void doGameMenu(System &state) {
             case 5: {
                 int initialMusicVolume = Mix_VolumeMusic(-1);
                 int initialAudioVolume = Mix_Volume(-1, -1);
-                optionsMenu[0].value = initialMusicVolume;
-                optionsMenu[1].value = initialAudioVolume;
-                optionsMenu[2].value = state.config->getInt("tile_scale", 1);
-                optionsMenu[3].value = optBool;
+                int initialFontScale = state.config->getInt("font_scale", 1);
+                optionsMenu[menuMusicIndex].value = initialMusicVolume;
+                optionsMenu[menuAudioIndex].value = initialAudioVolume;
+                optionsMenu[menuTileIndex].value = state.config->getInt("tile_scale", 1);
+                optionsMenu[menuFontIndex].value = initialFontScale;
+                optionsMenu[menuDemoBoolIndex].value = optBool;
                 int result = runMenu(state, optionsMenu);
                 if (result >= 0) {
-                    state.setMusicVolume(optionsMenu[0].value);
-                    state.setAudioVolume(optionsMenu[1].value);
-                    state.config->set("music", optionsMenu[0].value);
-                    state.config->set("audio", optionsMenu[1].value);
-                    state.config->set("tile_scale", std::to_string(optionsMenu[2].value));
-                    optBool = optionsMenu[3].value;
+                    state.setMusicVolume(optionsMenu[menuMusicIndex].value);
+                    state.setAudioVolume(optionsMenu[menuAudioIndex].value);
+                    state.setFontScale(optionsMenu[menuFontIndex].value);
+                    state.config->set("music", optionsMenu[menuMusicIndex].value);
+                    state.config->set("audio", optionsMenu[menuAudioIndex].value);
+                    state.config->set("tile_scale", std::to_string(optionsMenu[menuTileIndex].value));
+                    state.config->set("font_scale", std::to_string(optionsMenu[menuFontIndex].value));
+                    optBool = optionsMenu[menuDemoBoolIndex].value;
                 } else {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);
+                    state.setFontScale(initialFontScale);
                 }
                 if (result == menuQuit) state.wantsToQuit = true;
                 break; }

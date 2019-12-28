@@ -14,18 +14,23 @@ void Font::setMetrics(int width, int height, int linespace) {
     mCharWidth = width;
     mCharHeight = height;
     mLineSpace = linespace;
+    mScale = 1;
+}
+
+void Font::setScale(int scale) {
+    mScale = scale;
 }
 
 int Font::getCharWidth() const {
-    return mCharWidth;
+    return mCharWidth * mScale;
 }
 
 int Font::getCharHeight() const {
-    return mCharHeight;
+    return mCharHeight * mScale;
 }
 
 int Font::getLineHeight() const {
-    return mCharHeight + mLineSpace;
+    return (mCharHeight + mLineSpace) * mScale;
 }
 
 void Font::out(int x, int y, const std::string &text, const Color &defaultColor) {
@@ -34,7 +39,7 @@ void Font::out(int x, int y, const std::string &text, const Color &defaultColor)
     SDL_SetTextureColorMod(mTexture, defaultColor.r, defaultColor.g, defaultColor.b);
 
     SDL_Rect src = { 0, 0, mCharWidth, mCharHeight };
-    SDL_Rect dest = { x, y, mCharWidth, mCharHeight };
+    SDL_Rect dest = { x, y, getCharWidth(), getCharHeight() };
     for (std::string::size_type i = 0; i < text.size(); ++i) {
         char c = text[i];
         if (c == '\n') {
@@ -68,6 +73,6 @@ void Font::out(int x, int y, const std::string &text, const Color &defaultColor)
         }
         src.x = c * mCharWidth;
         SDL_RenderCopy(mRenderer, mTexture, &src, &dest);
-        dest.x += mCharWidth;
+        dest.x += getCharWidth();
     }
 }
