@@ -159,13 +159,13 @@ map0_build:
     ; beast pens
     @mf_drawbox     17 36 10 27 tileFence
     @mf_settile     14 22 tileSkull
-    @mf_addactor    aiPaceHorz     11 19 4 0 map0_strActor 0
-    @mf_addactor    aiPaceVert     14 24 4 0 map0_strActor 0
+    @mf_addactor    aiPaceHorz     11 19 5 0 map0_strActor 0
+    @mf_addactor    aiRandom       14 24 5 0 map0_strActor 0
 
     @mf_drawbox     17 27 10 17 tileFence
     @mf_settile     14 31 tileLargeSkull
-    @mf_addactor    aiRandom       15 30 4 0 map0_strActor 0
-    @mf_addactor    aiFollowPlayer 13 33 4 0 map0_strActor 0
+    @mf_addactor    aiPaceVert     15 30 5 0 map0_strActor 0
+    @mf_addactor    aiFollowPlayer 13 33 5 0 map0_strActor 0
 
     ; party gifter tester
     @mf_addactor    aiStill 18 27 2 map0_test_giveparty map0_str_partygifter 0

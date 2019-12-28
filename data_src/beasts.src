@@ -37,4 +37,13 @@ beast_info:
     .byte       100 100 100 100 ; resist: Physical, Cold,   Fire,     Electric,
     .byte       100 100 100 100 ; resist: Toxic,    Divine, Infernal, Void,
 
+    .word       5
+    .string_pad 32 "cow"
+    .word       72      ; art index
+    .word       1               ; default move
+    .short      99999  99999  0   5   ; stats: health, energy, accuracy, evasion
+    .short      0   0   100     ; stats: dr, db, speed
+    .byte       100 100 100 100 ; resist: Physical, Cold,   Fire,     Electric,
+    .byte       100 100 100 100 ; resist: Toxic,    Divine, Infernal, Void,
+
     .word -1
