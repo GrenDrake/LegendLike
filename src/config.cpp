@@ -67,7 +67,20 @@ int Config::getInt(const std::string &key, int defValue) const {
         log.warn("Failed to read config key " + key + " (value: " + iter->second + ") as int.");
         return defValue;
     }
+}
 
+double Config::getDouble(const std::string &key, double defValue) const {
+    auto iter = mKeys.find(key);
+    if (iter == mKeys.end()) return defValue;
+
+    char *endPtr;
+    double v = strtod(iter->second.c_str(), &endPtr);
+    if (*endPtr == 0) return v;
+    else {
+        Logger &log = Logger::getInstance();
+        log.warn("Failed to read config key " + key + " (value: " + iter->second + ") as double.");
+        return defValue;
+    }
 }
 
 bool Config::getBool(const std::string &key, bool defValue) const {
