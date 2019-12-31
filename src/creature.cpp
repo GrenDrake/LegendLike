@@ -127,6 +127,13 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
     Board *board = system.getBoard();
     const MoveType &move = MoveType::get(abilityNumber);
 
+    if (curEnergy < move.cost) {
+        if (this->isPlayer) system.addMessage("You use try to use " + move.name + ", but lack the energy.");
+        else                system.addMessage(getName() + " tries to use " + move.name + ", but lacks the energy.");
+        return;
+    }
+    curEnergy -= move.cost;
+
     if (this->isPlayer) system.addMessage("You use " + move.name + ". ");
     else                system.addMessage(getName() + " uses " + move.name + ". ");
 
