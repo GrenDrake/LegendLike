@@ -76,6 +76,14 @@ void repaint(System &state, bool callPresent) {
                     if (tile) {
                         SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                     }
+                    double hpPercent = static_cast<double>(creature->curHealth) / creature->getStat(Stat::Health);
+                    if (hpPercent < 1.0) {
+                        SDL_Rect box = texturePosition;
+                        box.h = tileScale;
+                        box.w *= hpPercent;
+                        SDL_SetRenderDrawColor(state.renderer, 127, 255, 127, SDL_ALPHA_OPAQUE);
+                        SDL_RenderFillRect(state.renderer, &box);
+                    }
                 }
             }
         }

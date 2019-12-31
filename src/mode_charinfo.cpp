@@ -116,9 +116,9 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
             yPos += lineHeight;
             state.smallFont->out(column2, yPos, "      Size: " + std::to_string(move.damageSize));
             yPos += lineHeight;
-            state.smallFont->out(column2, yPos, "     Shape: " + damageShapeName(move.damageShape));
+            state.smallFont->out(column2, yPos, "     Shape: " + damageShapeName(move.shape));
             yPos += lineHeight;
-            state.smallFont->out(column2, yPos, "      Type: " + damageFormName(move.damageType));
+            state.smallFont->out(column2, yPos, "      Form: " + damageFormName(move.form));
         }
     } else if (mode == charInventory) {
         state.smallFont->out(xPos, yPos, "CARRYING");

@@ -175,7 +175,7 @@ void gameloop(System &state) {
                             int abilityNumber = state.quickSlots[slot].action;
                             const MoveType &move = MoveType::get(abilityNumber);
                             Dir d = Dir::Here;
-                            if (move.damageType != formSelf) {
+                            if (move.form != formSelf) {
                                 d = gfx_GetDirection(state);
                             }
                             state.getPlayer()->useAbility(state, abilityNumber, d);

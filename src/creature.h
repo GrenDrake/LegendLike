@@ -64,8 +64,8 @@ public:
     int maxRange;
     int damage;
     int damageSize;
-    int damageShape;
-    int damageType;
+    int shape;
+    int form;
     unsigned flags;
 private:
     static std::vector<MoveType> types;
@@ -123,7 +123,7 @@ public:
     int getStat(Stat stat) const;
     double getResist(DamageType stat) const;
     void reset();
-    void takeDamage(int amount, DamageType type);
+    int takeDamage(int amount, DamageType type);
     bool isKOed() const;
     void autolevel(int toLevel, Random &rng);
     void learnMove(int moveId);

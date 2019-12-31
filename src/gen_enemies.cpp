@@ -30,6 +30,7 @@ void mapRandomEnemies(Board *board, Random &rng, const RandomFoeInfo &info) {
         actor->aiType = row.ai;
         actor->aiArg = 0;
         actor->talkFunc = 0;
+        actor->reset();
         board->addActor(actor, here);
     }
 }

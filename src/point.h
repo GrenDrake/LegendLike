@@ -1,6 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <iosfwd>
+
 class Random;
 
 enum class Dir {
@@ -49,6 +51,7 @@ Dir flipDirection(Dir original);
 Dir rotateDirection(Dir original);
 Dir randomDirection(Random &rng);
 std::string dirName(const Dir &d);
+std::ostream& operator<<(std::ostream &out, const Point &p);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
 
 #endif

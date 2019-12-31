@@ -273,8 +273,8 @@ bool System::loadMoveData() {
 
             type.damage         = moves.readByte();
             type.damageSize     = moves.readByte();
-            type.damageShape    = moves.readByte();
-            type.damageType     = moves.readByte();
+            type.shape          = moves.readByte();
+            type.form           = moves.readByte();
 
             type.flags          = moves.readWord();
 

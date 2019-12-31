@@ -85,6 +85,11 @@ std::string dirName(const Dir &d) {
     return "Dir#" + std::to_string(static_cast<int>(d));
 }
 
+std::ostream& operator<<(std::ostream &out, const Point &p) {
+    out << '(' << p.x() << ',' << p.y() << ')';
+    return out;
+}
+
 std::ostream& operator<<(std::ostream &out, const Dir &d) {
     out << dirName(d);
     return out;

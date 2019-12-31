@@ -1,9 +1,14 @@
 #include <ostream>
+#include <sstream>
+#include <vector>
+
 #include "board.h"
 #include "creature.h"
 #include "game.h"
 #include "random.h"
 #include "gfx.h"
+#include "point.h"
+#include "textutil.h"
 
 std::vector<CreatureType> CreatureType::types;
 std::vector<MoveType> MoveType::types;
@@ -78,10 +83,11 @@ void Creature::reset() {
     curEnergy = getStat(Stat::Energy);
 }
 
-void Creature::takeDamage(int amount, DamageType type) {
+int Creature::takeDamage(int amount, DamageType type) {
     amount *= getResist(type);
-    if (amount >= curHealth)    curHealth = 0;
-    else                        curHealth -= amount;
+    if (amount > curHealth) amount = curHealth;
+    curHealth -= amount;
+    return amount;
 }
 
 bool Creature::isKOed() const {
@@ -118,8 +124,99 @@ void Creature::forgetMove(int moveId) {
 }
 
 void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
+    Board *board = system.getBoard();
     const MoveType &move = MoveType::get(abilityNumber);
-    system.addMessage(getName() + " uses " + move.name + ".");
+
+    if (this->isPlayer) system.addMessage("You use " + move.name + ". ");
+    else                system.addMessage(getName() + " uses " + move.name + ". ");
+
+    // get the point of impact for the move
+    Point target = position;
+    switch(move.form) {
+        case formSelf:
+            // already have correct target; don't need to do anything
+            break;
+        case formBullet:
+        case formMelee:
+            for (int i = 0; i < move.minRange; ++i) target = target.shift(d);
+            for (int i = 0; i < move.maxRange - move.minRange; ++i) {
+                if (board->actorAt(target) != nullptr) {
+                    break;
+                }
+                target = target.shift(d);
+            }
+            break;
+        case formLobbed:
+            break;
+        case formFourway:
+            break;
+    }
+
+    // get the set of effected tiles
+    std::vector<Point> effected;
+    effected.push_back(target);
+    switch(move.shape) {
+        case shapeSquare:
+            break;
+        case shapeCircle:
+            break;
+        case shapeLong: {
+            Point work = target;
+            for (int i = 0; i < move.damageSize * 2; ++i) {
+                work = work.shift(d);
+                if (TileInfo::get(board->getTile(work)).block_travel) {
+                    break;
+                }
+                effected.push_back(work);
+            }
+            break; }
+        case shapeWide: {
+            Point work = target;
+            Dir a = rotateDirection(d);
+            for (int i = 0; i < move.damageSize; ++i) {
+                work = work.shift(a);
+                if (TileInfo::get(board->getTile(work)).block_travel) {
+                    break;
+                }
+                effected.push_back(work);
+            }
+            work = target;
+            a = flipDirection(a);
+            for (int i = 0; i < move.damageSize; ++i) {
+                work = work.shift(a);
+                if (TileInfo::get(board->getTile(work)).block_travel) {
+                    break;
+                }
+                effected.push_back(work);
+            }
+            break; }
+        case shapeCone:
+            break;
+    }
+
+    // apply to actors in effected range
+    for (const Point &p : effected) {
+        Creature *who = board->actorAt(p);
+        if (who) {
+            if (who->talkFunc) {
+                std::stringstream line;
+                line << upperFirst(who->getName()) << " resists! ";
+                system.appendMessage(line.str());
+            } else {
+                DamageType damageType = static_cast<DamageType>(move.type);
+                int realDamage = who->takeDamage(move.damage, damageType);
+                std::stringstream line;
+                line << upperFirst(who->getName()) << " takes " << realDamage << ' ' << damageType << " damage. ";
+                if (who->curHealth <= 0) {
+                    line << upperFirst(who->getName()) << " is defeated! ";
+                    board->removeActor(who);
+                    delete who;
+                }
+                system.appendMessage(line.str());
+            }
+        }
+    }
+
 }
 
 const char* getAbbrev(const Stat &stat) {
@@ -208,6 +305,9 @@ std::string damageFormName(const int &form) {
 }
 
 void Creature::ai(Board *board) {
+    // dead things don't do AI
+    if (curHealth <= 0) return;
+
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };
 
     switch(aiType) {
