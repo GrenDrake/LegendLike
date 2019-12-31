@@ -4,7 +4,7 @@ beast_info:
     .word       1               ; catalog number
     .string_pad 32 "Beast 8631" ; name
     .word       41              ; art index
-    .word       6               ; default move
+    .word       1               ; default move
     .short      10  10  0   5   ; stats: health, energy, accuracy, evasion
     .short      0   0   100     ; stats: dr, db, speed
     .byte       100 50  100 100 ; resist: Physical, Cold,   Fire,     Electric,
