@@ -2,9 +2,11 @@
 #define GFX_H
 
 #include <SDL2/SDL_mixer.h>
+#include <deque>
 #include <map>
 #include <string>
 #include <vector>
+#include "point.h"
 
 class Board;
 class Creature;
@@ -27,6 +29,15 @@ const int quickSlotCount = 4;
 
 struct Color {
     int r, g, b;
+};
+
+enum class AnimType {
+    None, Travel, All
+};
+
+struct Animation {
+    AnimType type;
+    std::deque<Point> points;
 };
 
 struct TrackInfo {
@@ -64,6 +75,8 @@ public:
 
     void setFontScale(int scale);
     SDL_Texture* getTile(unsigned index);
+
+    void queueAnimation(const Animation &anim);
 
     void playMusic(int trackNumber);
     void setMusicVolume(int volume);
@@ -117,6 +130,7 @@ public:
     std::map<std::string, SDL_Texture*> mImages;
     std::map<std::string, Font*> mFonts;
     std::map<int, std::string> strings;
+    std::deque<Animation> animationQueue;
 
     // system modules
     SDL_Renderer *renderer;

@@ -36,6 +36,9 @@ void repaint(System &state, bool callPresent) {
 
     gfx_Clear(state);
 
+    Animation noAnimation{AnimType::None};
+    Animation &curAnim = state.animationQueue.empty() ? noAnimation : state.animationQueue.front();
+
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     // DRAW MAP
     int viewX = state.getPlayer()->position.x() - (mapWidthTiles / 2);
@@ -43,50 +46,87 @@ void repaint(System &state, bool callPresent) {
 
     SDL_Rect clipRect = { 0, 0, mapWidthPixels, mapHeightPixels };
     SDL_RenderSetClipRect(state.renderer, &clipRect);
+    bool didAnimation = false;
     for (int y = 0; y < mapHeightTiles; ++y) {
         for (int x = 0; x < mapWidthTiles; ++x) {
             const Point here(viewX + x, viewY + y);
             if (here.x() < 0 || here.y() < 0 || here.x() >= state.getBoard()->width() || here.y() >= state.getBoard()->height()) {
                 continue;
             }
-            if (!state.getBoard()->isKnown(here)) continue;
             bool visible = state.getBoard()->isVisible(here);
-
-            int tileHere = state.getBoard()->getTile(here);
             SDL_Rect texturePosition = {
                 x * scaledTileWidth - mapOffsetX,
                 y * scaledTileHeight - mapOffsetY,
                 scaledTileWidth, scaledTileHeight
             };
 
-            if (tileHere != tileOutOfBounds) {
-                const TileInfo &tileInfo = TileInfo::get(tileHere);
-                SDL_Texture *tile = state.getTile(tileInfo.artIndex);
-                if (tile) {
-                    if (visible) SDL_SetTextureColorMod(tile, 255, 255, 255);
-                    else         SDL_SetTextureColorMod(tile,  96,  96,  96);
-                    SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+            if (state.getBoard()->isKnown(here)) {
+                int tileHere = state.getBoard()->getTile(here);
+
+                if (tileHere != tileOutOfBounds) {
+                    const TileInfo &tileInfo = TileInfo::get(tileHere);
+                    SDL_Texture *tile = state.getTile(tileInfo.artIndex);
+                    if (tile) {
+                        if (visible) SDL_SetTextureColorMod(tile, 255, 255, 255);
+                        else         SDL_SetTextureColorMod(tile,  96,  96,  96);
+                        SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                    }
+                }
+
+                if (visible) {
+                    Creature *creature = state.getBoard()->actorAt(here);
+                    if (creature) {
+                        SDL_Texture *tile = state.getTile(creature->typeInfo->artIndex);
+                        if (tile) {
+                            SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                        }
+                        double hpPercent = static_cast<double>(creature->curHealth) / creature->getStat(Stat::Health);
+                        if (hpPercent < 1.0) {
+                            SDL_Rect box = texturePosition;
+                            box.h = tileScale;
+                            box.w *= hpPercent;
+                            SDL_SetRenderDrawColor(state.renderer, 127, 255, 127, SDL_ALPHA_OPAQUE);
+                            SDL_RenderFillRect(state.renderer, &box);
+                        }
+                    }
                 }
             }
 
-            if (visible) {
-                Creature *creature = state.getBoard()->actorAt(here);
-                if (creature) {
-                    SDL_Texture *tile = state.getTile(creature->typeInfo->artIndex);
-                    if (tile) {
-                        SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
-                    }
-                    double hpPercent = static_cast<double>(creature->curHealth) / creature->getStat(Stat::Health);
-                    if (hpPercent < 1.0) {
-                        SDL_Rect box = texturePosition;
-                        box.h = tileScale;
-                        box.w *= hpPercent;
-                        SDL_SetRenderDrawColor(state.renderer, 127, 255, 127, SDL_ALPHA_OPAQUE);
-                        SDL_RenderFillRect(state.renderer, &box);
-                    }
+            if (!didAnimation) {
+                switch(curAnim.type) {
+                    case AnimType::None:
+                        // do nothing
+                        if (!state.animationQueue.empty()) {
+                            state.animationQueue.pop_front();
+                        }
+                        break;
+                    case AnimType::Travel:
+                        // draw first cell
+                        if (here == curAnim.points.front()) {
+                            didAnimation = true;
+                            curAnim.points.pop_front();
+                            if (visible) {
+                                SDL_SetRenderDrawColor(state.renderer, 127, 127, 127, 127);
+                                SDL_RenderFillRect(state.renderer, &texturePosition);
+                            }
+                            if (curAnim.points.empty()) {
+                                state.animationQueue.pop_front();
+                            }
+                        }
+                        break;
+                    case AnimType::All:
+                        // draw all cells
+                        if (std::find(curAnim.points.begin(), curAnim.points.end(), here) != curAnim.points.end()) {
+                            SDL_SetRenderDrawColor(state.renderer, 196, 92, 92, 127);
+                            SDL_RenderFillRect(state.renderer, &texturePosition);
+                        }
+                        break;
                 }
             }
         }
+    }
+    if (curAnim.type == AnimType::All) {
+        state.animationQueue.pop_front();
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
 

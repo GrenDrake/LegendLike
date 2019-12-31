@@ -144,15 +144,21 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
             // already have correct target; don't need to do anything
             break;
         case formBullet:
-        case formMelee:
-            for (int i = 0; i < move.minRange; ++i) target = target.shift(d);
+        case formMelee: {
+            target = target.shift(d);
+            Animation anim{AnimType::Travel};
             for (int i = 0; i < move.maxRange - move.minRange; ++i) {
                 if (board->actorAt(target) != nullptr) {
                     break;
                 }
+                if (TileInfo::get(board->getTile(target)).block_travel) break;
+                anim.points.push_back(target);
                 target = target.shift(d);
             }
-            break;
+            if (move.form == formBullet) {
+                system.queueAnimation(anim);
+            }
+            break; }
         case formLobbed:
             break;
         case formFourway:
@@ -162,6 +168,8 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
     // get the set of effected tiles
     std::vector<Point> effected;
     effected.push_back(target);
+    Animation anim{AnimType::All};
+    anim.points.push_back(target);
     switch(move.shape) {
         case shapeSquare:
             break;
@@ -169,11 +177,15 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
             break;
         case shapeLong: {
             Point work = target;
+            anim.points.push_back(work);
+            effected.push_back(work);
+
             for (int i = 0; i < move.damageSize * 2; ++i) {
-                work = work.shift(d);
                 if (TileInfo::get(board->getTile(work)).block_travel) {
                     break;
                 }
+                work = work.shift(d);
+                anim.points.push_back(work);
                 effected.push_back(work);
             }
             break; }
@@ -185,6 +197,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 if (TileInfo::get(board->getTile(work)).block_travel) {
                     break;
                 }
+                anim.points.push_back(work);
                 effected.push_back(work);
             }
             work = target;
@@ -194,12 +207,14 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 if (TileInfo::get(board->getTile(work)).block_travel) {
                     break;
                 }
+                anim.points.push_back(work);
                 effected.push_back(work);
             }
             break; }
         case shapeCone:
             break;
     }
+    system.queueAnimation(anim);
 
     // apply to actors in effected range
     for (const Point &p : effected) {

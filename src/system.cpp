@@ -54,6 +54,18 @@ void System::setFontScale(int scale) {
     }
 }
 
+void System::queueAnimation(const Animation &anim) {
+    switch(anim.type) {
+        case AnimType::None:
+            return;
+        case AnimType::Travel:
+        case AnimType::All:
+            if (anim.points.empty()) return;
+            break;
+    }
+    animationQueue.push_back(anim);
+}
+
 void System::addMessage(const std::string &text) {
     messages.push_back(Message{
         turnNumber,
