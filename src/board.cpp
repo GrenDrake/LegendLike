@@ -177,6 +177,74 @@ bool Board::isVisible(const Point &where) const {
     return false;
 }
 
+// Based on http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
+std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blockOn) {
+    std::vector<Point> points;
+
+    int x1 = from.x();
+    int y1 = from.y();
+    const int x2 = to.x();
+    const int y2 = to.y();
+
+    int delta_x = x2 - x1;
+    const int ix = (delta_x > 0) - (delta_x < 0);
+    delta_x = std::abs(delta_x) << 1;
+
+    int delta_y = y2 - y1;
+    const int iy = (delta_y > 0) - (delta_y < 0);
+    delta_y = std::abs(delta_y) << 1;
+
+    points.push_back(Point(x1, y1));
+
+    if (delta_x >= delta_y) {
+        // error may go below zero
+        int error = delta_y - (delta_x >> 1);
+
+        while (1) {
+            if (x1 == x2 && (blockOn & blockTarget)) break;
+            Point here(x1, y1);
+            if (TileInfo::get(getTile(here)).block_travel && (blockOn & blockSolid))  break;
+            if (TileInfo::get(getTile(here)).block_los    && (blockOn & blockOpaque)) break;
+
+            if ((error > 0) || (!error && (ix > 0))) {
+                error -= delta_x;
+                y1 += iy;
+            }
+
+            error += delta_y;
+            x1 += ix;
+            points.push_back(Point(x1, y1));
+        }
+    } else {
+        int error = delta_x - (delta_y >> 1);
+
+        while (1) {
+            if (y1 == y2 && (blockOn & blockTarget)) break;
+            Point here(x1, y1);
+            if (!valid(here)) break;
+            if (TileInfo::get(getTile(here)).block_travel && (blockOn & blockSolid))  break;
+            if (TileInfo::get(getTile(here)).block_los    && (blockOn & blockOpaque)) break;
+
+            if ((error > 0) || (!error && (iy > 0))) {
+                error -= delta_y;
+                x1 += ix;
+            }
+
+            error += delta_x;
+            y1 += iy;
+            points.push_back(Point(x1, y1));
+        }
+    }
+
+    return points;
+}
+
+bool Board::canSee(const Point &from, const Point &to) {
+    std::vector<Point> points = findPoints(from, to, blockOpaque|blockTarget);
+    if (points.back() == to)    return true;
+    else                        return false;
+}
+
 int Board::coord(const Point &p) const {
     if (p.x() < 0 || p.y() < 0 || p.x() >= mWidth || p.y() >= mHeight) return -1;
     return p.x() + p.y() * mWidth;

@@ -47,6 +47,10 @@ const int eventTypeManual   = 1;
 const int MF_ADD_UP         = 0x01;
 const int MF_ADD_DOWN       = 0x02;
 
+const int blockSolid        = 0x01;
+const int blockOpaque       = 0x02;
+const int blockTarget       = 0x04;
+
 struct MapInfo {
     int index;
     int width;
@@ -116,6 +120,8 @@ public:
     void setSeen(const Point &where);
     bool isKnown(const Point &where) const;
     bool isVisible(const Point &where) const;
+    std::vector<Point> findPoints(const Point &from, const Point &to, int blockOn);
+    bool canSee(const Point &from, const Point &to);
 
     void addEvent(const Point &where, int funcAddr, int type);
     const Event* eventAt(const Point &where) const;
