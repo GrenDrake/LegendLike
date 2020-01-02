@@ -56,7 +56,7 @@ int CreatureType::typeCount() {
 
 Creature::Creature(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
-  ai_lastDir(Dir::None)
+  ai_lastDir(Dir::None), ai_lastTarget(-1, -1)
 {
     typeIdent = type;
     typeInfo = &CreatureType::get(type);
@@ -364,6 +364,39 @@ void Creature::ai(Board *board) {
             ai_lastDir = position.directionTo(board->getPlayer()->position);
             tryMove(board, ai_lastDir);
             break;
+        case aiEnemy: {
+            Point playerPos = board->getPlayer()->position;
+            bool canSeePlayer = board->canSee(position, playerPos);
+            if (canSeePlayer) {
+                ai_lastTarget = playerPos;
+                // std::cerr << this << " can see player\n";
+                ai_lastPath = board->findPath(position, playerPos);
+                if (ai_lastPath.size() < 2) {
+                    // std::cerr << this << " no valid path to player\n";
+                    break;
+                }
+                ai_pathNext = 2;
+                // std::cerr << this << " trying to move to " << ai_lastPath[1] << "\n";
+                ai_lastDir = position.directionTo(ai_lastPath[1]);
+                tryMove(board, ai_lastDir);
+            } else if (ai_lastTarget.x() >= 0) {
+                // std::cerr << this << " lost sight of player\n";
+                if (position == ai_lastTarget || ai_pathNext >= ai_lastPath.size()) {
+                    // std::cerr << this << " reach last known location; wandering\n";
+                    ai_lastTarget = Point(-1,-1);
+                    ai_lastDir = dirs[rand() % 4];
+                } else {
+                    // std::cerr << this << " moving to last known location\n";
+                    ai_lastDir = position.directionTo(ai_lastPath[ai_pathNext]);
+                    ++ai_pathNext;
+                }
+                tryMove(board, ai_lastDir);
+            } else {
+                // std::cerr << this << " player not visible; wandering\n";
+                ai_lastDir = dirs[rand() % 4];
+                tryMove(board, ai_lastDir);
+            }
+            break; }
     }
 
 

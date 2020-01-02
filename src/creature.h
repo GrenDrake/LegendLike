@@ -21,6 +21,7 @@ const int aiPaceVert        = 3;
 const int aiPaceBox         = 4;
 const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
+const int aiEnemy           = 7;
 
 const int shapeSquare       = 0;
 const int shapeCircle       = 1;
@@ -115,6 +116,9 @@ public:
     int talkArg;
 
     Dir ai_lastDir;
+    Point ai_lastTarget;
+    std::vector<Point> ai_lastPath;
+    int ai_pathNext;
 
 
     void ai(Board *board);

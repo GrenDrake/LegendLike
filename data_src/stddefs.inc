@@ -70,6 +70,7 @@
 .define aiPaceBox         4
 .define aiAvoidPlayer     5
 .define aiFollowPlayer    6
+.define aiEnemy           7
 
 .define partyAll          -1
 
