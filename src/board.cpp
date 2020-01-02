@@ -1,13 +1,18 @@
 #include <cstdlib>
 #include <cstring>
+#include <queue>
+#include <map>
+#include <vector>
 
 #include "board.h"
 #include "creature.h"
+#include "point.h"
 
 
 std::vector<TileInfo> TileInfo::types;
 
 const TileInfo TileInfo::BAD_TILE{-1, "bad tile"};
+Board::Tile outOfBounds{ tileOutOfBounds };
 
 void TileInfo::add(const TileInfo &type) {
     types.push_back(type);
@@ -112,6 +117,21 @@ int Board::getTile(const Point &where) const {
     return tiles[t].tile;
 }
 
+const Board::Tile& Board::at(const Point &where) const {
+    int t = coord(where);
+    if (t < 0) return outOfBounds;
+    return tiles[t];
+}
+
+Board::Tile& Board::at(const Point &where) {
+    int t = coord(where);
+    if (t < 0) {
+        outOfBounds.tile = tileOutOfBounds;
+        return outOfBounds;
+    }
+    return tiles[t];
+}
+
 Point Board::findTile(int tile) const {
     for (int y = 0; y < height(); ++y) {
         for (int x = 0; x < width(); ++x) {
@@ -212,6 +232,80 @@ std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blo
 
     return points;
 }
+
+struct PathPoint : public Point {
+    PathPoint(int x, int y, int priority = 0)
+    : Point(x, y), priority(priority)
+    { }
+    PathPoint(const Point &p, int priority = 0)
+    : Point(p.x(), p.y()), priority(priority)
+    { }
+
+    int priority;
+};
+bool operator<(const PathPoint &a, const PathPoint &b) {
+    return a.priority > b.priority;
+}
+
+int pathfinderHeuristic(const Point &a, const Point &b) {
+    return std::abs(a.x() - b.x()) + std::abs(a.y() - b.y());
+}
+
+bool containsPoint(std::map<Point, int> container, Point value) {
+    auto iter = container.find(value);
+    if (iter == container.end())    return false;
+    else                            return true;
+}
+
+std::vector<Point> Board::findPath(const Point &from, const Point &to) {
+    std::priority_queue<PathPoint, std::vector<PathPoint>> frontier;
+    frontier.push(from);
+    std::map<Point, Point> cameFrom;
+    cameFrom[from] = Point(-1,-1);
+    std::map<Point, int> costSoFar;
+    costSoFar[from] = 0;
+
+    while (!frontier.empty()) {
+        // pop the top value and put it on the done list
+        PathPoint here = frontier.top();
+        frontier.pop();
+
+        // we're done, build the path and return
+        if (here == to) {
+            std::vector<Point> points;
+            Point p = cameFrom[to];
+            while (p != from) {
+                points.push_back(p);
+                p = cameFrom[p];
+            }
+            points.push_back(from);
+            return points;
+
+        // otherwise move on to the next point
+        } else {
+            const Dir initialDir = Dir::North;
+            Dir d = initialDir;
+            do {
+                PathPoint shifted = here.shift(d);
+                int newCost = costSoFar[here] + 1;
+                if (!TileInfo::get(getTile(shifted)).block_travel) {
+                    if (!containsPoint(costSoFar, shifted)
+                            || newCost < costSoFar[shifted]) {
+                        costSoFar[shifted] = newCost;
+                        shifted.priority = newCost + pathfinderHeuristic(shifted, to);
+                        frontier.push(shifted);
+                        cameFrom[shifted] = here;
+                    }
+                }
+                d = rotateDirection(d);
+            } while (d != initialDir);
+        }
+    }
+
+    // no path found, return empty list
+    return std::vector<Point>();
+}
+
 
 bool Board::canSee(const Point &from, const Point &to) {
     std::vector<Point> points = findPoints(from, to, blockOpaque|blockTarget);

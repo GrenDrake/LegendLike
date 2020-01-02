@@ -94,3 +94,10 @@ std::ostream& operator<<(std::ostream &out, const Dir &d) {
     out << dirName(d);
     return out;
 }
+
+bool operator<(const Point &left, const Point &right) {
+    if (left.x() < right.x()) return true;
+    if (left.x() > right.x()) return false;
+    if (left.y() < right.y()) return true;
+    return false;
+}

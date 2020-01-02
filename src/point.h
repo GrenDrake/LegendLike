@@ -42,6 +42,9 @@ public:
     bool operator==(const Point &rhs) const {
         return mX == rhs.mX && mY == rhs.mY;
     }
+    bool operator!=(const Point &rhs) const {
+        return !operator==(rhs);
+    }
 
 private:
     int mX, mY;
@@ -53,5 +56,6 @@ Dir randomDirection(Random &rng);
 std::string dirName(const Dir &d);
 std::ostream& operator<<(std::ostream &out, const Point &p);
 std::ostream& operator<<(std::ostream &out, const Dir &d);
+bool operator<(const Point &left, const Point &right);
 
 #endif

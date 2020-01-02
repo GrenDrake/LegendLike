@@ -113,6 +113,8 @@ public:
     void clearTo(int tile);
     void setTile(const Point &where, int tile);
     int getTile(const Point &where) const;
+    const Tile& at(const Point &where) const;
+    Tile& at(const Point &where);
     Point findTile(int tile) const;
 
     void resetFOV();
@@ -121,6 +123,7 @@ public:
     bool isKnown(const Point &where) const;
     bool isVisible(const Point &where) const;
     std::vector<Point> findPoints(const Point &from, const Point &to, int blockOn);
+    std::vector<Point> findPath(const Point &from, const Point &to);
     bool canSee(const Point &from, const Point &to);
 
     void addEvent(const Point &where, int funcAddr, int type);
