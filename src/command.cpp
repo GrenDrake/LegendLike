@@ -43,6 +43,7 @@ CommandDef gameCommands[] = {
     { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
     { Command::Debug_ShowInfo, Dir::None, SDLK_F5 },
     { Command::Debug_ShowFPS,  Dir::None, SDLK_F7 },
+    { Command::Debug_TestPathfinder, Dir::None, SDLK_F9 },
 
     { Command::None }
 };
@@ -187,7 +188,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;
         case Command::Debug_ShowInfo:   out << "show info (debug)"; break;
         case Command::Debug_ShowFPS:    out << "show fps (debug)"; break;
-        case Command::Debug_Heal:       out << "full heal party (debug)"; break;
+        case Command::Debug_TestPathfinder: out << "test pathfinder (debug)"; break;
     }
     return out;
 }

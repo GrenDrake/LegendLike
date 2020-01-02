@@ -81,6 +81,7 @@ public:
     struct Tile {
         int tile;
         unsigned fov;
+        bool mark;
     };
     struct Event {
         Point pos;
@@ -116,6 +117,7 @@ public:
     const Tile& at(const Point &where) const;
     Tile& at(const Point &where);
     Point findTile(int tile) const;
+    Point findRandomTile(Random &rng, int tile) const;
 
     void resetFOV();
     void calcFOV(const Point &origin);
@@ -133,6 +135,7 @@ public:
 
     void dbgRevealAll();
     void dbgToggleFOV();
+    void resetMark();
 private:
     int coord(const Point &p) const;
 

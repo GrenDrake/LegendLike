@@ -201,6 +201,24 @@ void gameloop(System &state) {
                 case Command::Debug_ShowFPS:
                     state.showFPS = !state.showFPS;
                     break;
+                case Command::Debug_TestPathfinder: {
+                    Board *board = state.getBoard();
+                    board->resetMark();
+                    Point src = state.getPlayer()->position;
+                    Point dest = board->findRandomTile(state.coreRNG, tileFloor);
+                    std::stringstream line;
+                    line << "Finding path from " << src << " to " << dest << '.';
+                    state.addMessage(line.str());
+                    auto points = board->findPath(src, dest);
+                    if (points.empty()) {
+                        state.addMessage("No path found.");
+                    } else {
+                        state.addMessage("Path has " + std::to_string(points.size()) + " tiles.");
+                        for (const Point &p : points) {
+                            board->at(p).mark = true;
+                        }
+                    }
+                    break; }
 
                 default:
                     /* we don't need to worry about the other kinds of command */

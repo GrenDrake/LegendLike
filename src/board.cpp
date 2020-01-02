@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <queue>
@@ -7,6 +8,7 @@
 #include "board.h"
 #include "creature.h"
 #include "point.h"
+#include "random.h"
 
 
 std::vector<TileInfo> TileInfo::types;
@@ -102,6 +104,7 @@ void Board::clearTo(int tile) {
         for (int x = 0; x < width(); ++x) {
             tiles[x+y*width()].tile = tile;
             tiles[x+y*width()].fov = 0;
+            tiles[x+y*width()].mark = false;
         }
     }
 }
@@ -138,6 +141,17 @@ Point Board::findTile(int tile) const {
             Point here(x, y);
             if (getTile(here) == tile) return here;
         }
+    }
+    return Point(-1,-1);
+}
+
+Point Board::findRandomTile(Random &rng, int tile) const {
+    const int MAX_ITERATIONS = 1000;
+    for (int i = 0; i < MAX_ITERATIONS; ++i) {
+        int x = rng.next32() % mWidth;
+        int y = rng.next32() % mHeight;
+        Point here(x, y);
+        if (getTile(here) == tile) return here;
     }
     return Point(-1,-1);
 }
@@ -273,12 +287,14 @@ std::vector<Point> Board::findPath(const Point &from, const Point &to) {
         // we're done, build the path and return
         if (here == to) {
             std::vector<Point> points;
+            points.push_back(to);
             Point p = cameFrom[to];
             while (p != from) {
                 points.push_back(p);
                 p = cameFrom[p];
             }
             points.push_back(from);
+            std::reverse(points.begin(), points.end());
             return points;
 
         // otherwise move on to the next point
@@ -345,4 +361,12 @@ void Board::dbgRevealAll() {
 
 void Board::dbgToggleFOV() {
     dbgDisableFOV = !dbgDisableFOV;
+}
+
+void Board::resetMark() {
+    for (int y = 0; y < height(); ++y) {
+        for (int x = 0; x < width(); ++x) {
+            at(Point(x,y)).mark = false;
+        }
+    }
 }

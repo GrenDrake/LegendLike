@@ -92,6 +92,16 @@ void repaint(System &state, bool callPresent) {
                 }
             }
 
+            if (state.getBoard()->at(here).mark) {
+                SDL_Rect markBox = {
+                    texturePosition.x + 2,
+                    texturePosition.y + 2,
+                    8, 8
+                };
+                SDL_SetRenderDrawColor(state.renderer, 63, 63, 196, 63);
+                SDL_RenderFillRect(state.renderer, &markBox);
+            }
+
             if (!didAnimation) {
                 switch(curAnim.type) {
                     case AnimType::None:

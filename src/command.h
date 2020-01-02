@@ -34,7 +34,7 @@ enum class Command {
     Debug_NoFOV,
     Debug_ShowInfo,
     Debug_ShowFPS,
-    Debug_Heal,
+    Debug_TestPathfinder,
 };
 
 struct CommandDef {
