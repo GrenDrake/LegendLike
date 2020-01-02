@@ -5,7 +5,7 @@ CFLAGS=-Wall -g -std=c99 -pedantic -I$(PHYSFS)src
 CXXFLAGS=-Wall -g -std=c++11 -pedantic `sdl-config --cflags` -I$(LIBFOV) -I$(PHYSFS)src
 GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS) -lfov -lphysfs -lSDL2_mixer -lSDL2_image `sdl2-config --libs`
 
-GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o \
+GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov.o \
 	 src/gen_dungeon.o src/system.o src/gfx.o src/command.o src/dataload.o \
 	 src/vm.o src/gfx_font.o src/physfsrwops.o src/point.o src/gfx_menu.o \
 	 src/mode_mainmenu.o src/creature.o src/gfx_resource.o src/gfx_ui.o src/config.o src/textutil.o \
