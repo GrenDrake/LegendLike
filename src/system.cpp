@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include "creature.h"
+#include "logger.h"
 #include "board.h"
 #include "vm.h"
 #include "gfx.h"
@@ -148,6 +149,8 @@ bool System::warpTo(int boardIndex, int x, int y) {
             mCurrentBoard->addActor(mPlayer, Point(x, y));
             mCurrentBoard->calcFOV(getPlayer()->position);
         } else {
+            Logger &log = Logger::getInstance();
+            log.error("Failed to access map ID " + std::to_string(boardIndex));
             return false;
         }
     }
