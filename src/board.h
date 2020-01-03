@@ -114,6 +114,8 @@ public:
     void clearTo(int tile);
     void setTile(const Point &where, int tile);
     int getTile(const Point &where) const;
+    bool isSolid(const Point &p);
+    bool isOpaque(const Point &p);
     const Tile& at(const Point &where) const;
     Tile& at(const Point &where);
     Point findTile(int tile) const;

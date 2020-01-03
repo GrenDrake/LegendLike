@@ -120,6 +120,16 @@ int Board::getTile(const Point &where) const {
     return tiles[t].tile;
 }
 
+bool Board::isSolid(const Point &p) {
+    const TileInfo &info = TileInfo::get(getTile(p));
+    return info.block_travel;
+}
+
+bool Board::isOpaque(const Point &p) {
+    const TileInfo &info = TileInfo::get(getTile(p));
+    return info.block_los;
+}
+
 const Board::Tile& Board::at(const Point &where) const {
     int t = coord(where);
     if (t < 0) return outOfBounds;
@@ -211,8 +221,8 @@ std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blo
         while (1) {
             if (x1 == x2 && (blockOn & blockTarget)) break;
             Point here(x1, y1);
-            if (TileInfo::get(getTile(here)).block_travel && (blockOn & blockSolid))  break;
-            if (TileInfo::get(getTile(here)).block_los    && (blockOn & blockOpaque)) break;
+            if (isSolid(here)  && (blockOn & blockSolid))  break;
+            if (isOpaque(here) && (blockOn & blockOpaque)) break;
 
             if ((error > 0) || (!error && (ix > 0))) {
                 error -= delta_x;
@@ -230,8 +240,8 @@ std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blo
             if (y1 == y2 && (blockOn & blockTarget)) break;
             Point here(x1, y1);
             if (!valid(here)) break;
-            if (TileInfo::get(getTile(here)).block_travel && (blockOn & blockSolid))  break;
-            if (TileInfo::get(getTile(here)).block_los    && (blockOn & blockOpaque)) break;
+            if (isSolid(here)  && (blockOn & blockSolid))  break;
+            if (isOpaque(here) && (blockOn & blockOpaque)) break;
 
             if ((error > 0) || (!error && (iy > 0))) {
                 error -= delta_y;
@@ -306,8 +316,7 @@ std::vector<Point> Board::findPath(const Point &from, const Point &to) {
                 int travelCost = 1;
                 if (TileInfo::get(getTile(shifted)).index == tileDoorClosed) ++travelCost;
                 int newCost = costSoFar[here] + 1;
-                if (!TileInfo::get(getTile(shifted)).block_travel
-                        || TileInfo::get(getTile(shifted)).index == tileDoorClosed) {
+                if (!isSolid(shifted) || TileInfo::get(getTile(shifted)).index == tileDoorClosed) {
                     if (!containsPoint(costSoFar, shifted)
                             || newCost < costSoFar[shifted]) {
                         costSoFar[shifted] = newCost;
