@@ -9,6 +9,7 @@
 #include "creature.h"
 #include "point.h"
 #include "random.h"
+#include "gfx.h"
 
 
 std::vector<TileInfo> TileInfo::types;
@@ -362,7 +363,24 @@ void Board::tick(System &system) {
         who->ai(system);
     }
 
-    calcFOV(getPlayer()->position);
+    for (auto iter = creatures.begin(); iter != creatures.end(); ) {
+        Creature *who = *iter;
+        if (who->curHealth <= 0) {
+            iter = creatures.erase(iter);
+            if (who->isPlayer) {
+                who->reset();
+                system.addMessage("You can take no more and collapse!\nWhen you awaken, you find that you have been brought back to the Demon Laboratory.");
+                system.warpTo(0, 44, 14);
+            } else {
+                delete who;
+            }
+        } else {
+            ++iter;
+        }
+    }
+
+    Creature *player = getPlayer();
+    if (player) calcFOV(player->position);
 }
 
 void Board::dbgRevealAll() {

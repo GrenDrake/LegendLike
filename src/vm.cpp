@@ -571,6 +571,7 @@ bool VM::run(unsigned address) {
                     creature->aiArg = 0;
                     creature->talkFunc = talkFunc;
                     creature->talkArg = specialValue;
+                    creature->reset();
                 }
                 break; }
             case Opcode::mf_addevent: {

@@ -229,12 +229,13 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 int realDamage = who->takeDamage(move.damage, damageType);
                 std::stringstream line;
                 line << upperFirst(who->getName()) << " takes " << realDamage << ' ' << damageType << " damage. ";
-                if (who->curHealth <= 0) {
-                    line << upperFirst(who->getName()) << " is defeated! ";
-                    board->removeActor(who);
-                    delete who;
-                }
                 system.appendMessage(line.str());
+                if (who->curHealth <= 0) {
+                    who->position = Point(-1, -1);
+                    if (!who->isPlayer) {
+                        system.appendMessage(upperFirst(who->getName()) + " is defeated! ");
+                    }
+                }
             }
         }
     }
