@@ -303,8 +303,11 @@ std::vector<Point> Board::findPath(const Point &from, const Point &to) {
             Dir d = initialDir;
             do {
                 PathPoint shifted = here.shift(d);
+                int travelCost = 1;
+                if (TileInfo::get(getTile(shifted)).index == tileDoorClosed) ++travelCost;
                 int newCost = costSoFar[here] + 1;
-                if (!TileInfo::get(getTile(shifted)).block_travel) {
+                if (!TileInfo::get(getTile(shifted)).block_travel
+                        || TileInfo::get(getTile(shifted)).index == tileDoorClosed) {
                     if (!containsPoint(costSoFar, shifted)
                             || newCost < costSoFar[shifted]) {
                         costSoFar[shifted] = newCost;
