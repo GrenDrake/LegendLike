@@ -326,9 +326,10 @@ std::string damageFormName(const int &form) {
     return "DamageForm" + std::to_string(form);
 }
 
-void Creature::ai(Board *board) {
+void Creature::ai(System &system) {
     // dead things don't do AI
     if (curHealth <= 0) return;
+    Board *board = system.getBoard();
 
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };
 
@@ -369,16 +370,22 @@ void Creature::ai(Board *board) {
             bool canSeePlayer = board->canSee(position, playerPos);
             if (canSeePlayer) {
                 ai_lastTarget = playerPos;
-                // std::cerr << this << " can see player\n";
-                ai_lastPath = board->findPath(position, playerPos);
-                if (ai_lastPath.size() < 2) {
-                    // std::cerr << this << " no valid path to player\n";
-                    break;
+                if (position.distanceTo(playerPos) < 2) {
+                    // do attack
+                    useAbility(system, typeInfo->defaultMove, position.directionTo(playerPos));
+                } else {
+                    // move towards player
+                    // std::cerr << this << " can see player\n";
+                    ai_lastPath = board->findPath(position, playerPos);
+                    if (ai_lastPath.size() < 2) {
+                        // std::cerr << this << " no valid path to player\n";
+                        break;
+                    }
+                    ai_pathNext = 2;
+                    // std::cerr << this << " trying to move to " << ai_lastPath[1] << "\n";
+                    ai_lastDir = position.directionTo(ai_lastPath[1]);
+                    tryMove(board, ai_lastDir);
                 }
-                ai_pathNext = 2;
-                // std::cerr << this << " trying to move to " << ai_lastPath[1] << "\n";
-                ai_lastDir = position.directionTo(ai_lastPath[1]);
-                tryMove(board, ai_lastDir);
             } else if (ai_lastTarget.x() >= 0) {
                 // std::cerr << this << " lost sight of player\n";
                 if (position == ai_lastTarget || ai_pathNext >= ai_lastPath.size()) {

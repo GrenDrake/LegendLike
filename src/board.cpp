@@ -357,9 +357,9 @@ const Board::Event* Board::eventAt(const Point &where) const {
     return nullptr;
 }
 
-void Board::tick() {
+void Board::tick(System &system) {
     for (Creature *who : creatures) {
-        who->ai(this);
+        who->ai(system);
     }
 
     calcFOV(getPlayer()->position);

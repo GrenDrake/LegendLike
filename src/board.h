@@ -6,6 +6,7 @@
 #include <vector>
 #include "point.h"
 
+class System;
 class Creature;
 class Random;
 
@@ -133,7 +134,7 @@ public:
     void addEvent(const Point &where, int funcAddr, int type);
     const Event* eventAt(const Point &where) const;
 
-    void tick();
+    void tick(System &system);
 
     void dbgRevealAll();
     void dbgToggleFOV();

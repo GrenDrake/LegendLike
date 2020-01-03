@@ -92,7 +92,7 @@ bool System::hasTick() const {
 void System::tick() {
     wantsTick = false;
     if (mCurrentBoard) {
-        mCurrentBoard->tick();
+        mCurrentBoard->tick(*this);
         ++turnNumber;
     }
 }

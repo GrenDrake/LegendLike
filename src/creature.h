@@ -121,7 +121,7 @@ public:
     int ai_pathNext;
 
 
-    void ai(Board *board);
+    void ai(System &system);
     bool tryMove(Board *board, Dir direction);
     std::string getName() const;
     int getStat(Stat stat) const;
