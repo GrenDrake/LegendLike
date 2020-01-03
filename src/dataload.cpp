@@ -349,8 +349,7 @@ bool System::loadTileData() {
         PHYSFS_readBytes(fp, &u8, 1);   info.red = u8;
         PHYSFS_readBytes(fp, &u8, 1);   info.green = u8;
         PHYSFS_readBytes(fp, &u8, 1);   info.blue = u8;
-        PHYSFS_readBytes(fp, &u8, 1);   info.block_travel = u8;
-        PHYSFS_readBytes(fp, &u8, 1);   info.block_los = u8;
+        PHYSFS_readULE32(fp, &u32);     info.flags = u32;
         PHYSFS_readBytes(fp, nameBuffer, 32);
         info.name = nameBuffer;
         TileInfo::add(info);

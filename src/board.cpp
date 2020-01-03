@@ -17,6 +17,10 @@ std::vector<TileInfo> TileInfo::types;
 const TileInfo TileInfo::BAD_TILE{-1, "bad tile"};
 Board::Tile outOfBounds{ tileOutOfBounds };
 
+bool TileInfo::is(unsigned flag) const {
+    return flags & flag;
+}
+
 void TileInfo::add(const TileInfo &type) {
     types.push_back(type);
 }
@@ -123,12 +127,12 @@ int Board::getTile(const Point &where) const {
 
 bool Board::isSolid(const Point &p) {
     const TileInfo &info = TileInfo::get(getTile(p));
-    return info.block_travel;
+    return info.is(TF_SOLID);
 }
 
 bool Board::isOpaque(const Point &p) {
     const TileInfo &info = TileInfo::get(getTile(p));
-    return info.block_los;
+    return info.is(TF_OPAQUE);
 }
 
 const Board::Tile& Board::at(const Point &where) const {

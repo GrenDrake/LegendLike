@@ -151,7 +151,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 if (board->actorAt(target) != nullptr) {
                     break;
                 }
-                if (TileInfo::get(board->getTile(target)).block_travel) break;
+                if (board->isSolid(target)) break;
                 anim.points.push_back(target);
                 target = target.shift(d);
             }
@@ -181,7 +181,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
             effected.push_back(work);
 
             for (int i = 0; i < move.damageSize * 2; ++i) {
-                if (TileInfo::get(board->getTile(work)).block_travel) {
+                if (board->isSolid(work)) {
                     break;
                 }
                 work = work.shift(d);
@@ -194,7 +194,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
             Dir a = rotateDirection(d);
             for (int i = 0; i < move.damageSize; ++i) {
                 work = work.shift(a);
-                if (TileInfo::get(board->getTile(work)).block_travel) {
+                if (board->isSolid(work)) {
                     break;
                 }
                 anim.points.push_back(work);
@@ -204,7 +204,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
             a = flipDirection(a);
             for (int i = 0; i < move.damageSize; ++i) {
                 work = work.shift(a);
-                if (TileInfo::get(board->getTile(work)).block_travel) {
+                if (board->isSolid(work)) {
                     break;
                 }
                 anim.points.push_back(work);
@@ -391,7 +391,7 @@ void Creature::ai(System &system) {
             } else {
                 if (ai_lastTarget.x() >= 0) {
                     // std::cerr << this << " lost sight of player\n";
-                    if (position == ai_lastTarget || ai_pathNext >= ai_lastPath.size()) {
+                    if (position == ai_lastTarget || ai_pathNext >= static_cast<int>(ai_lastPath.size())) {
                         // std::cerr << this << " reach last known location; wandering\n";
                         ai_lastTarget = Point(-1,-1);
                         ai_lastDir = dirs[rand() % 4];
@@ -406,8 +406,9 @@ void Creature::ai(System &system) {
                 }
                 if (!tryMove(board, ai_lastDir)) {
                     Point newPos = position.shift(ai_lastDir);
-                    if (board->getTile(newPos) == tileDoorClosed) {
-                        board->setTile(newPos, tileDoorOpen);
+                    const TileInfo &info = TileInfo::get(board->getTile(newPos));
+                    if (info.is(TF_ISDOOR)) {
+                        board->setTile(newPos, info.interactTo);
                     }
                 }
             }
@@ -421,7 +422,7 @@ bool Creature::tryMove(Board *board, Dir direction) {
     if (!board->valid(newPosition)) return false;
 
     int tile = board->getTile(newPosition);
-    if (TileInfo::get(tile).block_travel) {
+    if (TileInfo::get(tile).is(TF_SOLID)) {
         return false;
     }
 

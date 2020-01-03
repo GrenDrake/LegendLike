@@ -10,13 +10,24 @@
 #define MAX_TILES   100
 #define NAME_LENGTH 32
 
+const int TF_SOLID          = 0x01;
+const int TF_OPAQUE         = 0x02;
+const int TF_ISDOOR         = 0x04;
+
+const char *flagNames[] = {
+    "Solid",
+    "Opaque",
+    "Is Door",
+    NULL
+};
+
 struct tile_info {
     int ident;
     char name[NAME_LENGTH];
     int art_index;
     int red, green, blue;
-    int block_travel, block_los;
     int interact_to;
+    unsigned flags;
 };
 
 
@@ -73,11 +84,12 @@ void mainloop() {
             else                attroff(A_REVERSE);
             clrtoeol();
             mvprintw(i, 0,  "%4d %s", tiles[here].ident, tiles[here].name);
-            mvprintw(i, 40, "%4d  %3d,%3d,%3d  %c%c",
+            mvprintw(i, 40, "%4d  %3d,%3d,%3d  %c%c%c",
                     tiles[here].art_index,
                     tiles[here].red, tiles[here].green, tiles[here].blue,
-                    tiles[here].block_travel ? 'S' : ' ',
-                    tiles[here].block_los    ? 'O' : ' ');
+                    tiles[here].flags & TF_SOLID  ? 'S' : ' ',
+                    tiles[here].flags & TF_OPAQUE ? 'O' : ' ',
+                    tiles[here].flags & TF_ISDOOR ? 'D' : ' ');
             if (tiles[here].interact_to >= 0) {
                 mvprintw(i, 70, "%3d", tiles[here].interact_to);
             }
@@ -146,8 +158,7 @@ int read_data() {
         tile->red = read8(fp);
         tile->green = read8(fp);
         tile->blue = read8(fp);
-        tile->block_travel = read8(fp);
-        tile->block_los = read8(fp);
+        tile->flags = read32(fp);
         fread(tile->name, NAME_LENGTH, 1, fp);
     }
     qsort(tiles, MAX_TILES, sizeof(struct tile_info), load_data_sort);
@@ -169,8 +180,7 @@ void write_data() {
             write8(fp, tile->red);
             write8(fp, tile->green);
             write8(fp, tile->blue);
-            write8(fp, tile->block_travel);
-            write8(fp, tile->block_los);
+            write32(fp, tile->flags);
             fwrite(tile->name, NAME_LENGTH, 1, fp);
         }
     }
@@ -185,13 +195,13 @@ int* field_by_index(struct tile_info *tile, int index) {
         case 3:     return &tile->red;
         case 4:     return &tile->green;
         case 5:     return &tile->blue;
-        case 6:     return &tile->block_travel;
-        case 7:     return &tile->block_los;
-        case 8:     return &tile->interact_to;
+        case 6:     return &tile->interact_to;
+        case 7:     return (int*)&tile->flags;
         default:    return NULL;
     }
 }
 
+#define MAX_TILE_FIELD      10
 void edit_tile(int tile_number) {
     int field = 0;
     struct tile_info *tile = &tiles[tile_number];
@@ -206,9 +216,11 @@ void edit_tile(int tile_number) {
         mvprintw(3, 0, "        RED: %d%c", tile->red,         field == 3 ? '_' : ' ');
         mvprintw(4, 0, "      GREEN: %d%c", tile->green,       field == 4 ? '_' : ' ');
         mvprintw(5, 0, "       BLUE: %d%c", tile->blue,        field == 5 ? '_' : ' ');
-        mvprintw(6, 0, "      SOLID: %d%c", tile->block_travel,field == 6 ? '_' : ' ');
-        mvprintw(7, 0, "     OPAQUE: %d%c", tile->block_los,   field == 7 ? '_' : ' ');
-        mvprintw(8, 0, "   INTERACT: %d%c", tile->interact_to, field == 8 ? '_' : ' ');
+        mvprintw(6, 0, "   INTERACT: %d%c", tile->interact_to, field == 6 ? '_' : ' ');
+        mvprintw(7, 0, "      FLAGS: 0x%X%c", tile->flags, field == 7 ? '_' : ' ');
+        mvprintw(8, 0, "      SOLID: %s", (tile->flags & TF_SOLID) ? "yes" : "no");
+        mvprintw(9, 0, "      OPAQUE: %s", (tile->flags & TF_OPAQUE) ? "yes" : "no");
+        mvprintw(10,0, "      ISDOOR: %s", (tile->flags & TF_ISDOOR) ? "yes" : "no");
         mvprintw(field, 0, "->");
 
         refresh();
@@ -223,6 +235,12 @@ void edit_tile(int tile_number) {
             case '\r':
                 if (field == 1) {
                     edit_text(1, 13, tile->name);
+                } else if (field == 8) {
+                    tile->flags ^= TF_SOLID;
+                } else if (field == 9) {
+                    tile->flags ^= TF_OPAQUE;
+                } else if (field == 10) {
+                    tile->flags ^= TF_ISDOOR;
                 }
                 break;
             case KEY_LEFT:
@@ -263,13 +281,13 @@ void edit_tile(int tile_number) {
                 break;
             case '\t':
             case KEY_DOWN:
-                if (field < 8) ++field;
+                if (field < MAX_TILE_FIELD) ++field;
                 break;
             case KEY_HOME:
                 field = 0;
                 break;
             case KEY_END:
-                field = 8;
+                field = MAX_TILE_FIELD;
                 break;
             case KEY_PPAGE:
                 if (tile_number > 0) {
@@ -290,9 +308,6 @@ void edit_tile(int tile_number) {
                     edit_text_key(tile->name, key);
                 }
         }
-
-        force_bool(&tile->block_los);
-        force_bool(&tile->block_travel);
     }
 
 }

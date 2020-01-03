@@ -17,15 +17,19 @@ struct TileInfo {
     int red;
     int green;
     int blue;
-    bool block_travel;
-    bool block_los;
     int interactTo;
+    unsigned flags;
 
+    bool is(unsigned flag) const;
     static void add(const TileInfo &type);
     static const TileInfo& get(int ident);
     const static TileInfo BAD_TILE;
     static std::vector<TileInfo> types;
 };
+
+const int TF_SOLID          = 0x01;
+const int TF_OPAQUE         = 0x02;
+const int TF_ISDOOR         = 0x04;
 
 const int tileFloor         = 0;
 const int tileWall          = 1;

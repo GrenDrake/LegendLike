@@ -15,7 +15,7 @@ bool opaque(void *mapVoid, int x, int y) {
     Board *map = static_cast<Board*>(mapVoid);
     int t = map->getTile(Point(x, y));
     const TileInfo &info = TileInfo::get(t);
-    return info.block_los;
+    return info.is(TF_OPAQUE);
 	// return ((MAP *)map)->blockLOS(x, y);
 }
 
