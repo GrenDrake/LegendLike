@@ -328,6 +328,7 @@ std::string damageFormName(const int &form) {
 }
 
 void Creature::ai(System &system) {
+    if (system.coreRNG.next32() & 1) return;
     // dead things don't do AI
     if (curHealth <= 0) return;
     Board *board = system.getBoard();
@@ -387,27 +388,31 @@ void Creature::ai(System &system) {
                     ai_lastDir = position.directionTo(ai_lastPath[1]);
                     tryMove(board, ai_lastDir);
                 }
-            } else if (ai_lastTarget.x() >= 0) {
-                // std::cerr << this << " lost sight of player\n";
-                if (position == ai_lastTarget || ai_pathNext >= ai_lastPath.size()) {
-                    // std::cerr << this << " reach last known location; wandering\n";
-                    ai_lastTarget = Point(-1,-1);
-                    ai_lastDir = dirs[rand() % 4];
-                } else {
-                    // std::cerr << this << " moving to last known location\n";
-                    ai_lastDir = position.directionTo(ai_lastPath[ai_pathNext]);
-                    ++ai_pathNext;
-                }
-                tryMove(board, ai_lastDir);
             } else {
-                // std::cerr << this << " player not visible; wandering\n";
-                ai_lastDir = dirs[rand() % 4];
-                tryMove(board, ai_lastDir);
+                if (ai_lastTarget.x() >= 0) {
+                    // std::cerr << this << " lost sight of player\n";
+                    if (position == ai_lastTarget || ai_pathNext >= ai_lastPath.size()) {
+                        // std::cerr << this << " reach last known location; wandering\n";
+                        ai_lastTarget = Point(-1,-1);
+                        ai_lastDir = dirs[rand() % 4];
+                    } else {
+                        // std::cerr << this << " moving to last known location\n";
+                        ai_lastDir = position.directionTo(ai_lastPath[ai_pathNext]);
+                        ++ai_pathNext;
+                    }
+                } else {
+                    // std::cerr << this << " player not visible; wandering\n";
+                    ai_lastDir = dirs[rand() % 4];
+                }
+                if (!tryMove(board, ai_lastDir)) {
+                    Point newPos = position.shift(ai_lastDir);
+                    if (board->getTile(newPos) == tileDoorClosed) {
+                        board->setTile(newPos, tileDoorOpen);
+                    }
+                }
             }
             break; }
     }
-
-
 }
 
 bool Creature::tryMove(Board *board, Dir direction) {
