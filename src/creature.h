@@ -67,6 +67,8 @@ public:
     int damageSize;
     int shape;
     int form;
+    int player_use;
+    int other_use;
     unsigned flags;
 private:
     static std::vector<MoveType> types;

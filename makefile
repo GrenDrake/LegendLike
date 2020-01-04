@@ -19,6 +19,8 @@ ASSEMBLE=./assemble
 
 BEASTGEN_OBJS=tools/beastgen.o
 BEASTGEN=beastgen
+MOVED_OBJS=tools/moved.o tools/common.o
+MOVED=moved
 TILED_OBJS=tools/tiled.o tools/common.o
 TILED=tiled
 TYPED_OBJS=tools/typed.o tools/common.o
@@ -26,7 +28,6 @@ TYPED=typed
 
 GAME_DAT=data/game.dat
 BEAST_DAT=data/beasts.dat
-MOVES_DAT=data/moves.dat
 
 all: $(ASSEMBLE) $(GAME) datafiles tools
 
@@ -41,12 +42,12 @@ $(GAME_DAT): $(ASSEMBLE) data_src/gamedata.src data_src/stddefs.inc data_src/map
 	cd data_src && ../assemble gamedata.src ../$(GAME_DAT)
 $(BEAST_DAT): $(ASSEMBLE) data_src/beasts.src
 	cd data_src && ../assemble beasts.src ../$(BEAST_DAT)
-$(MOVES_DAT): $(ASSEMBLE) data_src/moves.src
-	cd data_src && ../assemble moves.src ../$(MOVES_DAT)
 
-tools: $(BEASTGEN) $(TILED) $(TYPED)
+tools: $(BEASTGEN) $(MOVED) $(TILED) $(TYPED)
 $(BEASTGEN): $(BEASTGEN_OBJS)
 	$(CC) $(BEASTGEN_OBJS) -o $(BEASTGEN)
+$(MOVED): $(MOVED_OBJS)
+	$(CC) $(MOVED_OBJS) -lncurses -o $(MOVED)
 $(TILED): $(TILED_OBJS)
 	$(CC) $(TILED_OBJS) -lncurses -o $(TILED)
 $(TYPED): $(TYPED_OBJS)

@@ -20,6 +20,7 @@
 const int END_MARKER    = -1;
 const int MAP_INFO_SIZE = 42;
 const int TILE_ID       = 0x454C4954;
+const int MOVE_ID       = 0x45564F4D;
 
 static bool fileHasExtension(const std::string &filename, const std::vector<std::string> &list) {
     std::string::size_type pos = filename.find_last_of('.');
@@ -245,43 +246,45 @@ bool System::loadMoveData() {
         return false;
     }
 
-    int baseAddress = moves.getExport("move_info");
-    if (baseAddress == -1) {
-        log.error("Could not find move_info in moves.dat");
-    } else {
-        moves.setPosition(baseAddress);
-        int ident = moves.readWord();
-        while (ident > 0) {
-            MoveType type;
-            type.ident          = ident;
-
-            int nameId          = moves.readWord();
-            auto nameStr = strings.find(nameId);
-            if (nameStr == strings.end()) {
-                type.name = "attack #" + std::to_string(ident);
-            } else {
-                type.name = nameStr->second;
-            }
-
-            type.accuracy       = moves.readByte();
-            type.speed          = moves.readByte();
-            type.cost           = moves.readByte();
-
-            type.type           = moves.readByte();
-            type.minRange       = moves.readByte();
-            type.maxRange       = moves.readByte();
-
-            type.damage         = moves.readByte();
-            type.damageSize     = moves.readByte();
-            type.shape          = moves.readByte();
-            type.form           = moves.readByte();
-
-            type.flags          = moves.readWord();
-
-            MoveType::add(type);
-            ident = moves.readWord();
-        }
+    int magicWord = moves.readWord();
+    if (magicWord != MOVE_ID) {
+        log.error("File moves.dat is corrupt or invalid.");
+        return false;
     }
+
+    int ident = moves.readWord();
+    while (ident > 0) {
+        MoveType type;
+        type.ident          = ident;
+        int nameId          = moves.readWord();
+        auto nameStr = strings.find(nameId);
+        if (nameStr == strings.end()) {
+            type.name = "attack #" + std::to_string(ident);
+        } else {
+            type.name = nameStr->second;
+        }
+
+        type.accuracy       = moves.readWord();
+        type.speed          = moves.readWord();
+        type.cost           = moves.readWord();
+
+        type.type           = moves.readWord();
+        type.minRange       = moves.readWord();
+        type.maxRange       = moves.readWord();
+
+        type.damage         = moves.readWord();
+        type.damageSize     = moves.readWord();
+        type.shape          = moves.readWord();
+        type.form           = moves.readWord();
+
+        type.player_use     = moves.readWord();
+        type.other_use      = moves.readWord();
+        type.flags          = moves.readWord();
+
+        MoveType::add(type);
+        ident = moves.readWord();
+    }
+
     log.info("Loaded " + std::to_string(MoveType::typeCount()) + " moves.");
     return true;
 }
