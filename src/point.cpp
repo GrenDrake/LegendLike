@@ -34,36 +34,46 @@ double Point::distanceTo(const Point &rhs) const {
 Dir Point::directionTo(const Point &other) const {
     if (other == *this) return Dir::Here;
 
-    int sx = mX - other.mX;
-    int sy = mY - other.mY;
-    int dx = std::abs(static_cast<double>(sx));
-    int dy = std::abs(static_cast<double>(sy));
-
-    if (dx > dy) {
-        if (sx < 0) return Dir::East;
-        else        return Dir::West;
-    } else {
-        if (sy < 0) return Dir::South;
-        else        return Dir::North;
-    }
+    double rX = other.mX - mX;
+    double rY = other.mY - mY;
+    double angle = atan2(rX, rY) * (180 / M_PI);
+    if (angle < 0) angle += 360.0;
+    if (angle < 22.5)  return Dir::South;
+    if (angle < 67.5)  return Dir::Southeast;
+    if (angle < 112.5) return Dir::East;
+    if (angle < 157.5) return Dir::Northeast;
+    if (angle < 202.5) return Dir::North;
+    if (angle < 247.5) return Dir::Northwest;
+    if (angle < 292.5) return Dir::West;
+    if (angle < 337.5) return Dir::Southwest;
+    return Dir::North;
 }
 
 Dir flipDirection(Dir original) {
     switch(original) {
-        case Dir::North:  return Dir::South;
-        case Dir::South:  return Dir::North;
-        case Dir::East:   return Dir::West;
-        case Dir::West:   return Dir::East;
-        default:        return Dir::North;
+        case Dir::North:        return Dir::South;
+        case Dir::Northeast:    return Dir::Southwest;
+        case Dir::East:         return Dir::West;
+        case Dir::Southeast:    return Dir::Northwest;
+        case Dir::South:        return Dir::North;
+        case Dir::Southwest:    return Dir::Northeast;
+        case Dir::West:         return Dir::East;
+        case Dir::Northwest:    return Dir::Southeast;
+        default:                return Dir::North;
     }
 }
+
 Dir rotateDirection(Dir original) {
     switch(original) {
-        case Dir::North:  return Dir::East;
-        case Dir::East:   return Dir::South;
-        case Dir::South:  return Dir::West;
-        case Dir::West:   return Dir::North;
-        default:        return Dir::North;
+        case Dir::North:        return Dir::East;
+        case Dir::East:         return Dir::South;
+        case Dir::South:        return Dir::West;
+        case Dir::West:         return Dir::North;
+        case Dir::Northeast:    return Dir::Southeast;
+        case Dir::Southeast:    return Dir::Southwest;
+        case Dir::Southwest:    return Dir::Northwest;
+        case Dir::Northwest:    return Dir::Northeast;
+        default:                return Dir::North;
     }
 }
 
