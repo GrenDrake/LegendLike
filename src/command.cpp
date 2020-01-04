@@ -87,6 +87,7 @@ CommandDef gameCommands[] = {
 
     { Command::Examine,     Dir::None,  SDLK_x },
     { Command::SelectItem,  Dir::None,  SDLK_RETURN },
+    { Command::SelectItem,  Dir::None,  SDLK_KP_ENTER },
     { Command::QuickKey_1,  Dir::None,  SDLK_1 },
     { Command::QuickKey_2,  Dir::None,  SDLK_2 },
     { Command::QuickKey_3,  Dir::None,  SDLK_3 },
