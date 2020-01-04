@@ -66,7 +66,7 @@ move_info:
     .word   4       14
     .byte   100     100     3
     .byte   typeFire  1   3
-    .byte   2       2       shapeCircle formSelf
+    .byte   -4       2       shapeCircle formSelf
     .word   0
 
     .word   5       12

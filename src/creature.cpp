@@ -85,7 +85,12 @@ void Creature::reset() {
 
 int Creature::takeDamage(int amount, DamageType type) {
     amount *= getResist(type);
-    if (amount > curHealth) amount = curHealth;
+    if (amount > 0) {
+        if (amount > curHealth) amount = curHealth;
+    } else {
+        int maxGain = getStat(Stat::Health) - curHealth;
+        if (-amount > maxGain) amount = -maxGain;
+    }
     curHealth -= amount;
     return amount;
 }
@@ -226,9 +231,12 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 system.appendMessage(line.str());
             } else {
                 DamageType damageType = static_cast<DamageType>(move.type);
+
                 int realDamage = who->takeDamage(move.damage, damageType);
                 std::stringstream line;
-                line << upperFirst(who->getName()) << " takes " << realDamage << ' ' << damageType << " damage. ";
+                line << upperFirst(who->getName());
+                if (move.damage > 0) line << " takes " << realDamage << ' ' << damageType << " damage. ";
+                else                line << " recovers " << -realDamage << " via " << damageType << ". ";
                 system.appendMessage(line.str());
                 if (who->curHealth <= 0) {
                     who->position = Point(-1, -1);
