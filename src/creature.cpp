@@ -128,7 +128,7 @@ void Creature::forgetMove(int moveId) {
     }
 }
 
-void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
+void Creature::useAbility(System &system, int abilityNumber, const Point &aimedAt) {
     Board *board = system.getBoard();
     const MoveType &move = MoveType::get(abilityNumber);
 
@@ -144,27 +144,34 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
 
     // get the point of impact for the move
     Point target = position;
+    Dir attackDir = Dir::None;
     switch(move.form) {
         case formSelf:
             // already have correct target; don't need to do anything
             break;
-        case formBullet:
-        case formMelee: {
-            target = target.shift(d);
-            Animation anim{AnimType::Travel};
-            for (int i = 0; i < move.maxRange - move.minRange; ++i) {
-                if (board->actorAt(target) != nullptr) {
-                    break;
-                }
-                if (board->isSolid(target)) break;
-                anim.points.push_back(target);
-                target = target.shift(d);
+        case formBullet: {
+            std::vector<Point> points = board->findPoints(position, aimedAt, blockSolid|blockActor);
+            if (points.size() >= 2) {
+                attackDir = points.front().directionTo(points.back());
+            } else {
+                attackDir = randomDirection(system.coreRNG);
             }
-            if (move.form == formBullet) {
+            target = points.back();
+            if (board->isSolid(target)) {
+                points.pop_back();
+                target = points.back();
+            }
+            if (!points.empty()) points.erase(points.begin());
+            if (!points.empty()) {
+                Animation anim{AnimType::Travel};
+                for (const Point &p : points) anim.points.push_back(p);
                 system.queueAnimation(anim);
             }
             break; }
+        case formMelee:
         case formLobbed:
+            attackDir = position.directionTo(aimedAt);
+            target = aimedAt;
             break;
         case formFourway:
             break;
@@ -189,14 +196,14 @@ void Creature::useAbility(System &system, int abilityNumber, const Dir &d) {
                 if (board->isSolid(work)) {
                     break;
                 }
-                work = work.shift(d);
+                work = work.shift(attackDir);
                 anim.points.push_back(work);
                 effected.push_back(work);
             }
             break; }
         case shapeWide: {
             Point work = target;
-            Dir a = rotateDirection(d);
+            Dir a = rotateDirection(attackDir);
             for (int i = 0; i < move.damageSize; ++i) {
                 work = work.shift(a);
                 if (board->isSolid(work)) {
@@ -382,7 +389,7 @@ void Creature::ai(System &system) {
                 ai_lastTarget = playerPos;
                 if (position.distanceTo(playerPos) < 2) {
                     // do attack
-                    useAbility(system, typeInfo->defaultMove, position.directionTo(playerPos));
+                    useAbility(system, typeInfo->defaultMove, playerPos);
                 } else {
                     // move towards player
                     // std::cerr << this << " can see player\n";

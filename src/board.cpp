@@ -204,6 +204,11 @@ bool Board::isVisible(const Point &where) const {
 std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blockOn) {
     std::vector<Point> points;
 
+    if (from == to) {
+        points.push_back(from);
+        return points;
+    }
+
     int x1 = from.x();
     int y1 = from.y();
     const int x2 = to.x();
@@ -228,6 +233,7 @@ std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blo
             Point here(x1, y1);
             if (isSolid(here)  && (blockOn & blockSolid))  break;
             if (isOpaque(here) && (blockOn & blockOpaque)) break;
+            if ((blockOn & blockActor) && here != from && actorAt(here)) break;
 
             if ((error > 0) || (!error && (ix > 0))) {
                 error -= delta_x;
@@ -247,6 +253,7 @@ std::vector<Point> Board::findPoints(const Point &from, const Point &to, int blo
             if (!valid(here)) break;
             if (isSolid(here)  && (blockOn & blockSolid))  break;
             if (isOpaque(here) && (blockOn & blockOpaque)) break;
+            if ((blockOn & blockActor) && here != from && actorAt(here)) break;
 
             if ((error > 0) || (!error && (iy > 0))) {
                 error -= delta_y;

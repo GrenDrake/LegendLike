@@ -55,6 +55,7 @@ const int MF_ADD_DOWN       = 0x02;
 const int blockSolid        = 0x01;
 const int blockOpaque       = 0x02;
 const int blockTarget       = 0x04;
+const int blockActor        = 0x08;
 
 struct MapInfo {
     int index;

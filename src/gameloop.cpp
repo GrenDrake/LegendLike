@@ -14,9 +14,10 @@
 #include "vm.h"
 #include "random.h"
 #include "gfx.h"
+#include "textutil.h"
 
-Dir gfx_GetDirection(System &system) {
-    system.addMessage("Which way?");
+Dir gfx_GetDirection(System &system, const std::string &prompt) {
+    system.addMessage(prompt + "; which way?");
     while (1) {
         repaint(system);
         SDL_Event event;
@@ -37,12 +38,13 @@ Dir gfx_GetDirection(System &system) {
     }
 }
 
-Point gfx_SelectTile(System &system) {
+Point gfx_SelectTile(System &system, const std::string &prompt) {
     system.cursor = system.getPlayer()->position;
     system.addMessage("Where?");
     while (1) {
         std::stringstream line;
-        line << "Looking at: " << system.cursor << ' ';
+        line << prompt << "; where? ";
+        line << system.cursor << ' ';
         Creature *actor = system.getBoard()->actorAt(system.cursor);
         if (actor) line << actor->getName() << " standing at ";
         line << TileInfo::get(system.getBoard()->getTile(system.cursor)).name;
@@ -88,7 +90,7 @@ bool tryInteract(System &state, const Point &target) {
         } else {
             // no talk function, presume hostile
             if (state.quickSlots[0].type == quickSlotAbility) {
-                state.getPlayer()->useAbility(state, state.quickSlots[0].action, state.getPlayer()->position.directionTo(target));
+                state.getPlayer()->useAbility(state, state.quickSlots[0].action, target);
             } else {
                 state.addMessage("They have nothing to say.");
             }
@@ -206,7 +208,7 @@ void gameloop(System &state) {
                     break;
 
                 case Command::Examine:
-                    if (gfx_SelectTile(state).x() >= 0) {
+                    if (gfx_SelectTile(state, "Looking at").x() >= 0) {
                         state.removeMessage();
                     }
                     break;
@@ -226,11 +228,16 @@ void gameloop(System &state) {
                         case quickSlotAbility: {
                             int abilityNumber = state.quickSlots[slot].action;
                             const MoveType &move = MoveType::get(abilityNumber);
-                            Dir d = Dir::Here;
-                            if (move.form != formSelf) {
-                                d = gfx_GetDirection(state);
+                            Point target = Point(-1, -1);
+                            if (move.form == formMelee) {
+                                Dir dir = gfx_GetDirection(state, move.name);
+                                if (dir == Dir::None) break;
+                                target = state.getPlayer()->position.shift(dir);
+                            } else if (move.form != formSelf) {
+                                target = gfx_SelectTile(state, upperFirst(move.name));
+                                if (target.x() < 0) break;
                             }
-                            state.getPlayer()->useAbility(state, abilityNumber, d);
+                            state.getPlayer()->useAbility(state, abilityNumber, target);
                             state.requestTick();
                             break; }
                     }
