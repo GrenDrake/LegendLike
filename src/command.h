@@ -25,6 +25,8 @@ enum class Command {
     ShowTooltip,
     PrevMode,
     NextMode,
+    Examine,
+    SelectItem,
     QuickKey_1,
     QuickKey_2,
     QuickKey_3,

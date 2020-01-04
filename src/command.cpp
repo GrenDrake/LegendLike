@@ -28,6 +28,8 @@ CommandDef gameCommands[] = {
     { Command::Interact,    Dir::East,  SDLK_RIGHT,     KMOD_LALT },
     { Command::Interact,    Dir::South, SDLK_DOWN,      KMOD_LALT },
     { Command::Interact,    Dir::West,  SDLK_LEFT,      KMOD_LALT },
+    { Command::Examine,     Dir::None,  SDLK_x },
+    { Command::SelectItem,  Dir::None,  SDLK_RETURN },
     { Command::QuickKey_1,  Dir::None,  SDLK_1 },
     { Command::QuickKey_2,  Dir::None,  SDLK_2 },
     { Command::QuickKey_3,  Dir::None,  SDLK_3 },
@@ -179,6 +181,8 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
 
         case Command::NextMode:         out << "next mode"; break;
         case Command::PrevMode:         out << "prev mode"; break;
+        case Command::Examine:          out << "examine"; break;
+        case Command::SelectItem:       out << "select item"; break;
         case Command::QuickKey_1:       out << "quick key 1"; break;
         case Command::QuickKey_2:       out << "quick key 2"; break;
         case Command::QuickKey_3:       out << "quick key 3"; break;

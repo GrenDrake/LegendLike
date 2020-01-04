@@ -104,6 +104,11 @@ void repaint(System &state, bool callPresent) {
                 SDL_RenderFillRect(state.renderer, &markBox);
             }
 
+            if (state.cursor == here) {
+                SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
+                SDL_RenderDrawRect(state.renderer, &texturePosition);
+            }
+
             if (!didAnimation) {
                 switch(curAnim.type) {
                     case AnimType::None:

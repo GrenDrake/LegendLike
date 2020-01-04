@@ -88,6 +88,8 @@ public:
 
     void addMessage(const std::string &text);
     void appendMessage(const std::string &newText);
+    void replaceMessage(const std::string &newText);
+    void removeMessage();
 
     void requestTick();
     bool hasTick() const;
@@ -118,6 +120,7 @@ public:
     Creature *mPlayer;
     std::map<int, Board*> mBoards;
     QuickSlot quickSlots[quickSlotCount];
+    Point cursor;
 
     // game resources
     Font *smallFont;

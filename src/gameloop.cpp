@@ -27,8 +27,49 @@ Dir gfx_GetDirection(System &system) {
                     system.appendMessage(" " + dirName(cmd.direction));
                     return cmd.direction;
                 case Command::Cancel:
-                    system.appendMessage(" Cancelled");
+                    system.appendMessage(" Cancelled.");
                     return Dir::None;
+                default:
+                    /* we don't need to handle most of the commands */
+                    break;
+            }
+        }
+    }
+}
+
+Point gfx_SelectTile(System &system) {
+    system.cursor = system.getPlayer()->position;
+    system.addMessage("Where?");
+    while (1) {
+        std::stringstream line;
+        line << "Looking at: " << system.cursor << ' ';
+        Creature *actor = system.getBoard()->actorAt(system.cursor);
+        if (actor) line << actor->getName() << " standing at ";
+        line << TileInfo::get(system.getBoard()->getTile(system.cursor)).name;
+        system.replaceMessage(line.str());
+        repaint(system);
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            const CommandDef &cmd = getCommand(system, event, gameCommands);
+            switch(cmd.command) {
+                case Command::Move: {
+                    Point newpos = system.cursor.shift(cmd.direction);
+                    if (system.getBoard()->valid(newpos)) {
+                        system.cursor = newpos;
+                    }
+                    break; }
+                case Command::SelectItem:
+                case Command::Interact: {
+                    std::stringstream line;
+                    line << "Selected " << system.cursor << ".";
+                    system.replaceMessage(line.str());
+                    Point result = system.cursor;
+                    system.cursor = Point(-1,-1);
+                    return result; }
+                case Command::Cancel:
+                    system.removeMessage();
+                    system.cursor = Point(-1,-1);
+                    return Point(-1, -1);
                 default:
                     /* we don't need to handle most of the commands */
                     break;
@@ -162,6 +203,12 @@ void gameloop(System &state) {
                     break;
                 case Command::AbilityList:
                     doCharInfo(state, charAbilities);
+                    break;
+
+                case Command::Examine:
+                    if (gfx_SelectTile(state).x() >= 0) {
+                        state.removeMessage();
+                    }
                     break;
 
                 case Command::QuickKey_1:
