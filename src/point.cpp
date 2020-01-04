@@ -14,6 +14,14 @@ Point Point::shift(Dir dir, int amount) const {
             return Point(mX, mY + amount);
         case Dir::West:
             return Point(mX - amount, mY);
+        case Dir::Northwest:
+            return Point(mX - amount, mY - amount);
+        case Dir::Northeast:
+            return Point(mX + amount, mY - amount);
+        case Dir::Southwest:
+            return Point(mX - amount, mY + amount);
+        case Dir::Southeast:
+            return Point(mX + amount, mY + amount);
         default:
             return Point(*this);
     }
