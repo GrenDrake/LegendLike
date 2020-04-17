@@ -109,7 +109,7 @@ bool System::load() {
                 if (mTracks.find(index) != mTracks.end()) {
                     log.error("Attempted to load as track " + std::to_string(index) + " \"" + filename + "\", but that track number was already in use.");
                 } else {
-                    std::vector<std::string> result = explode(*trackIter, "|");
+                    std::vector<std::string> result = explode(*trackIter, "~");
                     TrackInfo info = { index, filename };
                     if (result.size() != 3) {
                         log.warn(std::string("Track has malformed name: ") + *trackIter);
