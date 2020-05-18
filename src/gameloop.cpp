@@ -143,9 +143,10 @@ void gameloop(System &state) {
         }
 
         while (!state.animationQueue.empty()) {
-            repaint(state);
-            state.waitFrame();
-            SDL_Delay(200);
+            if (repaint(state)) {
+                state.waitFrame();
+                SDL_Delay(200);
+            }
         }
         if (state.hasTick()) state.tick();
         repaint(state);

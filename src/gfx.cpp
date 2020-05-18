@@ -15,7 +15,7 @@
 #include "textutil.h"
 #include "config.h"
 
-void repaint(System &state, bool callPresent) {
+bool repaint(System &state, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -134,6 +134,7 @@ void repaint(System &state, bool callPresent) {
                     case AnimType::All:
                         // draw all cells
                         if (std::find(curAnim.points.begin(), curAnim.points.end(), here) != curAnim.points.end()) {
+                            didAnimation = true;
                             SDL_Texture *tile = state.getTile(curAnim.tileNum);
                             SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
@@ -144,6 +145,12 @@ void repaint(System &state, bool callPresent) {
     }
     if (curAnim.type == AnimType::All) {
         state.animationQueue.pop_front();
+    }
+    if (curAnim.type == AnimType::Travel && !didAnimation) {
+        curAnim.points.pop_front();
+        if (curAnim.points.empty()) {
+            state.animationQueue.pop_front();
+        }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
 
@@ -297,6 +304,7 @@ void repaint(System &state, bool callPresent) {
 
 
     if (callPresent) SDL_RenderPresent(state.renderer);
+    return didAnimation;
 }
 
 void gfx_frameDelay(System &state) {

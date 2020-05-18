@@ -182,7 +182,7 @@ const int charAbilities = 1;
 const int charInventory = 2;
 const int charModeCount = 3;
 
-void repaint(System &state, bool callPresent = true);
+bool repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);
 
 void doCharInfo(System &system, int initialMode);
