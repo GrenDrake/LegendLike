@@ -146,6 +146,7 @@ void gameloop(System &state) {
             if (repaint(state)) {
                 state.waitFrame();
                 SDL_Delay(200);
+                SDL_PumpEvents();
             }
         }
         if (state.hasTick()) state.tick();
