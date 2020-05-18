@@ -279,6 +279,7 @@ bool System::loadMoveData() {
 
         type.player_use     = moves.readWord();
         type.other_use      = moves.readWord();
+        type.damageIcon     = moves.readWord();
         type.flags          = moves.readWord();
 
         MoveType::add(type);

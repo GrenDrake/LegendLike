@@ -123,8 +123,8 @@ void repaint(System &state, bool callPresent) {
                             didAnimation = true;
                             curAnim.points.pop_front();
                             if (visible) {
-                                SDL_SetRenderDrawColor(state.renderer, 127, 127, 127, 127);
-                                SDL_RenderFillRect(state.renderer, &texturePosition);
+                                SDL_Texture *tile = state.getTile(curAnim.tileNum);
+                                SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                             }
                             if (curAnim.points.empty()) {
                                 state.animationQueue.pop_front();
@@ -134,8 +134,8 @@ void repaint(System &state, bool callPresent) {
                     case AnimType::All:
                         // draw all cells
                         if (std::find(curAnim.points.begin(), curAnim.points.end(), here) != curAnim.points.end()) {
-                            SDL_SetRenderDrawColor(state.renderer, 196, 92, 92, 127);
-                            SDL_RenderFillRect(state.renderer, &texturePosition);
+                            SDL_Texture *tile = state.getTile(curAnim.tileNum);
+                            SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
                         break;
                 }

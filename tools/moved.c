@@ -25,6 +25,7 @@ struct move_info {
     int form;
     int player_use;
     int other_use;
+    int damage_icon;
     unsigned flags;
 };
 
@@ -169,6 +170,7 @@ int read_data() {
         a_move->form        = read32(fp);
         a_move->player_use  = read32(fp);
         a_move->other_use   = read32(fp);
+        a_move->damage_icon = read32(fp);
         a_move->flags       = read32(fp);
     }
     qsort(moves, MAX_MOVES, sizeof(struct move_info), load_data_sort);
@@ -198,6 +200,7 @@ void write_data() {
             write32(fp, a_move->form);
             write32(fp, a_move->player_use);
             write32(fp, a_move->other_use);
+            write32(fp, a_move->damage_icon);
             write32(fp, a_move->flags);
         }
     }
@@ -221,7 +224,8 @@ int* field_by_index(struct move_info *a_move, int index) {
         case 11:    return &a_move->form;
         case 12:    return &a_move->player_use;
         case 13:    return &a_move->other_use;
-        case 14:    return (int*)&a_move->flags;
+        case 14:    return &a_move->damage_icon;
+        case 15:    return (int*)&a_move->flags;
         default:    return NULL;
     }
 }
@@ -262,7 +266,7 @@ const char* get_type_name(int type) {
     return "unknown";
 }
 
-#define MAX_TILE_FIELD      14
+#define MAX_TILE_FIELD      15
 void edit_tile(int tile_number) {
     int field = 0;
     struct move_info *a_move = &moves[tile_number];
@@ -285,7 +289,8 @@ void edit_tile(int tile_number) {
         mvprintw(11, 0, "       FORM: %d%c %s",     a_move->form,          field == 11 ? '_' : ' ', get_form_name(a_move->form));
         mvprintw(12, 0, " PLAYER USE: %d%c %.40s",  a_move->player_use,    field == 12 ? '_' : ' ', get_string(a_move->player_use));
         mvprintw(13, 0, "  OTHER USE: %d%c %.40s",  a_move->other_use,     field == 13 ? '_' : ' ', get_string(a_move->other_use));
-        mvprintw(14, 0, "      FLAGS: 0x%X%c",      a_move->flags,         field == 14 ? '_' : ' ');
+        mvprintw(14, 0, "DAMAGE ICON: %d%c",        a_move->damage_icon,   field == 14 ? '_' : ' ');
+        mvprintw(15, 0, "      FLAGS: 0x%X%c",      a_move->flags,         field == 15 ? '_' : ' ');
         mvprintw(field, 0, "->");
 
         refresh();
@@ -374,4 +379,3 @@ void edit_tile(int tile_number) {
     }
 
 }
-

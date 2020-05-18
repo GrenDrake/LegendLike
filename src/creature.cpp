@@ -163,7 +163,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Point &aimedA
             }
             if (!points.empty()) points.erase(points.begin());
             if (!points.empty()) {
-                Animation anim{AnimType::Travel};
+                Animation anim{AnimType::Travel, move.damageIcon};
                 for (const Point &p : points) anim.points.push_back(p);
                 system.queueAnimation(anim);
             }
@@ -180,7 +180,7 @@ void Creature::useAbility(System &system, int abilityNumber, const Point &aimedA
     // get the set of effected tiles
     std::vector<Point> effected;
     effected.push_back(target);
-    Animation anim{AnimType::All};
+    Animation anim{AnimType::All, move.damageIcon};
     anim.points.push_back(target);
     switch(move.shape) {
         case shapeSquare:

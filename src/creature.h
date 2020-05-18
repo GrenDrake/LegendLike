@@ -69,6 +69,7 @@ public:
     int form;
     int player_use;
     int other_use;
+    int damageIcon;
     unsigned flags;
 private:
     static std::vector<MoveType> types;

@@ -37,6 +37,7 @@ enum class AnimType {
 
 struct Animation {
     AnimType type;
+    int tileNum;
     std::deque<Point> points;
 };
 
