@@ -52,7 +52,7 @@ void repaint(System &state, bool callPresent) {
     for (int y = 0; y < mapHeightTiles; ++y) {
         for (int x = 0; x < mapWidthTiles; ++x) {
             const Point here(viewX + x, viewY + y);
-            if (here.x() < 0 || here.y() < 0 || here.x() >= state.getBoard()->width() || here.y() >= state.getBoard()->height()) {
+            if (!state.getBoard()->valid(here)) {
                 continue;
             }
             bool visible = state.getBoard()->isVisible(here);
