@@ -16,7 +16,7 @@
 #include "gfx.h"
 #include "textutil.h"
 
-Dir gfx_GetDirection(System &system, const std::string &prompt) {
+Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false) {
     system.addMessage(prompt + "; which way?");
     while (1) {
         repaint(system);
@@ -30,6 +30,12 @@ Dir gfx_GetDirection(System &system, const std::string &prompt) {
                 case Command::Cancel:
                     system.appendMessage(" Cancelled.");
                     return Dir::None;
+                case Command::Wait:
+                    if (allowHere) {
+                        system.appendMessage(" here");
+                        return Dir::Here;
+                    }
+                    break;
                 default:
                     /* we don't need to handle most of the commands */
                     break;
@@ -100,18 +106,22 @@ bool tryInteract(System &state, const Point &target) {
     } else if (event && event->type == eventTypeManual) {
         state.vm->run(event->funcAddr);
         state.requestTick();
+        return true;
     } else {
         const TileInfo &info = TileInfo::get(state.getBoard()->getTile(target));
         int to = info.interactTo;
         if (to >= 0) {
             state.getBoard()->setTile(target, to);
             state.requestTick();
+            return true;
         } else if (to == interactGoDown) {
             state.down();
             state.requestTick();
+            return true;
         } else if (to == interactGoUp) {
             state.up();
             state.requestTick();
+            return true;
         }
     }
     return false;
@@ -180,14 +190,25 @@ void gameloop(System &state) {
                         tryInteract(state, dest);
                     }
                     break; }
-                case Command::Run:
-                    runDirection = cmd.direction;
-                    break;
+                case Command::Run: {
+                    Dir d = cmd.direction;
+                    if (d == Dir::None) {
+                        d = gfx_GetDirection(state, "Run");
+                        if (d == Dir::None) break;
+                    }
+                    runDirection = d;
+                    break; }
 
                 case Command::Interact: {
                     Dir d = cmd.direction;
+                    if (d == Dir::None) {
+                        d = gfx_GetDirection(state, "Activate", true);
+                        if (d == Dir::None) break;
+                    }
                     Point target = state.getPlayer()->position.shift(d, 1);
-                    tryInteract(state, target);
+                    if (!tryInteract(state, target)) {
+                        state.addMessage("Nothing to do!");
+                    }
                     break; }
                 case Command::Wait:
                     state.requestTick();

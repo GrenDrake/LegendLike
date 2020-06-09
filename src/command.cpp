@@ -36,6 +36,7 @@ CommandDef gameCommands[] = {
     { Command::Move,        Dir::Northwest, SDLK_KP_7 },
     { Command::Move,        Dir::Northwest, SDLK_y },
 
+    { Command::Run,         Dir::None, SDLK_r },
     { Command::Run,         Dir::North, SDLK_UP,        KMOD_LSHIFT },
     { Command::Run,         Dir::North, SDLK_KP_8,      KMOD_LSHIFT },
     { Command::Run,         Dir::North, SDLK_k,         KMOD_LSHIFT },
@@ -57,6 +58,7 @@ CommandDef gameCommands[] = {
     { Command::Run,         Dir::Northwest, SDLK_KP_7,  KMOD_LSHIFT },
     { Command::Run,         Dir::Northwest, SDLK_y,     KMOD_LSHIFT },
 
+    { Command::Interact,    Dir::None,  SDLK_a },
     { Command::Interact,    Dir::North, SDLK_UP,        KMOD_LALT },
     { Command::Interact,    Dir::North, SDLK_KP_8,      KMOD_LALT },
     { Command::Interact,    Dir::North, SDLK_k,         KMOD_LALT },
