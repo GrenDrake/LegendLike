@@ -92,7 +92,37 @@ map0_downToDungeon:
     @warpto         29 28 1
     ret
 
+map0_name:
+    .string "0000.map"
 map0_build:
+    @mf_fromfile    map0_name
+    ; the lab
+    @mf_addactor    aiStill         14 46 2 map0_talk_professor map0_str_professor 0
+    ; the academy
+    @mf_addevent    24 50 map0_downToAcademyCellar eventManual
+    @mf_addactor    aiPaceBox       21 51 2 map0_talk_archdean map0_str_archdean 0
+    @mf_addactor    aiAvoidPlayer   23 51 4 0 map0_strActor 0
+    @mf_addevent    25 47 map0_talk_academysign eventManual
+    ; beast pens
+    @mf_addactor    aiPaceHorz     11 19 5 0 map0_strActor 0
+    @mf_addactor    aiRandom       14 24 5 0 map0_strActor 0
+    @mf_addactor    aiPaceVert     15 30 5 0 map0_strActor 0
+    @mf_addactor    aiFollowPlayer 13 33 5 0 map0_strActor 0
+    ; party gifter tester
+    @mf_addactor    aiStill 18 27 2 map0_test_giveparty map0_str_partygifter 0
+    @mf_addactor    aiRandom 16 25 5 0 0 0
+    ; combat tester
+    @mf_addactor    aiStill 21 28 4 map0_test_fight map0_str_combatdemoguy 0
+    ; dungeon guard house
+    @mf_addevent    29 28 map0_downToDungeon eventManual
+    @mf_addactor    aiStill 25 29 4 map0_talk_gateguard map0_str_gateguard 0
+    ; village green
+    @mf_addevent    26 40 map0_talkwell eventManual
+    @mf_addevent    28 36 map0_talkfire eventManual
+    @mf_addactor    aiStill 25 37 2 map0_talkSage map0_strSage 0
+
+    ret
+
     ; create town frame
     .push_count     tileGrass tileGrass2 tileGrass3 tileGrass tileGrass2 tileGrass3 tileRocks tileTree1 tileTree2 tileTree3
     @mf_fillrand    66 66 0 0
@@ -169,6 +199,7 @@ map0_build:
 
     ; party gifter tester
     @mf_addactor    aiStill 18 27 2 map0_test_giveparty map0_str_partygifter 0
+    @mf_addactor    aiRandom 16 25 5 0 0 0
     ; combat tester
     @mf_addactor    aiStill 21 28 4 map0_test_fight map0_str_combatdemoguy 0
 

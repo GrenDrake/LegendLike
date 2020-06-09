@@ -4,6 +4,7 @@
 #include <queue>
 #include <map>
 #include <vector>
+#include <physfs.h>
 
 #include "board.h"
 #include "creature.h"
@@ -410,4 +411,44 @@ void Board::resetMark() {
             at(Point(x,y)).mark = false;
         }
     }
+}
+
+bool Board::readFromFile(const std::string &filename) {
+    PHYSFS_file *inf = PHYSFS_openRead(filename.c_str());
+    if (!inf) return false;
+
+    PHYSFS_uint16 fileWidth, fileHeight;
+    PHYSFS_readULE16(inf, &fileWidth);
+    PHYSFS_readULE16(inf, &fileHeight);
+    if (fileWidth != mWidth || fileHeight != mHeight) {
+        return false;
+    }
+
+    PHYSFS_uint32 tile;
+    for (int y = 0; y < mHeight; ++y) {
+        for (int x = 0; x < mWidth; ++x) {
+            PHYSFS_readULE32(inf, &tile);
+            at(Point(x, y)).tile = tile;
+        }
+    }
+
+    PHYSFS_close(inf);
+    return true;
+}
+
+bool Board::writeToFile(const std::string &filename) const {
+    PHYSFS_file *inf = PHYSFS_openWrite(filename.c_str());
+    if (!inf) return false;
+
+    PHYSFS_writeULE16(inf, mWidth);
+    PHYSFS_writeULE16(inf, mHeight);
+
+    for (int y = 0; y < mHeight; ++y) {
+        for (int x = 0; x < mWidth; ++x) {
+            PHYSFS_writeULE32(inf, at(Point(x, y)).tile);
+        }
+    }
+
+    PHYSFS_close(inf);
+    return true;
 }

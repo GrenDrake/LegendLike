@@ -52,6 +52,7 @@ enum class Opcode {
     mf_addactor,
     mf_clear,
     mf_addevent,
+    mf_fromfile,
     mf_makemaze,
     mf_makefoes,
 

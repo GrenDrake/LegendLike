@@ -67,6 +67,7 @@ struct mnemonic mnemonics[] = {
     {   op_mf_addactor, "mf_addactor",  0 },
     {   op_mf_clear,    "mf_clear",     0 },
     {   op_mf_addevent, "mf_addevent",  0 },
+    {   op_mf_fromfile, "mf_fromfile",  0 },
     {   op_mf_makemaze, "mf_makemaze",  0 },
     {   op_mf_makefoes, "mf_makefoes",  0 },
 

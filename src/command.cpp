@@ -103,6 +103,7 @@ CommandDef gameCommands[] = {
     { Command::Debug_ShowInfo, Dir::None, SDLK_F5 },
     { Command::Debug_ShowFPS,  Dir::None, SDLK_F7 },
     { Command::Debug_TestPathfinder, Dir::None, SDLK_F9 },
+    { Command::Debug_WriteMapBinary, Dir::None, SDLK_F10 },
 
     { Command::None }
 };
@@ -249,6 +250,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;
         case Command::Debug_ShowInfo:   out << "show info (debug)"; break;
         case Command::Debug_ShowFPS:    out << "show fps (debug)"; break;
+        case Command::Debug_WriteMapBinary: out << "write map to file (debug)"; break;
         case Command::Debug_TestPathfinder: out << "test pathfinder (debug)"; break;
     }
     return out;

@@ -144,6 +144,9 @@ public:
     void dbgRevealAll();
     void dbgToggleFOV();
     void resetMark();
+
+    bool readFromFile(const std::string &filename);
+    bool writeToFile(const std::string &filename) const;
 private:
     int coord(const Point &p) const;
 

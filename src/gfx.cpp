@@ -278,7 +278,7 @@ bool repaint(System &state, bool callPresent) {
                     ss << creature->name << "   ";
                 }
                 const TileInfo &tileInfo = TileInfo::get(tileHere);
-                ss << tileInfo.name << "   " << tileX << ", " << tileY;
+                ss << tileInfo.name << " [" << tileHere << "]   " << tileX << ", " << tileY;
                 ss << " V:" << state.getBoard()->isVisible(here);
                 ss << " K:" << state.getBoard()->isKnown(here);
                 ss << " MAPID: " << state.depth;

@@ -257,6 +257,13 @@ void gameloop(System &state) {
                 case Command::Debug_ShowFPS:
                     state.showFPS = !state.showFPS;
                     break;
+                case Command::Debug_WriteMapBinary: {
+                    if (state.getBoard()->writeToFile("binary.map")) {
+                        state.addMessage("Wrote map to disk as binary.map.");
+                    } else {
+                        state.addMessage("Failed to write map to disk.");
+                    }
+                    break; }
                 case Command::Debug_TestPathfinder: {
                     Board *board = state.getBoard();
                     board->resetMark();

@@ -583,6 +583,13 @@ bool VM::run(unsigned address) {
                     board->addEvent(Point(x, y), target, type);
                 }
                 break; }
+            case Opcode::mf_fromfile: {
+                unsigned fileStrAddr = pop();
+                std::string fromFile = readString(fileStrAddr);
+                if (!state->getBoard()->readFromFile("maps/" + fromFile)) {
+                    state->addMessage("Failed to load map file " + fromFile + ".");
+                }
+                break; }
             case Opcode::mf_makemaze: {
                 unsigned flags = pop();
                 makeMapMaze(state->getBoard(), state->coreRNG, flags);

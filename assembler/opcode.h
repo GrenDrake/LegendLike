@@ -50,6 +50,7 @@ enum opcode {
     op_mf_addactor,
     op_mf_clear,
     op_mf_addevent,
+    op_mf_fromfile,
     op_mf_makemaze,
     op_mf_makefoes,
 
