@@ -619,6 +619,7 @@ bool VM::run(unsigned address) {
             case Opcode::p_stat: {
                 int pos = pop();
                 int stat = pop();
+                pos += stat; // this is just to silence "unused variable" warnings until this gets reimplemented for real
                 push(0);
                 break; }
             case Opcode::p_reset: {
