@@ -111,6 +111,9 @@ public:
     bool up();
     bool build(int forIndex);
 
+    // player state
+    Dir runDirection;
+
     // message log
     std::vector<Message> messages;
 

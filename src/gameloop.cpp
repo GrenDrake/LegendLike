@@ -16,6 +16,8 @@
 #include "gfx.h"
 #include "textutil.h"
 
+void gfx_handleInput(System &state);
+
 Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false) {
     system.addMessage(prompt + "; which way?");
     while (1) {
@@ -126,17 +128,18 @@ bool tryInteract(System &state, const Point &target) {
     }
     return false;
 }
+
 void gameloop(System &state) {
     state.getBoard()->calcFOV(state.getPlayer()->position);
 
-    Dir runDirection = Dir::None;
+    state.runDirection = Dir::None;
 
     while (!state.wantsToQuit) {
-        if (runDirection != Dir::None) {
+        if (state.runDirection != Dir::None) {
             bool hitWall = false;
             do {
-                Point t = state.getPlayer()->position.shift(runDirection, 1);
-                if (state.getPlayer()->tryMove(state.getBoard(), runDirection)) {
+                Point t = state.getPlayer()->position.shift(state.runDirection, 1);
+                if (state.getPlayer()->tryMove(state.getBoard(), state.runDirection)) {
                     const Board::Event *e = state.getBoard()->eventAt(t);
                     if (e && e->type == eventTypeAuto) state.vm->run(e->funcAddr);
                     state.requestTick();
@@ -148,7 +151,7 @@ void gameloop(System &state) {
                     gfx_frameDelay(state);
                 }
             } while (!hitWall);
-            runDirection = Dir::None;
+            state.runDirection = Dir::None;
             continue;
         }
 
@@ -162,154 +165,156 @@ void gameloop(System &state) {
         if (state.hasTick()) state.tick();
         repaint(state);
 
-        // ////////////////////////////////////////////////////////////////////
-        // event loop
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            const CommandDef &cmd = getCommand(state, event, gameCommands);
-            switch(cmd.command) {
-                case Command::None:
-                case Command::Cancel:
-                    // do nothing
-                    break;
-                case Command::SystemMenu:
-                    return;
-                case Command::Quit:
-                    state.wantsToQuit = true;
-                    break;
-
-                case Command::Move: {
-                    Point dest = state.getPlayer()->position.shift(cmd.direction);
-                    if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
-                        const Board::Event *e = state.getBoard()->eventAt(dest);
-                        if (e && e->type == eventTypeAuto) {
-                            state.vm->run(e->funcAddr);
-                        }
-                        state.requestTick();
-                    } else {
-                        tryInteract(state, dest);
-                    }
-                    break; }
-                case Command::Run: {
-                    Dir d = cmd.direction;
-                    if (d == Dir::None) {
-                        d = gfx_GetDirection(state, "Run");
-                        if (d == Dir::None) break;
-                    }
-                    runDirection = d;
-                    break; }
-
-                case Command::Interact: {
-                    Dir d = cmd.direction;
-                    if (d == Dir::None) {
-                        d = gfx_GetDirection(state, "Activate", true);
-                        if (d == Dir::None) break;
-                    }
-                    Point target = state.getPlayer()->position.shift(d, 1);
-                    if (!tryInteract(state, target)) {
-                        state.addMessage("Nothing to do!");
-                    }
-                    break; }
-                case Command::Wait:
-                    state.requestTick();
-                    break;
-                case Command::ShowMap:
-                    doShowMap(state);
-                    break;
-                case Command::ShowTooltip:
-                    state.showTooltip = !state.showTooltip;
-                    break;
-
-                case Command::CharacterInfo:
-                    doCharInfo(state, charStats);
-                    break;
-                case Command::Inventory:
-                    doCharInfo(state, charInventory);
-                    break;
-                case Command::AbilityList:
-                    doCharInfo(state, charAbilities);
-                    break;
-
-                case Command::Examine:
-                    if (gfx_SelectTile(state, "Looking at").x() >= 0) {
-                        state.removeMessage();
-                    }
-                    break;
-
-                case Command::QuickKey_1:
-                case Command::QuickKey_2:
-                case Command::QuickKey_3:
-                case Command::QuickKey_4: {
-                    int slot = static_cast<int>(cmd.command) - static_cast<int>(Command::QuickKey_1);
-                    switch(state.quickSlots[slot].type) {
-                        case quickSlotUnused:
-                            /* do nothing */
-                            break;
-                        case quickSlotItem:
-                            /* not implemented */
-                            break;
-                        case quickSlotAbility: {
-                            int abilityNumber = state.quickSlots[slot].action;
-                            const MoveType &move = MoveType::get(abilityNumber);
-                            Point target = Point(-1, -1);
-                            if (move.form == formMelee) {
-                                Dir dir = gfx_GetDirection(state, move.name);
-                                if (dir == Dir::None) break;
-                                target = state.getPlayer()->position.shift(dir);
-                            } else if (move.form != formSelf) {
-                                target = gfx_SelectTile(state, upperFirst(move.name));
-                                if (target.x() < 0) break;
-                            }
-                            state.getPlayer()->useAbility(state, abilityNumber, target);
-                            state.requestTick();
-                            break; }
-                    }
-                    break; }
-
-                case Command::Debug_Reveal:
-                    state.getBoard()->dbgRevealAll();
-                    break;
-                case Command::Debug_NoFOV:
-                    state.getBoard()->dbgToggleFOV();
-                    break;
-                case Command::Debug_ShowInfo:
-                    state.showInfo = !state.showInfo;
-                    break;
-                case Command::Debug_ShowFPS:
-                    state.showFPS = !state.showFPS;
-                    break;
-                case Command::Debug_WriteMapBinary: {
-                    if (state.getBoard()->writeToFile("binary.map")) {
-                        state.addMessage("Wrote map to disk as binary.map.");
-                    } else {
-                        state.addMessage("Failed to write map to disk.");
-                    }
-                    break; }
-                case Command::Debug_TestPathfinder: {
-                    Board *board = state.getBoard();
-                    board->resetMark();
-                    Point src = state.getPlayer()->position;
-                    Point dest = board->findRandomTile(state.coreRNG, tileFloor);
-                    std::stringstream line;
-                    line << "Finding path from " << src << " to " << dest << '.';
-                    state.addMessage(line.str());
-                    auto points = board->findPath(src, dest);
-                    if (points.empty()) {
-                        state.addMessage("No path found.");
-                    } else {
-                        state.addMessage("Path has " + std::to_string(points.size()) + " tiles.");
-                        for (const Point &p : points) {
-                            board->at(p).mark = true;
-                        }
-                    }
-                    break; }
-
-                default:
-                    /* we don't need to worry about the other kinds of command */
-                    break;
-            }
-        }
+        gfx_handleInput(state);
 
         state.waitFrame();
+    }
+}
+
+void gfx_handleInput(System &state) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        const CommandDef &cmd = getCommand(state, event, gameCommands);
+        switch(cmd.command) {
+            case Command::None:
+            case Command::Cancel:
+                // do nothing
+                break;
+            case Command::SystemMenu:
+                return;
+            case Command::Quit:
+                state.wantsToQuit = true;
+                break;
+
+            case Command::Move: {
+                Point dest = state.getPlayer()->position.shift(cmd.direction);
+                if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
+                    const Board::Event *e = state.getBoard()->eventAt(dest);
+                    if (e && e->type == eventTypeAuto) {
+                        state.vm->run(e->funcAddr);
+                    }
+                    state.requestTick();
+                } else {
+                    tryInteract(state, dest);
+                }
+                break; }
+            case Command::Run: {
+                Dir d = cmd.direction;
+                if (d == Dir::None) {
+                    d = gfx_GetDirection(state, "Run");
+                    if (d == Dir::None) break;
+                }
+                state.runDirection = d;
+                break; }
+
+            case Command::Interact: {
+                Dir d = cmd.direction;
+                if (d == Dir::None) {
+                    d = gfx_GetDirection(state, "Activate", true);
+                    if (d == Dir::None) break;
+                }
+                Point target = state.getPlayer()->position.shift(d, 1);
+                if (!tryInteract(state, target)) {
+                    state.addMessage("Nothing to do!");
+                }
+                break; }
+            case Command::Wait:
+                state.requestTick();
+                break;
+            case Command::ShowMap:
+                doShowMap(state);
+                break;
+            case Command::ShowTooltip:
+                state.showTooltip = !state.showTooltip;
+                break;
+
+            case Command::CharacterInfo:
+                doCharInfo(state, charStats);
+                break;
+            case Command::Inventory:
+                doCharInfo(state, charInventory);
+                break;
+            case Command::AbilityList:
+                doCharInfo(state, charAbilities);
+                break;
+
+            case Command::Examine:
+                if (gfx_SelectTile(state, "Looking at").x() >= 0) {
+                    state.removeMessage();
+                }
+                break;
+
+            case Command::QuickKey_1:
+            case Command::QuickKey_2:
+            case Command::QuickKey_3:
+            case Command::QuickKey_4: {
+                int slot = static_cast<int>(cmd.command) - static_cast<int>(Command::QuickKey_1);
+                switch(state.quickSlots[slot].type) {
+                    case quickSlotUnused:
+                        /* do nothing */
+                        break;
+                    case quickSlotItem:
+                        /* not implemented */
+                        break;
+                    case quickSlotAbility: {
+                        int abilityNumber = state.quickSlots[slot].action;
+                        const MoveType &move = MoveType::get(abilityNumber);
+                        Point target = Point(-1, -1);
+                        if (move.form == formMelee) {
+                            Dir dir = gfx_GetDirection(state, move.name);
+                            if (dir == Dir::None) break;
+                            target = state.getPlayer()->position.shift(dir);
+                        } else if (move.form != formSelf) {
+                            target = gfx_SelectTile(state, upperFirst(move.name));
+                            if (target.x() < 0) break;
+                        }
+                        state.getPlayer()->useAbility(state, abilityNumber, target);
+                        state.requestTick();
+                        break; }
+                }
+                break; }
+
+            case Command::Debug_Reveal:
+                state.getBoard()->dbgRevealAll();
+                break;
+            case Command::Debug_NoFOV:
+                state.getBoard()->dbgToggleFOV();
+                break;
+            case Command::Debug_ShowInfo:
+                state.showInfo = !state.showInfo;
+                break;
+            case Command::Debug_ShowFPS:
+                state.showFPS = !state.showFPS;
+                break;
+            case Command::Debug_WriteMapBinary: {
+                if (state.getBoard()->writeToFile("binary.map")) {
+                    state.addMessage("Wrote map to disk as binary.map.");
+                } else {
+                    state.addMessage("Failed to write map to disk.");
+                }
+                break; }
+            case Command::Debug_TestPathfinder: {
+                Board *board = state.getBoard();
+                board->resetMark();
+                Point src = state.getPlayer()->position;
+                Point dest = board->findRandomTile(state.coreRNG, tileFloor);
+                std::stringstream line;
+                line << "Finding path from " << src << " to " << dest << '.';
+                state.addMessage(line.str());
+                auto points = board->findPath(src, dest);
+                if (points.empty()) {
+                    state.addMessage("No path found.");
+                } else {
+                    state.addMessage("Path has " + std::to_string(points.size()) + " tiles.");
+                    for (const Point &p : points) {
+                        board->at(p).mark = true;
+                    }
+                }
+                break; }
+
+            default:
+                /* we don't need to worry about the other kinds of command */
+                break;
+        }
     }
 }
