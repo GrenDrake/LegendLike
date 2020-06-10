@@ -15,7 +15,7 @@
 #include "textutil.h"
 #include "config.h"
 
-bool repaint(System &state, bool callPresent) {
+void gfx_drawMap(System &state) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -26,17 +26,12 @@ bool repaint(System &state, bool callPresent) {
     const int scaledTileHeight = tileHeight * tileScale;
 
     const int sidebarWidth = 30 * state.smallFont->getCharWidth();
-    const int sidebarX = screenWidth - sidebarWidth;
     const int mapOffsetX = scaledTileWidth / 3 * 2;
     const int mapOffsetY = scaledTileHeight / 3 * 2;
     const int mapWidthPixels = screenWidth - sidebarWidth;
     const int mapHeightPixels = screenHeight;
     const int mapWidthTiles = mapWidthPixels / scaledTileWidth + 2;
     const int mapHeightTiles = mapHeightPixels / scaledTileHeight + 2;
-
-    const Color uiColor{255, 255, 255};
-
-    gfx_Clear(state);
 
     Animation noAnimation{AnimType::None};
     Animation &curAnim = state.animationQueue.empty() ? noAnimation : state.animationQueue.front();
@@ -153,6 +148,30 @@ bool repaint(System &state, bool callPresent) {
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
+}
+
+void gfx_drawSidebar(System &state) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+
+    int tileScale = state.config->getInt("tile_scale", 1);
+    if (tileScale < 1) tileScale = 1;
+    const int scaledTileWidth = tileWidth * tileScale;
+    const int scaledTileHeight = tileHeight * tileScale;
+
+    const int sidebarWidth = 30 * state.smallFont->getCharWidth();
+    const int sidebarX = screenWidth - sidebarWidth;
+    const int mapOffsetX = scaledTileWidth / 3 * 2;
+    const int mapOffsetY = scaledTileHeight / 3 * 2;
+    const int mapWidthPixels = screenWidth - sidebarWidth;
+    const int mapHeightPixels = screenHeight;
+    const int mapWidthTiles = mapWidthPixels / scaledTileWidth + 2;
+    const int mapHeightTiles = mapHeightPixels / scaledTileHeight + 2;
+    int viewX = state.getPlayer()->position.x() - (mapWidthTiles / 2);
+    int viewY = state.getPlayer()->position.y() - (mapHeightTiles  / 2);
+
+    const Color uiColor{255, 255, 255};
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  PLAYER INFO
@@ -298,13 +317,31 @@ bool repaint(System &state, bool callPresent) {
         ss << "  FPS: " << state.getActualFps();
         state.smallFont->out(0, 0, ss.str().c_str());
     }
+}
+
+bool repaint(System &state, bool callPresent) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+
+    const int sidebarWidth = 30 * state.smallFont->getCharWidth();
+    const int mapWidthPixels = screenWidth - sidebarWidth;
+    const int mapHeightPixels = screenHeight;
+
+    const Color uiColor{255, 255, 255};
+
+    gfx_Clear(state);
+
+    Animation noAnimation{AnimType::None};
+
+    gfx_drawMap(state);
+    gfx_drawSidebar(state);
 
     gfx_HLine(state, 0, screenWidth, mapHeightPixels, uiColor);
     gfx_VLine(state, mapWidthPixels, 0, mapHeightPixels, uiColor);
 
-
     if (callPresent) SDL_RenderPresent(state.renderer);
-    return didAnimation;
+    return false;
 }
 
 void gfx_frameDelay(System &state) {
