@@ -35,6 +35,21 @@ const int SW_FIREROD = 4;
 const int SW_ICEROD = 5;
 const int SW_COUNT = 6;
 
+const int ITM_SWORD_UPGRADE  = 0;
+const int ITM_ARMOUR_UPGRADE = 1;
+const int ITM_HEALTH_UPGRADE = 2;
+const int ITM_ENERGY_UPGRADE = 3;
+const int ITM_BOW            = 4;
+const int ITM_HOOKSHOT       = 5;
+const int ITM_ICEROD         = 7;
+const int ITM_FIREROD        = 8;
+const int ITM_MATTOCK        = 9;
+const int ITM_AMMO_ARROW     = 10;
+const int ITM_AMMO_BOMB      = 11;
+const int ITM_COIN           = 12;
+const int ITM_CAP_ARROW      = 13;
+const int ITM_CAP_BOMB       = 14;
+
 struct Color {
     int r, g, b;
 };
@@ -64,6 +79,12 @@ struct QuickSlot {
 struct Message {
     int newTurns;
     std::string text;
+};
+
+struct ItemLocation {
+    int itemId;
+    int qty;
+    bool used;
 };
 
 class System {
@@ -123,6 +144,7 @@ public:
     int swordLevel, armourLevel;
     int subweaponLevel[SW_COUNT];
     int arrowCount, bombCount, coinCount;
+    int arrowCapacity, bombCapacity;
 
     // message log
     std::vector<Message> messages;
@@ -147,6 +169,7 @@ public:
     std::map<std::string, SDL_Texture*> mImages;
     std::map<std::string, Font*> mFonts;
     std::map<int, std::string> strings;
+    std::vector<ItemLocation> itemLocations;
     std::deque<Animation> animationQueue;
 
     // system modules

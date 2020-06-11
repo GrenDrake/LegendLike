@@ -77,6 +77,7 @@ struct mnemonic mnemonics[] = {
     {   op_p_learn,     "p_learn",      0 },
     {   op_p_forget,    "p_forget",     0 },
     {   op_p_knows,     "p_knows",      0 },
+    {   op_p_giveitem,  "p_giveitem",   0 },
 
     {   op_warpto,      "warpto",       0 },
 

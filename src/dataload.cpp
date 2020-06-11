@@ -191,6 +191,21 @@ bool System::load() {
         if (!loadCreatureData())    return false;
         if (!loadMoveData())        return false;
         if (!loadTileData())        return false;
+
+        const unsigned locationSize = 5;
+        const unsigned locationsAddr = vm->getExport("locations");
+        if (locationsAddr != -1) {
+            unsigned counter = 0;
+            while (1) {
+                int itemId = vm->readWord(locationsAddr + counter * locationSize);
+                int qty = vm->readByte(locationsAddr + counter * locationSize + 4);
+                if (itemId < 0) break;
+                itemLocations.push_back(ItemLocation{itemId, qty});
+                ++counter;
+            }
+        }
+        log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
+
     } catch (VMError &e) {
         log.error(e.what());
         return false;

@@ -62,6 +62,7 @@ enum class Opcode {
     p_learn,
     p_forget,
     p_knows,
+    p_giveitem,
 
     warpto,
 

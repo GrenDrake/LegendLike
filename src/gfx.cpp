@@ -228,11 +228,11 @@ void gfx_drawSidebar(System &state) {
     yPos += 40; artPos.y += 40;
     swordArt = state.getImage("ui/arrow.png");
     SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.arrowCount));
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.arrowCount) + "/" + std::to_string(state.arrowCapacity));
     yPos += 20; artPos.y += 20;
     swordArt = state.getImage("ui/bomb.png");
     SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.bombCount));
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.bombCount) + "/" + std::to_string(state.bombCapacity));
     yPos += 20; artPos.y += 20;
     swordArt = state.getImage("ui/coin.png");
     SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
@@ -247,7 +247,9 @@ void gfx_drawSidebar(System &state) {
         SDL_Texture *swordArt = state.getImage(subweapons[i].artfile);
         artPos.y = yPos;
         SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-        state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+        if (i == SW_BOW) {
+            state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+        }
         yPos += 20;
     }
     yPos -= 10;

@@ -1,10 +1,56 @@
-.export start map_info
+.export start map_info locations
 
 .include "stddefs.inc"
 
 
 .define strPrologText   0
 .define strDivider      10
+
+.define itmSwordUpgrade  0
+.define itmArmourUpgrade 1
+.define itmHealthUpgrade 2
+.define itmEnergyUpgrade 3
+.define itmBow           4
+.define itmHookshot      5
+.define itmIceRod        7
+.define itmFireRod       8
+.define itmMattock       9
+.define itmAmmoArrow     10
+.define itmAmmoBomb      11
+.define itmCoin          12
+.define itmCapArrow      13
+.define itmCapBomb       14
+
+locations:
+    .word itmSwordUpgrade  ; item ID
+    .byte 1 ; quantity
+    .word itmArmourUpgrade ; item ID
+    .byte 1 ; quantity
+    .word itmHealthUpgrade ; item ID
+    .byte 1 ; quantity
+    .word itmEnergyUpgrade ; item ID
+    .byte 1 ; quantity
+    .word itmBow           ; item ID
+    .byte 1 ; quantity
+    .word itmHookshot      ; item ID
+    .byte 1 ; quantity
+    .word itmIceRod        ; item ID
+    .byte 1 ; quantity
+    .word itmFireRod       ; item ID
+    .byte 1 ; quantity
+    .word itmMattock       ; item ID
+    .byte 1 ; quantity
+    .word itmAmmoArrow     ; item ID
+    .byte 5 ; quantity
+    .word itmAmmoBomb      ; item ID
+    .byte 1 ; quantity
+    .word itmCoin          ; item ID
+    .byte 3 ; quantity
+    .word itmCapArrow      ; item ID
+    .byte 10 ; quantity
+    .word itmCapBomb       ; item ID
+    .byte 5 ; quantity
+    .word -1               ; end of location list
 
 
 start:

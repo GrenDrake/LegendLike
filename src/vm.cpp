@@ -647,6 +647,44 @@ bool VM::run(unsigned address) {
                 bool result = state->getPlayer()->knowsMove(moveNo);
                 push(result ? 1 : 0);
                 break; }
+            case Opcode::p_giveitem: {
+                int locationNumber = pop();
+                if (locationNumber < 0 || locationNumber >= state->itemLocations.size()) {
+                    state->addMessage("Invalid location #" + std::to_string(locationNumber));
+                    break;
+                }
+                ItemLocation &locationDef = state->itemLocations[locationNumber];
+                if (locationDef.used) {
+                    state->addMessage("Tried to regive location #" + std::to_string(locationNumber));
+                    break;
+                }
+                locationDef.used = true;
+                switch(locationDef.itemId) {
+                    case ITM_SWORD_UPGRADE: ++state->swordLevel; break;
+                    case ITM_ARMOUR_UPGRADE: ++state->armourLevel; break;
+                    case ITM_ENERGY_UPGRADE: state->addMessage("Energy upgrade not implemented."); break;
+                    case ITM_HEALTH_UPGRADE: state->addMessage("Health upgrade not implemented."); break;
+                    case ITM_BOW:           ++state->subweaponLevel[SW_BOW]; break;
+                    case ITM_HOOKSHOT:      ++state->subweaponLevel[SW_HOOKSHOT]; break;
+                    case ITM_ICEROD:        ++state->subweaponLevel[SW_ICEROD]; break;
+                    case ITM_FIREROD:       ++state->subweaponLevel[SW_FIREROD]; break;
+                    case ITM_MATTOCK:       ++state->subweaponLevel[SW_MATTOCK]; break;
+                    case ITM_AMMO_ARROW:
+                        state->arrowCount += locationDef.qty;
+                        if (state->arrowCount > state->arrowCapacity) state->arrowCount = state->arrowCapacity;
+                        break;
+                    case ITM_AMMO_BOMB:
+                        state->bombCount += locationDef.qty;
+                        state->subweaponLevel[SW_BOMB] = 1;
+                        if (state->bombCount > state->bombCapacity) state->bombCount = state->bombCapacity;
+                        break;
+                    case ITM_COIN:          state->coinCount += locationDef.qty; break;
+                    case ITM_CAP_ARROW:     state->arrowCapacity += locationDef.qty; break;
+                    case ITM_CAP_BOMB:      state->bombCapacity += locationDef.qty; break;
+                    default:
+                        state->addMessage("Tried to give unknown item #" + std::to_string(locationDef.itemId));
+                }
+                break; }
 
             case Opcode::warpto: {
                 int map = pop();

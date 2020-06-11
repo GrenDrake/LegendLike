@@ -59,6 +59,8 @@ map0_talkfire:
     ret
 
 map0_test_giveparty:
+    @p_giveitem     12
+    @p_giveitem     13
     @p_learn        3
     @p_learn        4
     @p_learn        5
@@ -69,6 +71,18 @@ map0_test_giveparty:
     ret
 
 map0_test_fight:
+    @p_giveitem     0
+    @p_giveitem     1
+    @p_giveitem     2
+    @p_giveitem     3
+    @p_giveitem     4
+    @p_giveitem     5
+    @p_giveitem     6
+    @p_giveitem     7
+    @p_giveitem     8
+    @p_giveitem     9
+    @p_giveitem     10
+    @p_giveitem     11
     @p_forget       5
     @saystr         map0_str_fledTestFight
     textbox
