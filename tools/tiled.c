@@ -27,6 +27,7 @@ struct tile_info {
     int art_index;
     int red, green, blue;
     int interact_to;
+    int animLength;
     unsigned flags;
 };
 
@@ -158,6 +159,7 @@ int read_data() {
         tile->red = read8(fp);
         tile->green = read8(fp);
         tile->blue = read8(fp);
+        tile->animLength = read8(fp);
         tile->flags = read32(fp);
         fread(tile->name, NAME_LENGTH, 1, fp);
     }
@@ -180,6 +182,7 @@ void write_data() {
             write8(fp, tile->red);
             write8(fp, tile->green);
             write8(fp, tile->blue);
+            write8(fp, tile->animLength);
             write32(fp, tile->flags);
             fwrite(tile->name, NAME_LENGTH, 1, fp);
         }
@@ -196,12 +199,13 @@ int* field_by_index(struct tile_info *tile, int index) {
         case 4:     return &tile->green;
         case 5:     return &tile->blue;
         case 6:     return &tile->interact_to;
-        case 7:     return (int*)&tile->flags;
+        case 7:     return &tile->animLength;
+        case 8:     return (int*)&tile->flags;
         default:    return NULL;
     }
 }
 
-#define MAX_TILE_FIELD      10
+#define MAX_TILE_FIELD      11
 void edit_tile(int tile_number) {
     int field = 0;
     struct tile_info *tile = &tiles[tile_number];
@@ -217,10 +221,11 @@ void edit_tile(int tile_number) {
         mvprintw(4, 0, "      GREEN: %d%c", tile->green,       field == 4 ? '_' : ' ');
         mvprintw(5, 0, "       BLUE: %d%c", tile->blue,        field == 5 ? '_' : ' ');
         mvprintw(6, 0, "   INTERACT: %d%c", tile->interact_to, field == 6 ? '_' : ' ');
-        mvprintw(7, 0, "      FLAGS: 0x%X%c", tile->flags, field == 7 ? '_' : ' ');
-        mvprintw(8, 0, "      SOLID: %s", (tile->flags & TF_SOLID) ? "yes" : "no");
-        mvprintw(9, 0, "      OPAQUE: %s", (tile->flags & TF_OPAQUE) ? "yes" : "no");
-        mvprintw(10,0, "      ISDOOR: %s", (tile->flags & TF_ISDOOR) ? "yes" : "no");
+        mvprintw(7, 0, "ANIM LENGTH: %d%c", tile->animLength,  field == 7 ? '_' : ' ');
+        mvprintw(8, 0, "      FLAGS: 0x%X%c", tile->flags,     field == 8 ? '_' : ' ');
+        mvprintw(9, 0, "      SOLID: %s", (tile->flags & TF_SOLID) ? "yes" : "no");
+        mvprintw(10, 0, "     OPAQUE: %s", (tile->flags & TF_OPAQUE) ? "yes" : "no");
+        mvprintw(11,0, "      ISDOOR: %s", (tile->flags & TF_ISDOOR) ? "yes" : "no");
         mvprintw(field, 0, "->");
 
         refresh();
@@ -235,11 +240,11 @@ void edit_tile(int tile_number) {
             case '\r':
                 if (field == 1) {
                     edit_text(1, 13, tile->name);
-                } else if (field == 8) {
-                    tile->flags ^= TF_SOLID;
                 } else if (field == 9) {
-                    tile->flags ^= TF_OPAQUE;
+                    tile->flags ^= TF_SOLID;
                 } else if (field == 10) {
+                    tile->flags ^= TF_OPAQUE;
+                } else if (field == 11) {
                     tile->flags ^= TF_ISDOOR;
                 }
                 break;
@@ -268,6 +273,7 @@ void edit_tile(int tile_number) {
             case '-':
                 if (t) *t = -(*t);
                 break;
+            case '/':
             case KEY_BACKSPACE:
             case '\x8':
                 if (field == 1) {

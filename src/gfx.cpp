@@ -63,7 +63,12 @@ void gfx_drawMap(System &state) {
 
                 if (tileHere != tileOutOfBounds) {
                     const TileInfo &tileInfo = TileInfo::get(tileHere);
-                    SDL_Texture *tile = state.getTile(tileInfo.artIndex);
+                    SDL_Texture *tile = nullptr;
+                    if (tileInfo.animLength > 0) {
+                        tile = state.getTile(tileInfo.artIndex + ((state.framecount / 12) % (tileInfo.animLength + 1)));
+                    } else {
+                        tile = state.getTile(tileInfo.artIndex);
+                    }
                     if (tile) {
                         if (visible) SDL_SetTextureColorMod(tile, 255, 255, 255);
                         else         SDL_SetTextureColorMod(tile,  96,  96,  96);

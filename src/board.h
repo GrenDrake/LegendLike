@@ -18,6 +18,7 @@ struct TileInfo {
     int green;
     int blue;
     int interactTo;
+    int animLength;
     unsigned flags;
 
     bool is(unsigned flag) const;
