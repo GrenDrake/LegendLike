@@ -156,20 +156,6 @@ void gfx_drawMap(System &state) {
     SDL_RenderSetClipRect(state.renderer, nullptr);
 }
 
-struct Subweapon {
-    std::string name;
-    std::string artfile;
-};
-std::vector<Subweapon> subweapons{
-    { "bow",      "ui/bow.png" },
-    { "hookshot", "ui/hookshot.png" },
-    { "bomb",     "ui/bomb.png" },
-    { "mattock",  "ui/mattock.png" },
-    { "firerod",  "ui/firerod.png" },
-    { "icerod",   "ui/icerod.png" },
-};
-
-
 void gfx_drawSidebar(System &state) {
     int screenWidth = 0;
     int screenHeight = 0;
@@ -244,11 +230,16 @@ void gfx_drawSidebar(System &state) {
     artPos.x = xPos2;
     for (int i = 0; i < SW_COUNT; ++i) {
         if (state.subweaponLevel[i] <= 0) continue;
-        SDL_Texture *swordArt = state.getImage(subweapons[i].artfile);
+        SDL_Texture *swordArt = state.getImage(state.subweapons[i].artfile);
         artPos.y = yPos;
         SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
         if (i == SW_BOW) {
             state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+        }
+        if (i == state.currentSubweapon) {
+            swordArt = state.getImage("ui/subweapon_cursor.png");
+            SDL_Rect cursorRect { xPos2 - 8, yPos, 8, 16 };
+            SDL_RenderCopy(state.renderer, swordArt, nullptr, &cursorRect);
         }
         yPos += 20;
     }

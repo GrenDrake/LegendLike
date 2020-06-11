@@ -87,6 +87,12 @@ struct ItemLocation {
     bool used;
 };
 
+struct Subweapon {
+    std::string name;
+    std::string artfile;
+    bool directional;
+};
+
 class System {
 public:
     System(SDL_Renderer *renderer, Random &rng);
@@ -145,6 +151,7 @@ public:
     int subweaponLevel[SW_COUNT];
     int arrowCount, bombCount, coinCount;
     int arrowCapacity, bombCapacity;
+    int currentSubweapon;
 
     // message log
     std::vector<Message> messages;
@@ -170,6 +177,7 @@ public:
     std::map<std::string, Font*> mFonts;
     std::map<int, std::string> strings;
     std::vector<ItemLocation> itemLocations;
+    std::vector<Subweapon> subweapons;
     std::deque<Animation> animationQueue;
 
     // system modules

@@ -272,6 +272,53 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
 
+            case Command::NextSubweapon: {
+                bool hasSubweapon = false;
+                for (int i = 0; i < SW_COUNT; ++i) {
+                    if (state.subweaponLevel[i] > 0) {
+                        hasSubweapon = true;
+                        break;
+                    }
+                }
+                if (!hasSubweapon) {
+                    state.currentSubweapon = -1;
+                } else {
+                    do {
+                        ++state.currentSubweapon;
+                        if (state.currentSubweapon >= SW_COUNT) state.currentSubweapon = 0;
+                    } while (state.subweaponLevel[state.currentSubweapon] == 0);
+                }
+                break; }
+            case Command::PrevSubweapon: {
+                bool hasSubweapon = false;
+                for (int i = 0; i < SW_COUNT; ++i) {
+                    if (state.subweaponLevel[i] > 0) {
+                        hasSubweapon = true;
+                        break;
+                    }
+                }
+                if (!hasSubweapon) {
+                    state.currentSubweapon = -1;
+                } else {
+                    do {
+                        --state.currentSubweapon;
+                        if (state.currentSubweapon < 0) state.currentSubweapon = SW_COUNT - 1;
+                    } while (state.subweaponLevel[state.currentSubweapon] == 0);
+                }
+                break; }
+            case Command::Subweapon: {
+                if (state.currentSubweapon == -1) {
+                    state.addMessage("You don't have any subweapons.");
+                    break;
+                }
+                Dir d = Dir::None;
+                if (state.subweapons[state.currentSubweapon].directional) {
+                    d = gfx_GetDirection(state, state.subweapons[state.currentSubweapon].name);
+                    if (d == Dir::None) break;
+                }
+                state.addMessage("You activate your " + state.subweapons[state.currentSubweapon].name + ".");
+                break; }
+
             case Command::Debug_Reveal:
                 state.getBoard()->dbgRevealAll();
                 break;

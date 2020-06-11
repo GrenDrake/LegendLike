@@ -660,15 +660,38 @@ bool VM::run(unsigned address) {
                 }
                 locationDef.used = true;
                 switch(locationDef.itemId) {
-                    case ITM_SWORD_UPGRADE: ++state->swordLevel; break;
-                    case ITM_ARMOUR_UPGRADE: ++state->armourLevel; break;
-                    case ITM_ENERGY_UPGRADE: state->addMessage("Energy upgrade not implemented."); break;
-                    case ITM_HEALTH_UPGRADE: state->addMessage("Health upgrade not implemented."); break;
-                    case ITM_BOW:           ++state->subweaponLevel[SW_BOW]; break;
-                    case ITM_HOOKSHOT:      ++state->subweaponLevel[SW_HOOKSHOT]; break;
-                    case ITM_ICEROD:        ++state->subweaponLevel[SW_ICEROD]; break;
-                    case ITM_FIREROD:       ++state->subweaponLevel[SW_FIREROD]; break;
-                    case ITM_MATTOCK:       ++state->subweaponLevel[SW_MATTOCK]; break;
+                    case ITM_SWORD_UPGRADE:
+                        ++state->swordLevel;
+                        break;
+                    case ITM_ARMOUR_UPGRADE:
+                        ++state->armourLevel;
+                        break;
+                    case ITM_ENERGY_UPGRADE:
+                        state->addMessage("Energy upgrade not implemented.");
+                        break;
+                    case ITM_HEALTH_UPGRADE:
+                        state->addMessage("Health upgrade not implemented.");
+                        break;
+                    case ITM_BOW:
+                        ++state->subweaponLevel[SW_BOW];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOW;
+                        break;
+                    case ITM_HOOKSHOT:
+                        ++state->subweaponLevel[SW_HOOKSHOT];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_HOOKSHOT;
+                        break;
+                    case ITM_ICEROD:
+                        ++state->subweaponLevel[SW_ICEROD];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_ICEROD;
+                        break;
+                    case ITM_FIREROD:
+                        ++state->subweaponLevel[SW_FIREROD];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_FIREROD;
+                        break;
+                    case ITM_MATTOCK:
+                        ++state->subweaponLevel[SW_MATTOCK];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_MATTOCK;
+                        break;
                     case ITM_AMMO_ARROW:
                         state->arrowCount += locationDef.qty;
                         if (state->arrowCount > state->arrowCapacity) state->arrowCount = state->arrowCapacity;
@@ -677,10 +700,17 @@ bool VM::run(unsigned address) {
                         state->bombCount += locationDef.qty;
                         state->subweaponLevel[SW_BOMB] = 1;
                         if (state->bombCount > state->bombCapacity) state->bombCount = state->bombCapacity;
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOMB;
                         break;
-                    case ITM_COIN:          state->coinCount += locationDef.qty; break;
-                    case ITM_CAP_ARROW:     state->arrowCapacity += locationDef.qty; break;
-                    case ITM_CAP_BOMB:      state->bombCapacity += locationDef.qty; break;
+                    case ITM_COIN:
+                        state->coinCount += locationDef.qty;
+                        break;
+                    case ITM_CAP_ARROW:
+                        state->arrowCapacity += locationDef.qty;
+                        break;
+                    case ITM_CAP_BOMB:
+                        state->bombCapacity += locationDef.qty;
+                        break;
                     default:
                         state->addMessage("Tried to give unknown item #" + std::to_string(locationDef.itemId));
                 }

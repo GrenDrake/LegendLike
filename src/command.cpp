@@ -99,6 +99,9 @@ CommandDef gameCommands[] = {
     { Command::Inventory,   Dir::None,  SDLK_i },
     { Command::AbilityList, Dir::None,  SDLK_a },
     { Command::ShowTooltip, Dir::None,  SDLK_t },
+    { Command::NextSubweapon,   Dir::None, SDLK_RIGHTBRACKET },
+    { Command::PrevSubweapon,   Dir::None, SDLK_LEFTBRACKET },
+    { Command::Subweapon,       Dir::None, SDLK_s },
 
     { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
     { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
@@ -251,6 +254,10 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::QuickKey_2:       out << "quick key 2"; break;
         case Command::QuickKey_3:       out << "quick key 3"; break;
         case Command::QuickKey_4:       out << "quick key 4"; break;
+
+        case Command::NextSubweapon:    out << "next subweapon"; break;
+        case Command::PrevSubweapon:    out << "prev subweapon"; break;
+        case Command::Subweapon:        out << "subweapon"; break;
 
         case Command::Debug_Reveal:     out << "reveal full map (debug)"; break;
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;

@@ -210,6 +210,13 @@ bool System::load() {
         log.error(e.what());
         return false;
     }
+
+    subweapons.push_back(Subweapon{ "bow",      "ui/bow.png",      true });
+    subweapons.push_back(Subweapon{ "hookshot", "ui/hookshot.png", true });
+    subweapons.push_back(Subweapon{ "bomb",     "ui/bomb.png",     true });
+    subweapons.push_back(Subweapon{ "mattock",  "ui/mattock.png",  true });
+    subweapons.push_back(Subweapon{ "firerod",  "ui/firerod.png",  true });
+    subweapons.push_back(Subweapon{ "icerod",   "ui/icerod.png",   true });
     return true;
 }
 

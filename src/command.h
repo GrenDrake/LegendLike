@@ -31,6 +31,9 @@ enum class Command {
     QuickKey_2,
     QuickKey_3,
     QuickKey_4,
+    NextSubweapon,
+    PrevSubweapon,
+    Subweapon,
 
     Debug_Reveal,
     Debug_NoFOV,

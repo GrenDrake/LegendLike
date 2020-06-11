@@ -12,7 +12,7 @@ System::System(SDL_Renderer *renderer, Random &rng)
   swordLevel(0), armourLevel(0),
   subweaponLevel{0},
   arrowCount(0), bombCount(0), coinCount(0),
-  arrowCapacity(30), bombCapacity(10),
+  arrowCapacity(30), bombCapacity(10), currentSubweapon(-1),
   turnNumber(1), depth(0), mCurrentBoard(nullptr),  mPlayer(nullptr),
   quickSlots{ {0} }, cursor(-1,-1), smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
   mCurrentMusic(nullptr),renderer(renderer), coreRNG(rng), vm(nullptr),

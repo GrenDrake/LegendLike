@@ -77,10 +77,8 @@ map0_test_fight:
     @p_giveitem     3
     @p_giveitem     4
     @p_giveitem     5
-    @p_giveitem     6
     @p_giveitem     7
     @p_giveitem     8
-    @p_giveitem     9
     @p_giveitem     10
     @p_giveitem     11
     @p_forget       5
