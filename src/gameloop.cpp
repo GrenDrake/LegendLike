@@ -133,6 +133,7 @@ void gameloop(System &state) {
     state.getBoard()->calcFOV(state.getPlayer()->position);
 
     state.runDirection = Dir::None;
+    state.lastticks = SDL_GetTicks();
 
     while (!state.wantsToQuit) {
         if (state.runDirection != Dir::None) {
@@ -157,7 +158,6 @@ void gameloop(System &state) {
 
         while (!state.animationQueue.empty()) {
             if (repaint(state)) {
-                state.waitFrame();
                 SDL_Delay(200);
                 SDL_PumpEvents();
             }
@@ -166,8 +166,6 @@ void gameloop(System &state) {
         repaint(state);
 
         gfx_handleInput(state);
-
-        state.waitFrame();
     }
 }
 

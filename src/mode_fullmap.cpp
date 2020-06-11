@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <sstream>
 
 #include "creature.h"
 #include "board.h"
@@ -93,6 +94,13 @@ void gfx_DrawMap(System &system) {
         xPos += tabWidth;
     }
 
+    if (system.showFPS) {
+        std::stringstream ss;
+        ss << "  FPS: " << system.getFPS();
+        system.smallFont->out(0, 0, ss.str().c_str());
+    }
+
+    system.advanceFrame();
     SDL_RenderPresent(system.renderer);
 }
 
@@ -163,8 +171,6 @@ void doShowMap(System &system) {
                 }
             }
         }
-
-        system.waitFrame();
     }
 
 }

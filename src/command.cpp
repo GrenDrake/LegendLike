@@ -181,6 +181,10 @@ CommandDef infoCommands[] = {
 };
 
 const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList) {
+    if (event.type == SDL_USEREVENT) {
+        system.fps = system.timerFrames;
+        system.timerFrames = 0;
+    }
     if (event.type == SDL_QUIT)     return commandQuit;
     if (event.type == SDL_WINDOWEVENT) {
         if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {

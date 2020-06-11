@@ -112,45 +112,6 @@ void System::tick() {
     }
 }
 
-// Framerate management system based on:
-// http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/
-// with a couple of minor modifications
-void System::setTarget(int targetFps) {
-    if (targetFps > 0) {
-        framerate = targetFps;
-        tickrate = 1000.0 / targetFps;
-        timerFrames = 0;
-        timerTime = SDL_GetTicks();
-        actualFPS = 0;
-    }
-}
-
-void System::waitFrame() {
-
-    ++framecount;
-    ++timerFrames;
-    unsigned current = SDL_GetTicks();
-    lastticks = current;
-    unsigned target = baseticks + (static_cast<double>(framecount) * tickrate);
-
-    if (current <= target) {
-        unsigned theDelay = target - current;
-        SDL_Delay(theDelay);
-    } else {
-        framecount = 0;
-        baseticks = SDL_GetTicks();
-    }
-
-    if (current - timerTime > 1000) {
-        timerTime = SDL_GetTicks();
-        actualFPS = timerFrames;
-        timerFrames = 0;
-    }
-}
-
-int System::getActualFps() {
-    return actualFPS;
-}
 
 bool System::warpTo(int boardIndex, int x, int y) {
     if (boardIndex < 0) {
@@ -219,4 +180,18 @@ bool System::build(int forIndex) {
         playMusic(info.musicTrack);
     }
     return true;
+}
+
+void System::advanceFrame() {
+    ++framecount;
+    ++timerFrames;
+    unsigned newTime = SDL_GetTicks();
+    unsigned frameTime = newTime - lastticks;
+    const unsigned MS_PER_FRAME = 16;
+    if (frameTime < MS_PER_FRAME) SDL_Delay(MS_PER_FRAME - frameTime);
+    lastticks = SDL_GetTicks();
+}
+
+unsigned System::getFPS() const {
+    return fps;
 }

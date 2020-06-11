@@ -174,10 +174,11 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     //  FPS INFO
     if (state.showFPS) {
         std::stringstream ss;
-        ss << "  FPS: " << state.getActualFps();
+        ss << "  FPS: " << state.getFPS();
         state.smallFont->out(0, 0, ss.str().c_str());
     }
 
+    state.advanceFrame();
     if (callPresent) SDL_RenderPresent(state.renderer);
 }
 
@@ -259,8 +260,5 @@ void doCharInfo(System &system, int initialMode) {
                 }
             }
         }
-
-        system.waitFrame();
     }
-
 }

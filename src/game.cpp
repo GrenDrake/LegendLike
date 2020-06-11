@@ -19,6 +19,14 @@
 bool printVersions();
 int innerMain(System &renderState);
 
+unsigned perSecondTimer(unsigned interval, void *param) {
+    SDL_Event event;
+    event.type = SDL_USEREVENT;
+    event.user.type = SDL_USEREVENT;
+    SDL_PushEvent(&event);
+    return(interval);
+}
+
 
 std::string versionString() {
     std::string text = GAME_NAME;
@@ -52,7 +60,7 @@ int main(int argc, char *argv[]) {
     Config config;
     config.loadFromFile("/save/game.cfg");
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0){
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0){
         log.error(std::string("SDL_Init Error: ") + SDL_GetError());
         return 1;
     }
@@ -118,6 +126,8 @@ int main(int argc, char *argv[]) {
 // apply settings from configuration files
     Mix_VolumeMusic(config.getInt("music", MIX_MAX_VOLUME));
     Mix_Volume(-1, config.getInt("audio", MIX_MAX_VOLUME));
+
+    SDL_AddTimer(1000, perSecondTimer, nullptr);
 
     Random coreRandom;
     coreRandom.seed(time(0));
@@ -203,7 +213,6 @@ int innerMain(System &renderState) {
     }
 
     renderState.setFontScale(renderState.config->getInt("font_scale", 1));
-    renderState.setTarget(renderState.config->getInt("fps", 60));
 
     try {
         doGameMenu(renderState);

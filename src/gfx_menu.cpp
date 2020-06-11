@@ -95,6 +95,7 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
         }
 
         showVersion(state);
+        state.advanceFrame();
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;
@@ -178,7 +179,6 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                     break;
             }
         }
-        state.waitFrame();
     }
 }
 
@@ -215,6 +215,7 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
         const int closeLeft = screenWidth - closeLine.size() * state.tinyFont->getCharWidth();
         const int closeTop  = screenHeight - state.tinyFont->getLineHeight();
         state.tinyFont->out(closeLeft, closeTop, closeLine);
+        state.advanceFrame();
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;
@@ -243,6 +244,5 @@ void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autos
                     break;
             }
         }
-        state.waitFrame();
     }
 }

@@ -96,10 +96,6 @@ public:
     bool hasTick() const;
     void tick();
 
-    void setTarget(int targetFps);
-    void waitFrame();
-    int getActualFps();
-
     Board* getBoard() {
         return mCurrentBoard;
     }
@@ -110,6 +106,9 @@ public:
     bool down();
     bool up();
     bool build(int forIndex);
+
+    void advanceFrame();
+    unsigned getFPS() const;
 
     // player state
     Dir runDirection;
@@ -153,7 +152,7 @@ public:
     bool showFPS;
     bool wantsTick;
 
-private:
+
     bool loadCreatureData();
     bool loadMoveData();
     bool loadStringData();

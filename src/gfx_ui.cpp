@@ -74,8 +74,6 @@ void gfx_MessageBox(System &state, std::string text) {
                     return;
             }
         }
-
-        state.waitFrame();
     }
 }
 
@@ -178,8 +176,6 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
                     return true;
             }
         }
-
-        system.waitFrame();
     }
 }
 

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -314,7 +315,7 @@ void gfx_drawSidebar(System &state) {
     }
     if (state.showFPS) {
         std::stringstream ss;
-        ss << "  FPS: " << state.getActualFps();
+        ss << "  FPS: " << state.getFPS();
         state.smallFont->out(0, 0, ss.str().c_str());
     }
 }
@@ -340,6 +341,7 @@ bool repaint(System &state, bool callPresent) {
     gfx_HLine(state, 0, screenWidth, mapHeightPixels, uiColor);
     gfx_VLine(state, mapWidthPixels, 0, mapHeightPixels, uiColor);
 
+    state.advanceFrame();
     if (callPresent) SDL_RenderPresent(state.renderer);
     return false;
 }
@@ -354,5 +356,4 @@ void gfx_frameDelay(System &state) {
             return;
         }
     }
-    state.waitFrame();
 }
