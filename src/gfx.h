@@ -27,6 +27,14 @@ const int quickSlotAbility = 1;
 const int quickSlotItem = 2;
 const int quickSlotCount = 4;
 
+const int SW_BOW = 0;
+const int SW_HOOKSHOT = 1;
+const int SW_BOMB = 2;
+const int SW_MATTOCK = 3;
+const int SW_FIREROD = 4;
+const int SW_ICEROD = 5;
+const int SW_COUNT = 6;
+
 struct Color {
     int r, g, b;
 };
@@ -112,6 +120,9 @@ public:
 
     // player state
     Dir runDirection;
+    int swordLevel, armourLevel;
+    int subweaponLevel[SW_COUNT];
+    int arrowCount, bombCount, coinCount;
 
     // message log
     std::vector<Message> messages;

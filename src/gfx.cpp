@@ -156,6 +156,20 @@ void gfx_drawMap(System &state) {
     SDL_RenderSetClipRect(state.renderer, nullptr);
 }
 
+struct Subweapon {
+    std::string name;
+    std::string artfile;
+};
+std::vector<Subweapon> subweapons{
+    { "bow",      "ui/bow.png" },
+    { "hookshot", "ui/hookshot.png" },
+    { "bomb",     "ui/bomb.png" },
+    { "mattock",  "ui/mattock.png" },
+    { "firerod",  "ui/firerod.png" },
+    { "icerod",   "ui/icerod.png" },
+};
+
+
 void gfx_drawSidebar(System &state) {
     int screenWidth = 0;
     int screenHeight = 0;
@@ -202,35 +216,72 @@ void gfx_drawSidebar(System &state) {
     state.tinyFont->out(column2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
     yPos += tinyLineHeight;
     const int statTop = yPos;
-    for (int i = 2; i < statCount; ++i) {
-        Stat stat = static_cast<Stat>(i);
-        std::stringstream line;
-        line << getAbbrev(stat) << ": " << player->getStat(stat);
-        state.tinyFont->out(xPos, yPos, line.str());
-        yPos += tinyLineHeight;
-    }
-    for (unsigned i = 0; i < quickSlotCount; ++i) {
-        std::string content = "";
-        switch(state.quickSlots[i].type) {
-            case quickSlotAbility:
-                content = MoveType::get(state.quickSlots[i].action).name;
-                break;
-            case quickSlotItem:
-                content = "item";
-                break;
-        }
-        state.tinyFont->out(xPos, yPos, std::to_string(i+1) + ": " + content);
-        yPos += tinyLineHeight;
-    }
+
+    SDL_Rect artPos{ xPos, yPos, 16, 16 };
+    SDL_Texture *swordArt = state.getImage("ui/sword.png");
+    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.swordLevel));
+    yPos += 20; artPos.y += 20;
+    swordArt = state.getImage("ui/armour.png");
+    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.armourLevel));
+    yPos += 40; artPos.y += 40;
+    swordArt = state.getImage("ui/arrow.png");
+    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.arrowCount));
+    yPos += 20; artPos.y += 20;
+    swordArt = state.getImage("ui/bomb.png");
+    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.bombCount));
+    yPos += 20; artPos.y += 20;
+    swordArt = state.getImage("ui/coin.png");
+    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.coinCount));
+    int firstYPos = yPos + 10;
+
     yPos = statTop;
-    for (int i = 0; i < damageTypeCount; ++i) {
-        DamageType damageType = static_cast<DamageType>(i);
-        std::stringstream line;
-        line << std::fixed << std::setprecision(3);
-        line << getAbbrev(damageType) << ": " << player->getResist(damageType);
-        state.tinyFont->out(column2, yPos, line.str());
-        yPos += tinyLineHeight;
+    int xPos2 = xPos + sidebarWidth / 2;
+    artPos.x = xPos2;
+    for (int i = 0; i < SW_COUNT; ++i) {
+        if (state.subweaponLevel[i] <= 0) continue;
+        SDL_Texture *swordArt = state.getImage(subweapons[i].artfile);
+        artPos.y = yPos;
+        SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+        state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+        yPos += 20;
     }
+    yPos -= 10;
+    if (firstYPos > yPos) yPos = firstYPos;
+
+    // for (int i = 2; i < statCount; ++i) {
+    //     Stat stat = static_cast<Stat>(i);
+    //     std::stringstream line;
+    //     line << getAbbrev(stat) << ": " << player->getStat(stat);
+    //     state.tinyFont->out(xPos, yPos, line.str());
+    //     yPos += tinyLineHeight;
+    // }
+    // for (unsigned i = 0; i < quickSlotCount; ++i) {
+    //     std::string content = "";
+    //     switch(state.quickSlots[i].type) {
+    //         case quickSlotAbility:
+    //             content = MoveType::get(state.quickSlots[i].action).name;
+    //             break;
+    //         case quickSlotItem:
+    //             content = "item";
+    //             break;
+    //     }
+    //     state.tinyFont->out(xPos, yPos, std::to_string(i+1) + ": " + content);
+    //     yPos += tinyLineHeight;
+    // }
+    // yPos = statTop;
+    // for (int i = 0; i < damageTypeCount; ++i) {
+    //     DamageType damageType = static_cast<DamageType>(i);
+    //     std::stringstream line;
+    //     line << std::fixed << std::setprecision(3);
+    //     line << getAbbrev(damageType) << ": " << player->getResist(damageType);
+    //     state.tinyFont->out(column2, yPos, line.str());
+    //     yPos += tinyLineHeight;
+    // }
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  MESSAGE LOG
