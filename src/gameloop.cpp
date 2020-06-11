@@ -242,35 +242,6 @@ void gfx_handleInput(System &state) {
                 }
                 break;
 
-            case Command::QuickKey_1:
-            case Command::QuickKey_2:
-            case Command::QuickKey_3:
-            case Command::QuickKey_4: {
-                int slot = static_cast<int>(cmd.command) - static_cast<int>(Command::QuickKey_1);
-                switch(state.quickSlots[slot].type) {
-                    case quickSlotUnused:
-                        /* do nothing */
-                        break;
-                    case quickSlotItem:
-                        /* not implemented */
-                        break;
-                    case quickSlotAbility: {
-                        int abilityNumber = state.quickSlots[slot].action;
-                        const MoveType &move = MoveType::get(abilityNumber);
-                        Point target = Point(-1, -1);
-                        if (move.form == formMelee) {
-                            Dir dir = gfx_GetDirection(state, move.name);
-                            if (dir == Dir::None) break;
-                            target = state.getPlayer()->position.shift(dir);
-                        } else if (move.form != formSelf) {
-                            target = gfx_SelectTile(state, upperFirst(move.name));
-                            if (target.x() < 0) break;
-                        }
-                        state.getPlayer()->useAbility(state, abilityNumber, target);
-                        state.requestTick();
-                        break; }
-                }
-                break; }
 
             case Command::NextSubweapon: {
                 bool hasSubweapon = false;

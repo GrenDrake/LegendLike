@@ -125,24 +125,6 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
         state.smallFont->out(column2, yPos, "EQUIPPED");
     }
 
-    const int column3 = column2 * 2;
-    yPos = paneTop;
-    state.smallFont->out(column3, yPos, "QUICK SLOTS");
-    yPos += lineHeight * 2;
-    for (int i = 0; i < quickSlotCount; ++i) {
-        std::string content = "nothing";
-        switch(state.quickSlots[i].type) {
-            case quickSlotAbility:
-                content = MoveType::get(state.quickSlots[i].action).name;
-                break;
-            case quickSlotItem:
-                content = "item";
-                break;
-        }
-        state.smallFont->out(column3, yPos, std::to_string(i+1) + ": " + content);
-        yPos += lineHeight;
-    }
-
 
     const int tabWidth = 200;
     const int tabHeight = lineHeight + 8;
@@ -231,16 +213,6 @@ void doCharInfo(System &system, int initialMode) {
                         }
                     break;
 
-                    case Command::QuickKey_1:
-                    case Command::QuickKey_2:
-                    case Command::QuickKey_3:
-                    case Command::QuickKey_4: {
-                        int slot = static_cast<int>(cmd.command) - static_cast<int>(Command::QuickKey_1);
-                        if (mode == charAbilities && selection >= 0 && selection < static_cast<int>(system.getPlayer()->moves.size())) {
-                            system.quickSlots[slot].type = quickSlotAbility;
-                            system.quickSlots[slot].action = system.getPlayer()->moves[selection];
-                        }
-                        break; }
                     case Command::Move:
                         if (mode == charAbilities) {
                             if (cmd.direction == Dir::North) {

@@ -90,10 +90,6 @@ CommandDef gameCommands[] = {
     { Command::Examine,     Dir::None,  SDLK_x },
     { Command::SelectItem,  Dir::None,  SDLK_RETURN },
     { Command::SelectItem,  Dir::None,  SDLK_KP_ENTER },
-    { Command::QuickKey_1,  Dir::None,  SDLK_1 },
-    { Command::QuickKey_2,  Dir::None,  SDLK_2 },
-    { Command::QuickKey_3,  Dir::None,  SDLK_3 },
-    { Command::QuickKey_4,  Dir::None,  SDLK_4 },
     { Command::ShowMap,     Dir::None,  SDLK_m },
     { Command::CharacterInfo,   Dir::None,  SDLK_c },
     { Command::Inventory,   Dir::None,  SDLK_i },
@@ -126,10 +122,6 @@ CommandDef characterCommands[] = {
     { Command::Rename,      Dir::None,  SDLK_r },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
     { Command::NextMode,    Dir::None,  SDLK_TAB },
-    { Command::QuickKey_1,  Dir::None,  SDLK_1 },
-    { Command::QuickKey_2,  Dir::None,  SDLK_2 },
-    { Command::QuickKey_3,  Dir::None,  SDLK_3 },
-    { Command::QuickKey_4,  Dir::None,  SDLK_4 },
 
     { Command::None }
 };
@@ -250,10 +242,6 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::PrevMode:         out << "prev mode"; break;
         case Command::Examine:          out << "examine"; break;
         case Command::SelectItem:       out << "select item"; break;
-        case Command::QuickKey_1:       out << "quick key 1"; break;
-        case Command::QuickKey_2:       out << "quick key 2"; break;
-        case Command::QuickKey_3:       out << "quick key 3"; break;
-        case Command::QuickKey_4:       out << "quick key 4"; break;
 
         case Command::NextSubweapon:    out << "next subweapon"; break;
         case Command::PrevSubweapon:    out << "prev subweapon"; break;
