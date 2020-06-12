@@ -1,8 +1,8 @@
 .export start map_info locations
 
 
-.define strPrologText   0
-.define strDivider      10
+.string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
+.string strDivider      "---"
 
 .define itmSwordUpgrade  0
 .define itmArmourUpgrade 1

@@ -9,18 +9,18 @@
 .string map0_strActor "actor"
 .string map0_strSage "sage"
 
-.define map0_str_academysign_text       5
-.define map0_str_gateguard_nopass       4
-.define map0_str_gateguard_allowpass    3
-.define map0_str_archdean_givebeast     2
-.define map0_str_professor_talk         1
-.define map0_str_fledTestFight          6
-.define map0_str_giftparty              7
+.string map0_str_academysign_text       "Sign: \"Academy\""
+.string map0_str_gateguard_nopass       "Guard: \"It is not safe beyond this point. Speak to the archdean at the academy before you leave.\""
+.string map0_str_gateguard_allowpass    "Guard: \"You may pass.\""
+.string map0_str_archdean_givebeast     "Archdean: \"Welcome! I wish I could give you a better greeting, but work on the academy is still in progress.\""
+.string map0_str_professor_talk         "Professor: \"Are you injured? Allow me to heal you.\""
+.string map0_str_fledTestFight          "Man: \"The depths too much for you, eh?\""
+.string map0_str_giftparty              "Woman: \"I am the stablemaster.\""
 
-.define map0_strRumblingNoise           8
-.define map0_strSageSaysHi              9
-.define map0_strTalkWell                17
-.define map0_strTalkFire                18
+.string map0_strRumblingNoise           "There is a rumbling sound as the walls shift."
+.string map0_strSageSaysHi              "Sage: Hello! It is a pleasant morning, is it not?"
+.string map0_strTalkWell                "The well is full of fresh, clean water."
+.string map0_strTalkFire                "Ouch! The fire is hot!"
 
 map0_gotfirst_flag:
     .byte 0
