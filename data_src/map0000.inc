@@ -1,13 +1,13 @@
 ; data for map of the starting town
 
-map0_str_professor:     .string "professor"
-map0_str_gateguard:     .string "gate guard"
-map0_str_combatdemoguy: .string "combat demo guy"
-map0_str_partygifter:   .string "party gifter guy"
-map0_str_archdean:      .string "archdean"
-map0_str_sign:          .string "sign"
-map0_strActor:          .string "actor"
-map0_strSage:           .string "sage"
+.string map0_str_professor "professor"
+.string map0_str_gateguard "gate guard"
+.string map0_str_combatdemoguy "combat demo guy"
+.string map0_str_partygifter "party gifter guy"
+.string map0_str_archdean "archdean"
+.string map0_str_sign "sign"
+.string map0_strActor "actor"
+.string map0_strSage "sage"
 
 .define map0_str_academysign_text       5
 .define map0_str_gateguard_nopass       4
@@ -104,8 +104,7 @@ map0_downToDungeon:
     @warpto         29 28 1
     ret
 
-map0_name:
-    .string "0000.map"
+.string map0_name "0000.map"
 map0_build:
     @mf_fromfile    map0_name
     ; the lab

@@ -1,66 +1,39 @@
-.export start map_info locations
 
+.short 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 -1
 
-.define strPrologText   0
-.define strDivider      10
+.string prologText "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\n\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion.\n"
 
-.define itmSwordUpgrade  0
-.define itmArmourUpgrade 1
-.define itmHealthUpgrade 2
-.define itmEnergyUpgrade 3
-.define itmBow           4
-.define itmHookshot      5
-.define itmIceRod        7
-.define itmFireRod       8
-.define itmMattock       9
-.define itmAmmoArrow     10
-.define itmAmmoBomb      11
-.define itmCoin          12
-.define itmCapArrow      13
-.define itmCapBomb       14
+.define tileWall   55
+.define tileGrass  56
+.define tileGrass2 57
+.define tileGrass3 58
+.define tileTree1  59
+.define tileTree2  60
+.define tileTree3  61
+.define tileRocks  62
+.define tileFence  63
+.define tileGround 64
 
-locations:
-    .word itmSwordUpgrade  ; item ID
-    .byte 1 ; quantity
-    .word itmArmourUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmHealthUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmEnergyUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmBow           ; item ID
-    .byte 1 ; quantity
-    .word itmHookshot      ; item ID
-    .byte 1 ; quantity
-    .word itmIceRod        ; item ID
-    .byte 1 ; quantity
-    .word itmFireRod       ; item ID
-    .byte 1 ; quantity
-    .word itmMattock       ; item ID
-    .byte 1 ; quantity
-    .word itmAmmoArrow     ; item ID
-    .byte 5 ; quantity
-    .word itmAmmoBomb      ; item ID
-    .byte 1 ; quantity
-    .word itmCoin          ; item ID
-    .byte 3 ; quantity
-    .word itmCapArrow      ; item ID
-    .byte 10 ; quantity
-    .word itmCapBomb       ; item ID
-    .byte 5 ; quantity
-    .word -1               ; end of location list
+.define tileWindow 100
+.define tileDoorOpen 100
+.define tileInteriorFloor 100
+.define tileUp 100
+.define eventManual 100
+.define tileDown 100
+.define tileWater 100
+.define aiRandom 100
+.define aiStill 100
 
-
+.export start
 start:
     ; teleport the player to the starting location
     @warpto     23 17 0
-    @saystr     strPrologText
-    textbox
-    @saystr     strDivider
-    textbox
+    @saystr     prologText
+    @textbox    0 0 0
     ret
 
 
+.export map_info
 map_info:
     ; level 0 (town)
     .short      0  ; depth
@@ -136,13 +109,13 @@ dungeon_fight_2:
 dungeon_foe_info:
     .word   100     ; foes to add to map
 
-    .word   10      ; map actor art ID
-    .word   aiEnemy ; map actor AI
+    .word   11      ; map actor art ID
+    .word   aiRandom ; map actor AI
     .word   random_foe_name ; map actor name
     .word   dungeon_fight_1
 
     .word   12      ; map actor art ID
-    .word   aiEnemy ; map actor AI
+    .word   aiRandom ; map actor AI
     .word   random_foe_name ; map actor name
     .word   dungeon_fight_2
 
@@ -159,3 +132,4 @@ map_build_dungeon_bottom:
     @mf_makemaze    1
     @mf_makefoes    dungeon_foe_info
     ret
+

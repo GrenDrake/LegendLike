@@ -1,3 +1,4 @@
+#include <iostream>
 #include <limits>
 #include <sstream>
 
@@ -70,7 +71,6 @@ void VM::setSystem(System *newState) {
 }
 
 bool VM::loadFromFile(const std::string &filename, bool requireValid) {
-
     if (!PHYSFS_exists(filename.c_str())) {
         return false;
     }
@@ -99,6 +99,7 @@ bool VM::loadFromFile(const std::string &filename, bool requireValid) {
 int VM::getExport(const std::string &name) const {
     if (!mIsValid) return -1;
     int export_count = readWord(exportCountPosition);
+    std::cerr << name << "   " << export_count << "\n";
     for (int i = 0; i < export_count; ++i) {
         int pos = firstExportPosition + i * exportSize;
         char export_name[20] = { 0 };

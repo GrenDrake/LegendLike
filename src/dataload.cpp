@@ -184,7 +184,6 @@ bool System::load() {
         return false;
     }
 
-
     try {
         if (!loadStringData())      return false;
 

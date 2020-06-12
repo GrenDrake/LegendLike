@@ -12,10 +12,7 @@ GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov
 	 src/logger.o src/gen_enemies.o src/mode_charinfo.o
 GAME=game
 
-ASSEMBLE_OBJS=assembler/assemble.o assembler/assem_tokens.o \
-      assembler/assem_token.o assembler/assem_build.o assembler/assem_labels.o \
-	  assembler/utility.o
-ASSEMBLE=./assemble
+ASSEMBLE=build/build
 
 BEASTGEN_OBJS=tools/beastgen.o
 BEASTGEN=beastgen
@@ -29,19 +26,19 @@ TYPED=typed
 GAME_DAT=data/game.dat
 BEAST_DAT=data/beasts.dat
 
-all: $(ASSEMBLE) $(GAME) datafiles tools
-
-$(ASSEMBLE): $(ASSEMBLE_OBJS)
-	$(CC) $(ASSEMBLE_OBJS) -o $(ASSEMBLE)
+all: $(GAME) datafiles tools
 
 $(GAME): $(GAME_OBJS)
 	$(CXX) $(GAME_OBJS) $(GAME_LIBS) -o $(GAME)
+assembler:
+	cd build && make
 
 datafiles: $(GAME_DAT) $(BEAST_DAT) $(MOVES_DAT)
-$(GAME_DAT): $(ASSEMBLE) data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc
-	cd data_src && ../assemble gamedata.src ../$(GAME_DAT)
-$(BEAST_DAT): $(ASSEMBLE) data_src/beasts.src
-	cd data_src && ../assemble beasts.src ../$(BEAST_DAT)
+$(GAME_DAT): build/build data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc
+	$(ASSEMBLE) data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc -o $(GAME_DAT)
+#	cd data_src && ../assemble gamedata.src ../$(GAME_DAT)
+$(BEAST_DAT): data_src/beasts.src
+	$(ASSEMBLE) data_src/beasts.src -o $(BEAST_DAT)
 
 tools: $(BEASTGEN) $(MOVED) $(TILED) $(TYPED)
 $(BEASTGEN): $(BEASTGEN_OBJS)
@@ -56,4 +53,4 @@ $(TYPED): $(TYPED_OBJS)
 clean:
 	$(RM) src/*.o assembler/*.o $(ASSEMBLE) $(GAME) $(GAME_DAT)
 
-.PHONY: all clean datafiles tools
+.PHONY: all clean assembler datafiles tools

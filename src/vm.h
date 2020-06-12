@@ -17,8 +17,8 @@ public:
 
 class VM {
 public:
-    static const int exportCountPosition = 12;
-    static const int firstExportPosition = 16;
+    static const int exportCountPosition = 48;
+    static const int firstExportPosition = 52;
     static const int exportNameSize = 16;
     static const int exportSize = 20;
     static const int maxStackSize = 128;

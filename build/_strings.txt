@@ -1,0 +1,27 @@
+__string_1                          ~Hello there!~
+map0_strActor                       ~actor~
+map0_strPortrait1                   ~por0001.png~
+map0_strRumblingNoise               ~There is a rumbling sound as the walls shift.~
+map0_strScorpian                    ~scorpian~
+map0_strScorpianSaysHi              ~The scorpian greets you cheerfully.\n\nYou respond politely.~
+map0_str_academysign_text           ~Demon Beast Academy (Under Renovation)~
+map0_str_archdean                   ~archdean~
+map0_str_archdean_alreadygavebeast  ~New graduates are only entitled to one beast from the academy to help them get started. If you want more, you'll need to catch them yourself.~
+map0_str_archdean_givebeast         ~Unfortunately, with the work being done on the academy, are usual arrangements are not available. Thus, please, take this beast to get you started.~
+map0_str_combatdemoguy              ~combat demo guy~
+map0_str_fledTestFight              ~Too much for you, eh?~
+map0_str_gateguard                  ~gate guard~
+map0_str_gateguard_allowpass        ~I see you have a beast with you. You may pass.~
+map0_str_gateguard_nopass           ~It is not safe beyond the gate; you must claim a beast from the academy before you may depart.~
+map0_str_giftparty                  ~I am the stablemaster. Here, have some beasts.~
+map0_str_lostTestFight              ~I'm sorry that you lost. Get your beasties healed at the lab and come back to try again.~
+map0_str_partygifter                ~party gifter guy~
+map0_str_professor                  ~professor~
+map0_str_professor_talk             ~Are your beasts hurt? If they are, allow me to heal them.~
+map0_str_professor_talk_nobeasts    ~If your beasts become hurt, I can heal them.~
+map0_str_sign                       ~sign~
+map0_str_test_fight_givebeast       ~Here. You don't appear to have a beast, so have this one.~
+map0_str_wonTestFight               ~Congradulations! If you're ever in the mood for a rematch, come speak to me again.~
+map1_str_octopus                    ~octopus~
+prologText                          ~After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\n\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion.\n~
+random_foe_name                     ~random foe~
