@@ -48,6 +48,8 @@ locations:
     .byte 10 ; quantity
     .word itmCapBomb       ; item ID
     .byte 5 ; quantity
+    .word itmSwordUpgrade  ; item ID
+    .byte 1 ; quantity
     .word -1               ; end of location list
 
 

@@ -95,12 +95,17 @@ bool tryInteract(System &state, const Point &target) {
         if (actor->talkFunc) {
             // has talk function, is friendly
             state.vm->run(actor->talkFunc);
+        } else if (state.swordLevel <= 0) {
+                state.addMessage("You don't have a sword!");
         } else {
-            // no talk function, presume hostile
-            if (state.quickSlots[0].type == quickSlotAbility) {
-                state.getPlayer()->useAbility(state, state.quickSlots[0].action, target);
-            } else {
-                state.addMessage("They have nothing to say.");
+            int roll = 0;
+            for (int i = 0; i < state.swordLevel; ++i) {
+                roll += 1 + rand() % 4;
+            }
+            actor->takeDamage(roll, DamageType::Physical);
+            state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
+            if (actor->curHealth <= 0) {
+                state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
             }
         }
         state.requestTick();

@@ -39,6 +39,7 @@ map0_talk_archdean:
     @p_damage       1 10
     @saystr         map0_str_archdean_givebeast
     textbox
+    @p_giveitem     14
     ret
 
 map0_talk_gateguard:

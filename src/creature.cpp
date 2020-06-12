@@ -92,6 +92,7 @@ int Creature::takeDamage(int amount, DamageType type) {
         if (-amount > maxGain) amount = -maxGain;
     }
     curHealth -= amount;
+    if (curHealth <= 0) position = Point(-1, -1);
     return amount;
 }
 

@@ -372,13 +372,9 @@ bool VM::run(unsigned address) {
                 currentText << static_cast<char>(pop());
                 break;
             case Opcode::saystr: {
-                int stringId = pop();
-                auto iter = state->strings.find(stringId);
-                if (iter != state->strings.end()) {
-                    currentText << iter->second;
-                } else {
-                    currentText << "{bad string " << stringId << "}";
-                }
+                int stringAddr = pop();
+                std::string text = readString(stringAddr);
+                currentText << text;
                 break; }
             case Opcode::textbox: {
                 if (state) {
