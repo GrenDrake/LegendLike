@@ -4,6 +4,10 @@
 #include "point.h"
 #include "random.h"
 
+#ifndef M_PI
+#define M_PI 3.14159
+#endif
+
 Point Point::shift(Dir dir, int amount) const {
     switch(dir) {
         case Dir::North:

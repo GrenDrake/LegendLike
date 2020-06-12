@@ -1,3 +1,5 @@
+*.dll
+*.exe
 game
 build/build
 moved

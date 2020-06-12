@@ -1,9 +1,17 @@
 LIBFOV=../libfov-1.0.4/fov/
 PHYSFS=../physfs-3.0.2/
 
-CFLAGS=-Wall -g -std=c99 -pedantic -I$(PHYSFS)src
-CXXFLAGS=-Wall -g -std=c++11 -pedantic `sdl-config --cflags` -I$(LIBFOV) -I$(PHYSFS)src
-GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS) -lfov -lphysfs -lSDL2_mixer -lSDL2_image `sdl2-config --libs`
+# Windows
+CC=gcc
+SDL2=../SDL2/i686-w64-mingw32
+CFLAGS=-Wall -g -std=c99 -pedantic -Dmain=SDL2main -I$(SDL2)/include -I$(PHYSFS)src
+CXXFLAGS=-Wall -g -std=c++11 -pedantic -I$(SDL2)/include -I$(LIBFOV) -I$(PHYSFS)src
+GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS)build/ -L$(SDL2)/lib \
+          -lmingw32 -lfov -lphysfs -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_image
+# OSX
+# CFLAGS=-Wall -g -std=c99 -pedantic -I$(PHYSFS)src
+# CXXFLAGS=-Wall -g -std=c++11 -pedantic `sdl-config --cflags` -I$(LIBFOV) -I$(PHYSFS)src
+# GAME_LIBS=-L$(LIBFOV).libs/ -L$(PHYSFS) -lfov -lphysfs -lSDL2_mixer -lSDL2_image `sdl2-config --libs`
 
 GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov.o \
 	 src/gen_dungeon.o src/system.o src/gfx.o src/command.o src/dataload.o \
