@@ -76,6 +76,7 @@ bool buildHeader(Program &code) {
     while (headerData->data.size() < 12) {
         headerData->data.push_back(Value{0});
     }
+    unsigned headerSize = headerData->data.size() * headerData->width;
 
     // build the exports table
     AsmLabel *exportsLabel = new AsmLabel(Origin(), "__exports");
@@ -104,11 +105,13 @@ bool buildHeader(Program &code) {
         }
         exportsData->data.push_back(Value{0, name});
     }
+    std::cerr << "Header size: " << headerSize + exportsData->data.size() * exportsData->width << "\n";
 
 
     // build the string table
     AsmLabel *stringTableLabel = new AsmLabel(Origin(), "__string_table");
     stringTable.push_back(stringTableLabel);
+    unsigned stringTableSize = 0;
     for (auto iter : code.strings) {
         AsmLabel *label = new AsmLabel(iter.second.origin, iter.first);
         AsmData *data = new AsmData(iter.second.origin, 1, true);
@@ -116,9 +119,11 @@ bool buildHeader(Program &code) {
             data->data.push_back(Value{c});
         }
         data->data.push_back(Value{0});
+        stringTableSize += data->data.size() * data->width;
         stringTable.push_back(label);
         stringTable.push_back(data);
     }
+    std::cerr << "String table size: " << stringTableSize << "\n";
 
     // insert into beginning of program code
     code.code.insert(code.code.begin(), stringTable.begin(), stringTable.end());
