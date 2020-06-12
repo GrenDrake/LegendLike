@@ -2,76 +2,100 @@
 #include <vector>
 #include <SDL2/SDL.h>
 
+#include "command.h"
 #include "game.h"
 #include "gfx.h"
 #include "textutil.h"
 
+bool pointInBox(int x, int y, const SDL_Rect &box) {
+    if (x < box.x || y < box.y) return false;
+    if (x > box.x + box.w) return false;
+    if (y > box.y + box.h) return false;
+    return true;
+}
 
-void gfx_MessageBox(System &state, std::string text) {
+bool gfx_confirm(System &state, const std::string &title, const std::string &message, bool defaultResult) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
-    const int lineHeight = state.smallFont->getLineHeight();
-    const int textOffset = 8;
-    const int targetHeight = (screenHeight - 200) / 2;
-    const int height = targetHeight / lineHeight * lineHeight + 2 * textOffset;
-    const unsigned maxLines = targetHeight / lineHeight;
-    const int width = screenWidth - 200;
-    const int left = 100;
-    const int top = screenHeight - height - 100;
-    const int textWidth = (width - textOffset * 2) / state.smallFont->getCharWidth();
 
-    std::string finalLine;
-    finalLine.insert(0, textWidth - 1, ' ');
-    finalLine += "\x07";
-    std::vector<std::string> lines;
-    wordwrap(text, textWidth, lines);
-    lines.push_back(finalLine);
+    unsigned titleLength = title.size();
+    unsigned messageLength = message.size();
+    unsigned maxLength = titleLength;
+    if (maxLength < messageLength) maxLength = messageLength;
+    unsigned realLength = state.smallFont->getCharWidth() * maxLength;
+    int boxWidth = realLength + 32;
+    int boxHeight = 32 + state.smallFont->getCharHeight() * 3.5;
+    int boxX = (screenWidth - boxWidth) / 2;
+    int boxY = (screenHeight - boxHeight) / 2;
+    unsigned titleX = boxX + (boxWidth - titleLength * state.smallFont->getCharWidth()) / 2;
+    unsigned messageX = boxX + (boxWidth - messageLength * state.smallFont->getCharWidth()) / 2;
 
+    SDL_Rect yesBox {
+        boxX + 16,
+        boxY + boxHeight - 16 - state.smallFont->getCharHeight(),
+        3 * state.smallFont->getCharWidth(),
+        state.smallFont->getCharHeight()
+    };
+    SDL_Rect noBox {
+        boxX + boxWidth - 16 - 2 * state.smallFont->getCharWidth(),
+        boxY + boxHeight - 16 - state.smallFont->getCharHeight(),
+        2 * state.smallFont->getCharWidth(),
+        state.smallFont->getCharHeight()
+    };
 
-    unsigned firstLine = 0;
     while (1) {
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
         repaint(state, false);
-        gfx_DrawFrame(state, left, top, width, height);
-        for (unsigned i = 0; i < maxLines; ++i) {
-            unsigned lineNo = firstLine + i;
-            if (lineNo >= lines.size()) break;
-            state.smallFont->out(left + 8, top + 8 + i * lineHeight, lines[lineNo]);
-        }
+        gfx_DrawFrame(state, boxX, boxY, boxWidth, boxHeight);
+        state.smallFont->out(titleX, boxY + 6, title);
+        gfx_HLine(state, boxX, boxX + boxWidth, boxY + 12 + state.smallFont->getCharHeight(), Color{255, 255, 255});
+        state.smallFont->out(messageX, boxY + 16 + state.smallFont->getCharHeight(), message);
+        SDL_SetRenderDrawColor(state.renderer, 127, 127, 127, SDL_ALPHA_OPAQUE);
+        if (pointInBox(mouseX, mouseY, yesBox)) SDL_RenderFillRect(state.renderer, &yesBox);
+        else if (pointInBox(mouseX, mouseY, noBox)) SDL_RenderFillRect(state.renderer, &noBox);
+        state.smallFont->out(yesBox.x, yesBox.y, "Yes");
+        state.smallFont->out(noBox.x, noBox.y, "No");
+        state.advanceFrame();
         SDL_RenderPresent(state.renderer);
 
         SDL_Event event;
         SDL_WaitEvent(&event);
         if (event.type == SDL_QUIT) {
+            if (state.wantsToQuit) {
+                // if we're already trying to quit, take this as a "yes"
+                // the only time we call this function while quitting should be
+                // to ask "Are you sure you want to quit?"
+                return true;
+            }
             state.wantsToQuit = true;
-            return;
+            return false;
         }
-        if (event.type == SDL_MOUSEBUTTONUP) return;
+        if (event.type == SDL_MOUSEBUTTONUP) {
+            if (pointInBox(mouseX, mouseY, yesBox)) return true;
+            else if (pointInBox(mouseX, mouseY, noBox)) return false;
+        }
         if (event.type == SDL_KEYDOWN) {
-            switch(event.key.keysym.sym) {
-                case SDLK_q:
+            const CommandDef &command = getCommand(state, event, confirmCommands);
+            switch(command.command) {
+                case Command::Quit:
                     if (event.key.keysym.mod & KMOD_SHIFT) {
                         state.wantsToQuit = true;
-                        return;
+                        return false;
                     }
                     break;
-                case SDLK_UP:
-                case SDLK_w:
-                    if (firstLine) {
-                        --firstLine;
-                    }
+                case Command::Move:
+                    return true;
+                case Command::Cancel:
+                    return false;
+                case Command::Interact:
+                    return defaultResult;
+                case Command::Close:
+                    return !defaultResult;
+                default:
+                    // we don't care about any other commands
                     break;
-                case SDLK_DOWN:
-                case SDLK_s:
-                    if (lines.size() > maxLines && firstLine < lines.size() - maxLines) {
-                        ++firstLine;
-                    }
-                    break;
-                case SDLK_SPACE:
-                case SDLK_RETURN:
-                case SDLK_ESCAPE:
-                case SDLK_KP_ENTER:
-                    return;
             }
         }
     }

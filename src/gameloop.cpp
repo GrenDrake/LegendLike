@@ -135,12 +135,13 @@ bool tryInteract(System &state, const Point &target) {
 }
 
 void gameloop(System &state) {
+    state.returnToMenu = false;
     state.getBoard()->calcFOV(state.getPlayer()->position);
 
     state.runDirection = Dir::None;
     state.lastticks = SDL_GetTicks();
 
-    while (!state.wantsToQuit) {
+    while (!state.wantsToQuit && !state.returnToMenu) {
         if (state.runDirection != Dir::None) {
             bool hitWall = false;
             do {
@@ -171,7 +172,13 @@ void gameloop(System &state) {
         repaint(state);
 
         gfx_handleInput(state);
+        if (state.wantsToQuit) {
+            if (!gfx_confirm(state, "Confirm", "Are you sure you want to quit?")) {
+                state.wantsToQuit = false;
+            }
+        }
     }
+
 }
 
 void gfx_handleInput(System &state) {
@@ -184,6 +191,7 @@ void gfx_handleInput(System &state) {
                 // do nothing
                 break;
             case Command::SystemMenu:
+                state.returnToMenu = true;
                 return;
             case Command::Quit:
                 state.wantsToQuit = true;

@@ -53,5 +53,6 @@ extern CommandDef mapCommands[];
 extern CommandDef characterCommands[];
 extern CommandDef menuCommands[];
 extern CommandDef infoCommands[];
+extern CommandDef confirmCommands[];
 
 #endif

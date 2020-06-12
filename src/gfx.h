@@ -189,6 +189,7 @@ public:
 
     // game configuration flags
     bool wantsToQuit;
+    bool returnToMenu;
     bool showTooltip;
     bool showInfo;
     bool showFPS;
@@ -234,7 +235,7 @@ void doCredits(System &state);
 void doGameMenu(System &state);
 void doShowMap(System &system);
 
-void gfx_MessageBox(System &state, std::string text);
+bool gfx_confirm(System &state, const std::string &title, const std::string &message, bool defaultResult = true);
 void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);

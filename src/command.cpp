@@ -175,6 +175,22 @@ CommandDef infoCommands[] = {
     { Command::None }
 };
 
+CommandDef confirmCommands[] = {
+    { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
+    { Command::Interact,    Dir::None,  SDLK_SPACE },
+    { Command::Interact,    Dir::None,  SDLK_KP_ENTER },
+    { Command::Interact,    Dir::None,  SDLK_RETURN },
+    { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_z },
+    { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
+    { Command::Cancel,      Dir::None,  SDLK_n },
+    { Command::Cancel,      Dir::None,  SDLK_n,         KMOD_LSHIFT },
+    { Command::Move,        Dir::None,  SDLK_y },
+    { Command::Move,        Dir::None,  SDLK_y,         KMOD_LSHIFT },
+
+    { Command::None }
+};
+
 const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList) {
     if (event.type == SDL_USEREVENT) {
         system.fps = system.timerFrames;
