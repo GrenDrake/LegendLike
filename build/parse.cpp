@@ -11,6 +11,23 @@ std::string anonymousString(ParseState &state, const std::string &text);
 bool buildPush(ParseState &state, const Origin &origin, const Value &value);
 Value tokenToValue(ParseState &state);
 
+void unescapeString(std::string &text) {
+    for (unsigned i = 0; i < text.size(); ++i) {
+        if (text[i] != '\\') continue;
+        ++i;
+        if (i >= text.size()) break;
+        switch(text[i]) {
+            case 'n':
+                text[i - 1] = '\n';
+                break;
+            default:
+                text[i - 1] = text[i];
+                break;
+        }
+        text.erase(i, 1);
+    }
+}
+
 std::vector<Token> parseLine(const std::string &line, const std::string &filename, int lineNo) {
     std::vector<Token> tokens;
 
@@ -74,11 +91,13 @@ std::vector<Token> parseLine(const std::string &line, const std::string &filenam
             int column = pos + 1;
             Origin origin{ filename, lineNo, column};
             ++pos;
-            auto start = pos;
-            while (pos < line.size() && line[pos] != '"') {
+            const auto start = pos;
+            while (pos < line.size()) {
+                if (line[pos] == '"' && line[pos - 1] != '\\') break;
                 ++pos;
             }
             std::string text = line.substr(start, pos - start);
+            unescapeString(text);
             tokens.push_back(Token{origin, TokenType::String, text});
             ++pos;
 
