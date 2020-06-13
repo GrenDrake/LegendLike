@@ -105,33 +105,44 @@ map0_downToDungeon:
     @warpto         29 28 1
     ret
 
+.npc npcProfessor      name="professor"    x=46 y=14 aiType=aiStill         typeId=2 talkFunc=map0_talk_professor
+.npc npcArchdean       name="archdean"     x=51 y=21 aiType=aiPaceBox       typeId=2 talkFunc=map0_talk_archdean
+.npc npcStudent        name="student"      x=51 y=23 aiType=aiAvoidPlayer   typeId=4
+.npc npcCow1           name="cow"          x=19 y=11 aiType=aiRandom        typeId=5
+.npc npcCow2           name="cow"          x=24 y=14 aiType=aiPaceHorz      typeId=5
+.npc npcCow3           name="cow"          x=30 y=15 aiType=aiPaceVert      typeId=5
+.npc npcCow4           name="cow"          x=33 y=13 aiType=aiFollowPlayer  typeId=5
+.npc npcStablemaster   name="stablemaster" x=27 y=18 aiType=aiStill         typeId=2 talkFunc=map0_test_giveparty
+.npc npcDungeonGuard   name="guard"        x=25 y=29 aiType=aiStill         typeId=4 talkFunc=map0_talk_gateguard
+.npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=4 talkFunc=map0_test_fight
+.npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=2 talkFunc=map0_talkSage
+
 .string map0_name "0000.map"
 map0_build:
     @mf_fromfile    map0_name
     ; the lab
-    @mf_addactor    aiStill         14 46 2 map0_talk_professor map0_str_professor 0
+    @mf_addactor    npcProfessor
     ; the academy
     @mf_addevent    24 50 map0_downToAcademyCellar eventManual
-    @mf_addactor    aiPaceBox       21 51 2 map0_talk_archdean map0_str_archdean 0
-    @mf_addactor    aiAvoidPlayer   23 51 4 0 map0_strActor 0
+    @mf_addactor    npcArchdean
+    @mf_addactor    npcStudent
     @mf_addevent    25 47 map0_talk_academysign eventManual
     ; beast pens
-    @mf_addactor    aiPaceHorz     11 19 5 0 map0_strActor 0
-    @mf_addactor    aiRandom       14 24 5 0 map0_strActor 0
-    @mf_addactor    aiPaceVert     15 30 5 0 map0_strActor 0
-    @mf_addactor    aiFollowPlayer 13 33 5 0 map0_strActor 0
-    ; party gifter tester
-    @mf_addactor    aiStill 18 27 2 map0_test_giveparty map0_str_partygifter 0
-    @mf_addactor    aiRandom 16 25 5 0 0 0
+    @mf_addactor    npcCow1
+    @mf_addactor    npcCow2
+    @mf_addactor    npcCow3
+    @mf_addactor    npcCow4
+    ; stablemaster
+    @mf_addactor    npcStablemaster
     ; combat tester
-    @mf_addactor    aiStill 21 28 4 map0_test_fight map0_str_combatdemoguy 0
+    @mf_addactor    npcTownCivilian1
     ; dungeon guard house
     @mf_addevent    29 28 map0_downToDungeon eventManual
-    @mf_addactor    aiStill 25 29 4 map0_talk_gateguard map0_str_gateguard 0
+    @mf_addactor    npcDungeonGuard
     ; village green
     @mf_addevent    26 40 map0_talkwell eventManual
     @mf_addevent    28 36 map0_talkfire eventManual
-    @mf_addactor    aiStill 25 37 2 map0_talkSage map0_strSage 0
+    @mf_addactor    npcTownCivilian2
 
     ret
 
@@ -351,4 +362,3 @@ map0_talkSage:
     @saystr     map0_strSageSaysHi
     textbox
     ret
-

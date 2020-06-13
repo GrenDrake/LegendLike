@@ -37,6 +37,9 @@ std::ostream& operator<<(std::ostream &out, TokenType type) {
         case TokenType::At:
             out << "AT";
             break;
+        case TokenType::Equals:
+            out << "EQUALS";
+            break;
         case TokenType::EOL:
             out << "EOL";
             break;
@@ -79,7 +82,7 @@ void dumpCode(const std::vector<AsmLine*> &code) {
                 const int breakSpace = 8 / data->width - 1;
                 for (unsigned i = 0; i < data->data.size(); i += stepSize) {
                     codeDump << "   ";
-                    for (unsigned j = 0; j < stepSize; ++j) {
+                    for (unsigned j = 0; j < static_cast<unsigned>(stepSize); ++j) {
                         unsigned k = i + j;
                         codeDump << ' ';
                         if (k < data->data.size()) {
@@ -88,7 +91,7 @@ void dumpCode(const std::vector<AsmLine*> &code) {
                         } else {
                             codeDump << "  ";
                         }
-                        if (j == breakSpace) codeDump << "  ";
+                        if (j == static_cast<unsigned>(breakSpace)) codeDump << "  ";
                     }
                     codeDump << '\n';
                 }
@@ -166,13 +169,21 @@ void dumpStrings(const Program &program) {
 }
 
 void dumpSymbols(const Program &program) {
-    std::ofstream labelValues("_symbols.txt");
+    unsigned identifierWidth = 0;
     for (auto iter : program.symbolTable) {
-        labelValues << iter.first << "  ";
+        if (iter.first.size() > identifierWidth) identifierWidth = iter.first.size();
+    }
+    identifierWidth += 2;
+
+    std::ofstream labelValues("_symbols.txt");
+    labelValues << std::left;
+    for (auto iter : program.symbolTable) {
+        labelValues << std::setw(identifierWidth) << iter.first << "  ";
         if (!iter.second.value.identifier.empty()) {
             labelValues << iter.second.value.identifier;
         } else {
-            labelValues << iter.second.value.value;
+            labelValues << iter.second.value.value << " (0x";
+            labelValues << std::hex << iter.second.value.value << std::dec << ')';
         }
         labelValues << " (" << iter.second.origin << ")\n";
     }

@@ -550,22 +550,24 @@ bool VM::run(unsigned address) {
                 }
                 break; }
             case Opcode::mf_addactor: {
-                int specialValue = pop();
-                int nameAddr = pop();
-                int talkFunc = pop();
-                int typeId = pop();
-                int x = pop();
-                int y = pop();
-                int aiType = pop();
+                int npcAddr = pop();
+                int nameAddr = readWord (npcAddr);
+                int talkFunc = readWord (npcAddr + 4);
+                int special  = readWord (npcAddr + 8);
+                int x        = readShort(npcAddr + 12);
+                int y        = readShort(npcAddr + 14);
+                int typeId   = readShort(npcAddr + 16);
+                int aiType   = readByte (npcAddr + 18);
+                int aiArg    = readByte (npcAddr + 19);
                 if (board) {
                     std::string name = nameAddr ? readString(nameAddr) : "actor";
                     Creature *creature = new Creature(typeId);
                     board->addActor(creature, Point(x, y));
                     creature->name = name;
                     creature->aiType = aiType;
-                    creature->aiArg = 0;
+                    creature->aiArg = aiArg;
                     creature->talkFunc = talkFunc;
-                    creature->talkArg = specialValue;
+                    creature->talkArg = special;
                     creature->reset();
                 }
                 break; }
@@ -644,7 +646,7 @@ bool VM::run(unsigned address) {
                 break; }
             case Opcode::p_giveitem: {
                 int locationNumber = pop();
-                if (locationNumber < 0 || locationNumber >= state->itemLocations.size()) {
+                if (locationNumber < 0 || locationNumber >= static_cast<int>(state->itemLocations.size())) {
                     state->addMessage("Invalid location #" + std::to_string(locationNumber));
                     break;
                 }

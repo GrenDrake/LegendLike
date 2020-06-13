@@ -48,6 +48,11 @@ std::vector<Token> parseLine(const std::string &line, const std::string &filenam
             Origin origin{ filename, lineNo, column};
             ++pos;
             tokens.push_back(Token{origin, TokenType::Colon});
+        } else if (line[pos] == '=') {
+            int column = pos + 1;
+            Origin origin{ filename, lineNo, column};
+            ++pos;
+            tokens.push_back(Token{origin, TokenType::Equals});
 
         } else if (line[pos] == '@') {
             int column = pos + 1;
@@ -145,6 +150,62 @@ bool parseDefine(ParseState &state) {
 
     state.advance();
     state.checkForEOL();
+    return true;
+}
+
+bool parseNPC(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .npc
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{0}, aiType{0}, aiArg{0}, talkFunc{0}, specialValue{0};
+    Value typeId{0}, xPos{0}, yPos{0};
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (!state.require(TokenType::Equals)) return false;
+        state.advance();
+
+        Value value = tokenToValue(state);
+        state.advance();
+
+        if (label == "name")          name = value;
+        else if (label == "aiType")   aiType = value;
+        else if (label == "aiArg")    aiArg = value;
+        else if (label == "talkFunc") talkFunc = value;
+        else if (label == "special")  specialValue = value;
+        else if (label == "typeId")   typeId = value;
+        else if (label == "x")        xPos = value;
+        else if (label == "y")        yPos = value;
+        else {
+            state.code.errorLog.add(origin, "Unknown NPC attribute " + label + ".");
+            return false;
+        }
+    }
+
+    AsmLabel *npcLabel = new AsmLabel(origin, identifier);
+    AsmData *npcDataW = new AsmData(origin, 4);
+    AsmData *npcDataS = new AsmData(origin, 2);
+    AsmData *npcDataB = new AsmData(origin, 1);
+
+    npcDataW->data.push_back(name);
+    npcDataW->data.push_back(talkFunc);
+    npcDataW->data.push_back(specialValue);
+    npcDataS->data.push_back(xPos);
+    npcDataS->data.push_back(yPos);
+    npcDataS->data.push_back(typeId);
+    npcDataB->data.push_back(aiType);
+    npcDataB->data.push_back(aiArg);
+
+    state.code.add(npcLabel);
+    state.code.add(npcDataW);
+    state.code.add(npcDataS);
+    state.code.add(npcDataB);
     return true;
 }
 
@@ -284,6 +345,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseData(state, 2)) continue;
             } else if (state.here().text == ".byte") {
                 if (!parseData(state, 1)) continue;
+            } else if (state.here().text == ".npc") {
+                if (!parseNPC(state)) continue;
 
             } else if (state.here().text == ".export") {
                 state.advance();
@@ -321,6 +384,7 @@ std::string anonymousString(ParseState &state, const Origin &origin, const std::
     static unsigned nextIdent = 1;
     std::string labelName = "__string_" + std::to_string(nextIdent);
     state.code.strings.insert(std::make_pair(labelName, StringData{origin, text}));
+    ++nextIdent;
     return labelName;
 }
 

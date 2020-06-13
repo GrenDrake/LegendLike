@@ -8,6 +8,9 @@ map1_upToDungeonHouse:
     @warpto         29 28 0
     ret
 
+.npc octopus1 name="octopus" x=37 y=25 aiType=aiRandom typeId=3
+.npc octopus2 name="octopus" x=41 y=27 aiType=aiRandom typeId=3
+
 map1_build:
     ; create town frame
     .push_count     tileGrass tileGrass2 tileGrass3 tileGrass tileGrass2 tileGrass3 tileRocks tileTree1 tileTree2 tileTree3
@@ -40,8 +43,8 @@ map1_build:
     @mf_vertline    30 25 33 tileWindow
     .push_count     tileWater
     @mf_fillrand    30 43 23 34
-    @mf_addactor    aiRandom 25 37 3 0 map1_str_octopus 0
-    @mf_addactor    aiRandom 27 41 3 0 map1_str_octopus 0
+    @mf_addactor    octopus1
+    @mf_addactor    octopus2
 
     ret
 

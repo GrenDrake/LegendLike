@@ -1,4 +1,3 @@
-#include <iostream>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -344,7 +343,7 @@ void gfx_drawSidebar(System &state) {
             if (state.showInfo) {
                 std::stringstream ss;
                 if (creature) {
-                    ss << creature->name << "   ";
+                    ss << creature->getName() << "   ";
                 }
                 const TileInfo &tileInfo = TileInfo::get(tileHere);
                 ss << tileInfo.name << " [" << tileHere << "]   " << tileX << ", " << tileY;

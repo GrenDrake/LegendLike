@@ -9,6 +9,7 @@ enum class TokenType {
     String,
     Colon,
     At,
+    Equals,
     EOL
 };
 
