@@ -28,8 +28,6 @@ BEASTGEN_OBJS=tools/beastgen.o
 BEASTGEN=beastgen
 MOVED_OBJS=tools/moved.o tools/common.o
 MOVED=moved
-TILED_OBJS=tools/tiled.o tools/common.o
-TILED=tiled
 TYPED_OBJS=tools/typed.o tools/common.o
 TYPED=typed
 
@@ -47,13 +45,11 @@ $(GAME_DAT): build/build data_src/gamedata.src data_src/stddefs.inc data_src/map
 	$(ASSEMBLE) data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc -o $(GAME_DAT)
 #	cd data_src && ../assemble gamedata.src ../$(GAME_DAT)
 
-tools: $(BEASTGEN) $(MOVED) $(TILED) $(TYPED)
+tools: $(BEASTGEN) $(MOVED) $(TYPED)
 $(BEASTGEN): $(BEASTGEN_OBJS)
 	$(CC) $(BEASTGEN_OBJS) -o $(BEASTGEN)
 $(MOVED): $(MOVED_OBJS)
 	$(CC) $(MOVED_OBJS) -lncurses -o $(MOVED)
-$(TILED): $(TILED_OBJS)
-	$(CC) $(TILED_OBJS) -lncurses -o $(TILED)
 $(TYPED): $(TYPED_OBJS)
 	$(CC) $(TYPED_OBJS) -lncurses -o $(TYPED)
 
