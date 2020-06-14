@@ -117,7 +117,7 @@ dungeon_foe_info:
 
     .word   -1      ; random foe end marker
 
-    @mf_addactor    aiStill 14 46 11 map0_talk_professor map0_str_professor 0
+    ;@mf_addactor    aiStill 14 46 11 map0_talk_professor map0_str_professor 0
 
 map_build_dungeon:
     @mf_makemaze    3

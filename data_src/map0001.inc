@@ -47,5 +47,3 @@ map1_build:
     @mf_addactor    octopus2
 
     ret
-
-.string map1_str_octopus "octopus"
