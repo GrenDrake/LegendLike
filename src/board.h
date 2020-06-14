@@ -159,16 +159,9 @@ private:
     bool dbgDisableFOV;
 };
 
-struct RandomFoeRow {
-    int art;
-    int ai;
-    std::string name;
-    int fightInfo;
-};
-
 struct RandomFoeInfo {
     int count;
-    std::vector<RandomFoeRow> rows;
+    std::vector<int> typeList;
 };
 
 void makeMapMaze(Board *board, Random &player, unsigned flags);

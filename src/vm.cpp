@@ -596,18 +596,11 @@ bool VM::run(unsigned address) {
                 RandomFoeInfo info;
                 info.count = readWord(infoAddr);
                 infoAddr += 4;
-                int artID = readWord(infoAddr);
-                while (artID > 0) {
-                    RandomFoeRow row;
-                    row.art    = artID;
-                    row.ai     = readWord(infoAddr + 4);
-                    int nameAddr = readWord(infoAddr + 8);
-                    row.name = readString(nameAddr);
-                    row.fightInfo = readWord(infoAddr + 12);
-
-                    infoAddr += 16;
-                    artID = readWord(infoAddr);
-                    info.rows.push_back(row);
+                int type = readWord(infoAddr);
+                while (type > 0) {
+                    info.typeList.push_back(type);
+                    infoAddr += 4;
+                    type = readWord(infoAddr);
                 }
 
                 mapRandomEnemies(state->getBoard(), state->coreRNG, info);

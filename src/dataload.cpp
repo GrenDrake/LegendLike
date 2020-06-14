@@ -218,7 +218,7 @@ bool System::loadCreatureData() {
         CreatureType type;
         int nameAddr = vm->readWord(npcTypesAddr + counter * npcTypeSize);
         type.ident = counter;
-        if (nameAddr) type.name = vm->readWord(nameAddr);
+        if (nameAddr) type.name = vm->readString(nameAddr);
         type.artIndex = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
         type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
         type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);

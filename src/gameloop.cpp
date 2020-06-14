@@ -96,7 +96,7 @@ bool tryInteract(System &state, const Point &target) {
             // has talk function, is friendly
             state.vm->run(actor->talkFunc);
         } else if (state.swordLevel <= 0) {
-                state.addMessage("You don't have a sword!");
+            state.addMessage("You don't have a sword!");
         } else {
             int roll = 0;
             for (int i = 0; i < state.swordLevel; ++i) {

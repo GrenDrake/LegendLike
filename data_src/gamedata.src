@@ -103,6 +103,9 @@
 .npctype npcTypeGuard    name="guard"   artIndex=10
 .npctype npcTypeCow      name="cow"     artIndex=72
 
+.npctype npcTypeBrigand  name="brigand"   artIndex=10 health=3
+.npctype npcTypeBandit   name="bandit"    artIndex=10 health=2
+
 
 map_info:
     ; level 0 (town)
@@ -187,19 +190,11 @@ dungeon_fight_2:
     .word 0     ; fight type
     .word 2     ; fight bg
 
+
 dungeon_foe_info:
     .word   100     ; foes to add to map
-
-    .word   10      ; map actor art ID
-    .word   aiEnemy ; map actor AI
-    .word   random_foe_name ; map actor name
-    .word   dungeon_fight_1
-
-    .word   12      ; map actor art ID
-    .word   aiEnemy ; map actor AI
-    .word   random_foe_name ; map actor name
-    .word   dungeon_fight_2
-
+    .word   npcTypeBandit
+    .word   npcTypeBrigand
     .word   -1      ; random foe end marker
 
 

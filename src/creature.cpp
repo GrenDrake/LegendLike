@@ -56,6 +56,7 @@ int CreatureType::typeCount() {
 
 Creature::Creature(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
+  aiType(aiStill), aiArg(0), talkFunc(0), talkArg(0),
   ai_lastDir(Dir::None), ai_lastTarget(-1, -1)
 {
     typeIdent = type;
@@ -375,8 +376,13 @@ void Creature::ai(System &system) {
             if (canSeePlayer) {
                 ai_lastTarget = playerPos;
                 if (position.distanceTo(playerPos) < 2) {
+                    Creature *player = board->getPlayer();
                     // do attack
-                    useAbility(system, 0, playerPos);
+                    player->takeDamage(1);
+                    std::stringstream msg;
+                    msg << getName() << " attacks you for " << 1 << " damage.";
+                    system.addMessage(upperFirst(msg.str()));
+                    if (player->curHealth <= 0) system.appendMessage(" You die!");
                 } else {
                     // move towards player
                     // std::cerr << this << " can see player\n";
