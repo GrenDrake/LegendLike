@@ -122,7 +122,7 @@ bool buildHeader(Program &code) {
         unsigned locationsSize = 4;
         int counter = 0;
         for (const ItemLocation &location : code.locations) {
-            code.addSymbol(code.errorLog, location.name, SymbolDef{location.origin, Value{counter}});
+            code.addSymbol(location.name, SymbolDef{location.origin, Value{counter}});
             AsmData *data = new AsmData(location.origin, 4);
             data->data.push_back(location.itemId);
             stringTable.push_back(data);

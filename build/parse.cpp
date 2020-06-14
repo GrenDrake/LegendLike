@@ -146,7 +146,7 @@ bool parseDefine(ParseState &state) {
 
     if (!state.require(TokenType::Integer)) return false;
     SymbolDef newSymbol(origin, Value{state.here().i});
-    state.code.addSymbol(state.code.errorLog, name, newSymbol);
+    state.code.addSymbol(name, newSymbol);
 
     state.advance();
     state.checkForEOL();

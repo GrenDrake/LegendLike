@@ -121,7 +121,7 @@ struct Program {
     std::map<std::string, StringData> strings;
     std::vector<Backpatch> patches;
 
-    void addSymbol(ErrorLog &errorLog, const std::string &name, const SymbolDef &symbol);
+    void addSymbol(const std::string &name, const SymbolDef &symbol);
     const SymbolDef& getSymbol(const std::string &name);
     void add(AsmLine *line) {
         code.push_back(line);

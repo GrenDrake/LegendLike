@@ -7,7 +7,7 @@
 #include "assemble.h"
 
 
-void Program::addSymbol(ErrorLog &errorLog, const std::string &name, const SymbolDef &symbol) {
+void Program::addSymbol(const std::string &name, const SymbolDef &symbol) {
     auto existing = symbolTable.find(name);
     if (existing != symbolTable.end()) {
         std::stringstream msg;
@@ -93,7 +93,7 @@ void generate(Program &code, const std::string &outputFile) {
         } else if (label) {
             Value value;
             value.value = filePos;
-            code.addSymbol(code.errorLog, label->name, SymbolDef(label->origin, value));
+            code.addSymbol(label->name, SymbolDef(label->origin, value));
         }
     }
 
