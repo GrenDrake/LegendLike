@@ -28,7 +28,7 @@ map0_talk_academysign:
     textbox
     ret
 map0_talk_archdean:
-    @p_damage       1 10
+    @p_damage       5
     @saystr         "Archdean: \"Welcome! I wish I could give you a better greeting, but work on the academy is still in progress.\""
     textbox
     @p_giveitem     locCoin1
@@ -91,17 +91,17 @@ map0_talkSage:
     textbox
     ret
 
-.npc npcProfessor      name="professor"    x=46 y=14 aiType=aiStill         typeId=2 talkFunc=map0_talk_professor
-.npc npcArchdean       name="archdean"     x=51 y=21 aiType=aiPaceBox       typeId=2 talkFunc=map0_talk_archdean
-.npc npcStudent        name="student"      x=51 y=23 aiType=aiAvoidPlayer   typeId=4
-.npc npcCow1           name="cow"          x=19 y=11 aiType=aiRandom        typeId=5
-.npc npcCow2           name="cow"          x=24 y=14 aiType=aiPaceHorz      typeId=5
-.npc npcCow3           name="cow"          x=30 y=15 aiType=aiPaceVert      typeId=5
-.npc npcCow4           name="cow"          x=33 y=13 aiType=aiFollowPlayer  typeId=5
-.npc npcStablemaster   name="stablemaster" x=27 y=18 aiType=aiStill         typeId=2 talkFunc=map0_test_giveparty
-.npc npcDungeonGuard   name="guard"        x=25 y=29 aiType=aiStill         typeId=4 talkFunc=map0_talk_gateguard
-.npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=4 talkFunc=map0_test_fight
-.npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=2 talkFunc=map0_talkSage
+.npc npcProfessor      name="professor"    x=46 y=14 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talk_professor
+.npc npcArchdean       name="archdean"     x=51 y=21 aiType=aiPaceBox       typeId=npcTypeSage  talkFunc=map0_talk_archdean
+.npc npcStudent        name="student"      x=51 y=23 aiType=aiAvoidPlayer   typeId=npcTypeGuard
+.npc npcCow1           name="cow"          x=19 y=11 aiType=aiRandom        typeId=npcTypeCow
+.npc npcCow2           name="cow"          x=24 y=14 aiType=aiPaceHorz      typeId=npcTypeCow
+.npc npcCow3           name="cow"          x=30 y=15 aiType=aiPaceVert      typeId=npcTypeCow
+.npc npcCow4           name="cow"          x=33 y=13 aiType=aiFollowPlayer  typeId=npcTypeCow
+.npc npcStablemaster   name="stablemaster" x=27 y=18 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_test_giveparty
+.npc npcDungeonGuard   name="guard"        x=25 y=29 aiType=aiStill         typeId=npcTypeGuard talkFunc=map0_talk_gateguard
+.npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=npcTypeGuard talkFunc=map0_test_fight
+.npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talkSage
 
 
 map0_enter:

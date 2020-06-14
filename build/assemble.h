@@ -106,6 +106,18 @@ struct Backpatch {
     int width;
 };
 
+struct NpcType {
+    Origin origin;
+    std::string identifier;
+    Value name;
+    Value artIndex;
+    Value health;
+    Value energy;
+    Value accuracy;
+    Value evasion;
+    Value moveRate;
+};
+
 struct ItemLocation {
     Origin origin;
     std::string name;
@@ -118,6 +130,7 @@ struct Program {
     std::vector<AsmLine*> code;
     std::vector<std::string> exports;
     std::vector<ItemLocation> locations;
+    std::vector<NpcType> npcTypes;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
     std::string outputFile = "output.bin";
     Program code;
     code.exports.push_back("__locations");
+    code.exports.push_back("__npctypes");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -132,7 +133,7 @@ bool buildHeader(Program &code) {
             locationsSize += data->data.size() * data->width;
             ++counter;
         }
-        std::cerr << "Locations size: " << locationsSize << "\n";
+        std::cerr << "Locations size: " << locationsSize << " (" << counter << " items)\n";
     }
 
     {
@@ -152,6 +153,34 @@ bool buildHeader(Program &code) {
             stringTable.push_back(data);
         }
         std::cerr << "String table size: " << stringTableSize << "\n";
+    }
+
+    {
+        // build the npc types table
+        AsmLabel *npcTypesLabel = new AsmLabel(Origin(), "__npctypes");
+        stringTable.push_back(npcTypesLabel);
+        AsmData *npcTypesCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(npcTypesCountData);
+        Value npcTypesCount;
+        npcTypesCount.value = code.npcTypes.size();
+        npcTypesCountData->data.push_back(npcTypesCount);
+        unsigned npcTypesSize = 4;
+        int counter = 0;
+        for (const NpcType &npcType : code.npcTypes) {
+            code.addSymbol(npcType.identifier, SymbolDef{npcType.origin, Value{counter}});
+            AsmData *data = new AsmData(npcType.origin, 4);
+            data->data.push_back(npcType.name);
+            data->data.push_back(npcType.artIndex);
+            data->data.push_back(npcType.health);
+            data->data.push_back(npcType.energy);
+            data->data.push_back(npcType.accuracy);
+            data->data.push_back(npcType.evasion);
+            data->data.push_back(npcType.moveRate);
+            stringTable.push_back(data);
+            npcTypesSize += data->data.size() * data->width;
+            ++counter;
+        }
+        std::cerr << "NPC Types size: " << npcTypesSize << " (" << counter << " items)\n";
     }
 
     // insert into beginning of program code

@@ -29,6 +29,11 @@ start:
     textbox
     ret
 
+.npctype npcTypePlayer   name="sage"    artIndex=41 health=10 energy=10
+.npctype npcTypeSage     name="sage"    artIndex=11
+.npctype npcTypeOctopus  name="octopus" artIndex=71
+.npctype npcTypeGuard    name="guard"   artIndex=10
+.npctype npcTypeCow      name="cow"     artIndex=72
 
 map_info:
     ; level 0 (town)

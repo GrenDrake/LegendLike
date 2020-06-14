@@ -626,9 +626,8 @@ bool VM::run(unsigned address) {
                 break; }
             case Opcode::p_damage: {
                 int amnt = pop();
-                int type = pop();
                 if (board) {
-                    state->getPlayer()->takeDamage(amnt, static_cast<DamageType>(type));
+                    state->getPlayer()->takeDamage(amnt);
                 }
                 break; }
             case Opcode::p_learn: {

@@ -206,41 +206,28 @@ bool System::load() {
 
 bool System::loadCreatureData() {
     Logger &log = Logger::getInstance();
-    VM beasts;
-    if (!beasts.loadFromFile("beasts.dat", false)) {
-        log.error("Failed to load beast info.");
+    const unsigned npcTypeSize = 28;
+    unsigned npcTypesAddr = vm->getExport("__npctypes");
+    if (npcTypesAddr == static_cast<unsigned>(-1)) {
+        log.error("NPC types data not found.");
         return false;
     }
-    const int beastSize = 66;
-    int baseAddress = beasts.getExport("beast_info");
-    if (baseAddress == -1) {
-        log.error("Could not find beast_info in beasts.dat");
-    } else {
-        int ident = beasts.readWord(baseAddress);
-        while (ident > 0) {
-            CreatureType type;
-            type.ident = ident;
-            type.name = beasts.readString(baseAddress + 4);
-            type.artIndex = beasts.readWord(baseAddress + 36);
-            type.defaultMove = beasts.readWord(baseAddress + 40);
-            int offset = baseAddress + 44;
-            for (int j = 0; j < statCount; ++j) {
-                type.stats[j] = beasts.readShort(offset);
-                offset += 2;
-            }
-            for (int j = 0; j < damageTypeCount; ++j) {
-                int value = beasts.readByte(offset);
-                type.resistances[j] = value / 100.0;
-                offset += 1;
-            }
-
-            CreatureType::add(type);
-
-            baseAddress += beastSize;
-            ident = beasts.readWord(baseAddress);
-        }
+    const unsigned npcTypesCount = vm->readWord(npcTypesAddr);
+    npcTypesAddr += 4;
+    for (unsigned counter = 0; counter < npcTypesCount; ++counter) {
+        CreatureType type;
+        int nameAddr = vm->readWord(npcTypesAddr + counter * npcTypeSize);
+        type.ident = counter;
+        if (nameAddr) type.name = vm->readWord(nameAddr);
+        type.artIndex = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
+        type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
+        type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);
+        type.accuracy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
+        type.evasion = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
+        type.moveRate = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
+        CreatureType::add(type);
     }
-    log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " creatures.");
+    log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " npc types.");
     return true;
 }
 
@@ -248,7 +235,7 @@ bool System::loadLocationsData() {
     Logger &log = Logger::getInstance();
     const unsigned locationSize = 4;
     unsigned locationsAddr = vm->getExport("__locations");
-    if (locationsAddr == -1) {
+    if (locationsAddr == static_cast<unsigned>(-1)) {
         log.error("Locations data not found.");
         return false;
     }
@@ -256,12 +243,9 @@ bool System::loadLocationsData() {
     locationsAddr += 4;
     for (unsigned i = 0; i < locationCount; ++i) {
         unsigned counter = 0;
-        while (1) {
-            int itemId = vm->readWord(locationsAddr + counter * locationSize);
-            if (itemId < 0) break;
-            itemLocations.push_back(ItemLocation{itemId});
-            ++counter;
-        }
+        int itemId = vm->readWord(locationsAddr + counter * locationSize);
+        itemLocations.push_back(ItemLocation{itemId});
+        ++counter;
     }
     log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
     return true;

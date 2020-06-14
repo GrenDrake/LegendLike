@@ -60,7 +60,6 @@ Creature::Creature(int type)
 {
     typeIdent = type;
     typeInfo = &CreatureType::get(type);
-    moves.push_back(typeInfo->defaultMove);
 }
 
 std::string Creature::getName() const {
@@ -68,27 +67,16 @@ std::string Creature::getName() const {
     return name;
 }
 
-int Creature::getStat(Stat stat) const {
-    int statNumber = static_cast<int>(stat);
-    return typeInfo->stats[statNumber];
-}
-
-double Creature::getResist(DamageType stat) const {
-    int statNumber = static_cast<int>(stat);
-    return typeInfo->resistances[statNumber];
-}
-
 void Creature::reset() {
-    curHealth = getStat(Stat::Health);
-    curEnergy = getStat(Stat::Energy);
+    curHealth = typeInfo->maxHealth;
+    curEnergy = typeInfo->maxEnergy;
 }
 
-int Creature::takeDamage(int amount, DamageType type) {
-    amount *= getResist(type);
+int Creature::takeDamage(int amount) {
     if (amount > 0) {
         if (amount > curHealth) amount = curHealth;
     } else {
-        int maxGain = getStat(Stat::Health) - curHealth;
+        int maxGain = typeInfo->maxHealth - curHealth;
         if (-amount > maxGain) amount = -maxGain;
     }
     curHealth -= amount;
@@ -238,13 +226,11 @@ void Creature::useAbility(System &system, int abilityNumber, const Point &aimedA
                 line << upperFirst(who->getName()) << " resists! ";
                 system.appendMessage(line.str());
             } else {
-                DamageType damageType = static_cast<DamageType>(move.type);
-
-                int realDamage = who->takeDamage(move.damage, damageType);
+                int realDamage = who->takeDamage(move.damage);
                 std::stringstream line;
                 line << upperFirst(who->getName());
-                if (move.damage > 0) line << " takes " << realDamage << ' ' << damageType << " damage. ";
-                else                line << " recovers " << -realDamage << " via " << damageType << ". ";
+                if (move.damage > 0) line << " takes " << realDamage << " damage. ";
+                else                line << " recovers " << -realDamage << ". ";
                 system.appendMessage(line.str());
                 if (who->curHealth <= 0) {
                     who->position = Point(-1, -1);
@@ -390,7 +376,7 @@ void Creature::ai(System &system) {
                 ai_lastTarget = playerPos;
                 if (position.distanceTo(playerPos) < 2) {
                     // do attack
-                    useAbility(system, typeInfo->defaultMove, playerPos);
+                    useAbility(system, 0, playerPos);
                 } else {
                     // move towards player
                     // std::cerr << this << " can see player\n";

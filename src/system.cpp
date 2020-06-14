@@ -34,14 +34,12 @@ void System::reset() {
     mCurrentBoard = nullptr;
     wantsTick = false;
 
-    mPlayer = new Creature(1);
+    mPlayer = new Creature(playerTypeId);
     mPlayer->name = "player";
     mPlayer->isPlayer = true;
     mPlayer->aiType = aiPlayer;
     mPlayer->talkFunc = 0;
     mPlayer->reset();
-    quickSlots[0].type = quickSlotAbility;
-    quickSlots[0].action = mPlayer->moves[0];
 }
 
 void System::endGame() {

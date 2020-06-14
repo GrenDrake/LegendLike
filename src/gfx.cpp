@@ -82,7 +82,7 @@ void gfx_drawMap(System &state) {
                         if (tile) {
                             SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
-                        double hpPercent = static_cast<double>(creature->curHealth) / creature->getStat(Stat::Health);
+                        double hpPercent = static_cast<double>(creature->curHealth) / creature->typeInfo->maxHealth;
                         if (hpPercent < 1.0) {
                             SDL_Rect box = texturePosition;
                             box.h = tileScale;
@@ -187,8 +187,8 @@ void gfx_drawSidebar(System &state) {
     const int barHeight = lineHeight / 2;
     const int column2 = xPos + sidebarWidth / 2;
     Creature *player = state.getPlayer();
-    const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->getStat(Stat::Health));
-    const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->getStat(Stat::Energy));
+    const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->typeInfo->maxHealth);
+    const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->typeInfo->maxEnergy);
 
     state.smallFont->out(xPos, yPos, player->name);
     yPos += lineHeight;
@@ -197,8 +197,8 @@ void gfx_drawSidebar(System &state) {
     gfx_DrawBar(state, xPos, yPos, sidebarWidth - 16, barHeight, energyPercent, Color{127,127,255});
     yPos += barHeight * 2;
 
-    state.tinyFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->getStat(Stat::Health)));
-    state.tinyFont->out(column2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
+    state.tinyFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->typeInfo->maxHealth));
+    state.tinyFont->out(column2, yPos, "EN: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->typeInfo->maxEnergy));
     yPos += tinyLineHeight;
     const int statTop = yPos;
 

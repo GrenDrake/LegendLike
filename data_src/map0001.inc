@@ -8,8 +8,8 @@ map1_upToDungeonHouse:
     @warpto         29 28 0
     ret
 
-.npc octopus1 name="octopus" x=37 y=25 aiType=aiRandom typeId=3
-.npc octopus2 name="octopus" x=41 y=27 aiType=aiRandom typeId=3
+.npc octopus1 name="octopus" x=37 y=25 aiType=aiRandom typeId=npcTypeOctopus
+.npc octopus2 name="octopus" x=41 y=27 aiType=aiRandom typeId=npcTypeOctopus
 
 map1_build:
     ; create town frame

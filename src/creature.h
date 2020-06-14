@@ -13,6 +13,8 @@ class System;
 class Random;
 struct SDL_Texture;
 
+const int playerTypeId      = 0;
+
 const int aiPlayer          = 99;
 const int aiStill           = 0;
 const int aiRandom          = 1;
@@ -89,9 +91,8 @@ public:
     int ident;
     std::string name;
     int artIndex;
-    int stats[statCount];
-    double resistances[damageTypeCount];
-    int defaultMove;
+    int maxHealth, maxEnergy;
+    int accuracy, evasion, moveRate;
 private:
     static std::vector<CreatureType> types;
 };
@@ -127,10 +128,8 @@ public:
     void ai(System &system);
     bool tryMove(Board *board, Dir direction);
     std::string getName() const;
-    int getStat(Stat stat) const;
-    double getResist(DamageType stat) const;
     void reset();
-    int takeDamage(int amount, DamageType type);
+    int takeDamage(int amount);
     bool isKOed() const;
     void autolevel(int toLevel, Random &rng);
     void learnMove(int moveId);

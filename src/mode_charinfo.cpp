@@ -36,8 +36,8 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     int yPos = 8;
     int xPos = 8;
     Creature *player = state.getPlayer();
-    const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->getStat(Stat::Health));
-    const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->getStat(Stat::Energy));
+    const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->typeInfo->maxHealth);
+    const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->typeInfo->maxEnergy);
 
     state.smallFont->out(xPos, yPos, player->name);
     yPos += lineHeight;
@@ -46,35 +46,12 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     gfx_DrawBar(state, xPos, yPos, barWidth, barHeight, energyPercent, Color{127,127,255});
     yPos += barHeight * 2;
 
-    state.smallFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->getStat(Stat::Health)));
-    state.smallFont->out(column2, yPos, "    Energy: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->getStat(Stat::Energy)));
+    state.smallFont->out(xPos, yPos, "HP: " + std::to_string(player->curHealth) + "/" + std::to_string(player->typeInfo->maxHealth));
+    state.smallFont->out(column2, yPos, "    Energy: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->typeInfo->maxEnergy));
     yPos += lineHeight * 2;
     const int paneTop = yPos;
 
-    if (mode == charStats) {
-        state.smallFont->out(xPos, yPos, "STATS");
-        yPos += lineHeight;
-        for (int i = 2; i < statCount; ++i) {
-            Stat stat = static_cast<Stat>(i);
-            std::stringstream line;
-            line << getAbbrev(stat) << ": " << player->getStat(stat);
-            state.smallFont->out(xPos, yPos, line.str());
-            yPos += lineHeight;
-        }
-
-        yPos = paneTop;
-        state.smallFont->out(column2, yPos, "RESISTANCES");
-        yPos += lineHeight;
-        for (int i = 0; i < damageTypeCount; ++i) {
-            DamageType damageType = static_cast<DamageType>(i);
-            std::stringstream line;
-            line << std::fixed << std::setprecision(3);
-            line << std::setw(10) << damageType << ": " << player->getResist(damageType);
-            state.smallFont->out(column2, yPos, line.str());
-            yPos += lineHeight;
-        }
-
-    } else if (mode == charAbilities) {
+    if (mode == charAbilities) {
         state.smallFont->out(xPos, yPos, "KNOWN MOVES");
         yPos += lineHeight;
         const int costPos = column2 - 4 * charWidth;

@@ -102,7 +102,7 @@ bool tryInteract(System &state, const Point &target) {
             for (int i = 0; i < state.swordLevel; ++i) {
                 roll += 1 + rand() % 4;
             }
-            actor->takeDamage(roll, DamageType::Physical);
+            actor->takeDamage(roll);
             state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
             if (actor->curHealth <= 0) {
                 state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");

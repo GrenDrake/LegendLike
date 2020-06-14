@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -161,7 +160,7 @@ bool parseLocation(ParseState &state) {
     const std::string &identifier = state.here().text;
     state.advance();
 
-    Value itemId;
+    Value itemId{-1};
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
         const std::string &label = state.here().text;
@@ -238,6 +237,50 @@ bool parseNPC(ParseState &state) {
     state.code.add(npcDataW);
     state.code.add(npcDataS);
     state.code.add(npcDataB);
+    return true;
+}
+
+bool parseNpcType(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .npctype
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{0};
+    Value artIndex{0};
+    Value health{10000};
+    Value energy{10000};
+    Value accuracy{0};
+    Value evasion{0};
+    Value moveRate{2};
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (!state.require(TokenType::Equals)) return false;
+        state.advance();
+
+        Value value = tokenToValue(state);
+        state.advance();
+
+        if (label == "name")          name = value;
+        else if (label == "artIndex") artIndex = value;
+        else if (label == "health")   health = value;
+        else if (label == "energy")   energy = value;
+        else if (label == "accuracy") accuracy = value;
+        else if (label == "evasion")  evasion = value;
+        else if (label == "moveRate") moveRate = value;
+        else {
+            state.code.errorLog.add(origin, "Unknown npc type attribute " + label + ".");
+            return false;
+        }
+    }
+
+    NpcType npcType{ origin, identifier, name, artIndex, health, energy, accuracy, evasion, moveRate };
+    state.code.npcTypes.push_back(npcType);
     return true;
 }
 
@@ -381,6 +424,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseLocation(state)) continue;
             } else if (state.here().text == ".npc") {
                 if (!parseNPC(state)) continue;
+            } else if (state.here().text == ".npctype") {
+                if (!parseNpcType(state)) continue;
 
             } else if (state.here().text == ".export") {
                 state.advance();
