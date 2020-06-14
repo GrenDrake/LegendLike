@@ -359,7 +359,7 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
         std::vector<Token> tokens = parseLine(line, filename, lineNo);
         if (tokens.empty() || tokens.front().type == TokenType::EOL) continue;
         ParseState state(tokens, errorLog, code);
-        dumpTokens(tokens);
+        if (code.doTokenDump) dumpTokens(tokens);
 
         if (state.here().type == TokenType::Directive) {
             // Directive

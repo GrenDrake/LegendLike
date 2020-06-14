@@ -112,6 +112,7 @@ struct ItemLocation {
 };
 
 struct Program {
+    Program();
     ErrorLog errorLog;
     std::vector<AsmLine*> code;
     std::vector<std::string> exports;
@@ -121,11 +122,11 @@ struct Program {
     std::map<std::string, StringData> strings;
     std::vector<Backpatch> patches;
 
+    bool doTokenDump;
+
     void addSymbol(const std::string &name, const SymbolDef &symbol);
     const SymbolDef& getSymbol(const std::string &name);
-    void add(AsmLine *line) {
-        code.push_back(line);
-    }
+    void add(AsmLine *line);
 };
 
 std::ostream& operator<<(std::ostream &out, const Origin &origin);

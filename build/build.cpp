@@ -16,8 +16,10 @@ int main(int argc, char *argv[]) {
         std::string arg = argv[i];
 
         if (arg[0] == '-') {
-            if (arg == "-dump") doDumpInternals = true;
-            else if (arg == "-o") {
+            if (arg == "-dump") {
+                doDumpInternals = true;
+                code.doTokenDump = true;
+            } else if (arg == "-o") {
                 ++i;
                 if (i >= argc) {
                     std::cerr << "Expected name of output file after -o\n";
@@ -38,7 +40,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    clearTokenDump();
+    if (code.doTokenDump) clearTokenDump();
     for (const std::string &filename : files) {
         parseFile(filename, code.errorLog, code);
         if (!code.errorLog.errors.empty()) {
