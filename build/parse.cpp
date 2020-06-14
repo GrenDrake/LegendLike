@@ -360,6 +360,63 @@ bool parseString(ParseState &state) {
     return true;
 }
 
+const unsigned TILE_ISSOLID  = 0x01;
+const unsigned TILE_ISOPAQUE = 0x02;
+const unsigned TILE_ISDOOR   = 0x04;
+bool parseTileDef(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .tiledef
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{0};
+    Value artIndex{0};
+    Value red{0};
+    Value green{0};
+    Value blue{0};
+    Value interactTo{-1};
+    Value animLength{0};
+    bool isSolid = false, isOpaque = false, isDoor = false;
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (label == "solid")       isSolid = true;
+        else if (label == "opaque") isOpaque = true;
+        else if (label == "door")   isDoor = true;
+        else {
+            if (!state.require(TokenType::Equals)) return false;
+            state.advance();
+
+            Value value = tokenToValue(state);
+            state.advance();
+
+            if (label == "name")            name = value;
+            else if (label == "artIndex")   artIndex = value;
+            else if (label == "red")        red = value;
+            else if (label == "green")      green = value;
+            else if (label == "blue")       blue = value;
+            else if (label == "interactTo") interactTo = value;
+            else if (label == "animLength") animLength = value;
+            else {
+                state.code.errorLog.add(origin, "Unknown tiledef attribute " + label + ".");
+                return false;
+            }
+        }
+    }
+
+    TileDef newTile{ origin, identifier, name, artIndex, red, green, blue, interactTo, animLength };
+    if (isSolid)  newTile.flags |= TILE_ISSOLID;
+    if (isOpaque) newTile.flags |= TILE_ISOPAQUE;
+    if (isDoor)   newTile.flags |= TILE_ISDOOR;
+
+    state.code.tileDefs.push_back(newTile);
+    return true;
+}
+
 bool parsePaddedString(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .string_pad
@@ -426,7 +483,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseNPC(state)) continue;
             } else if (state.here().text == ".npctype") {
                 if (!parseNpcType(state)) continue;
-
+            } else if (state.here().text == ".tiledef") {
+                if (!parseTileDef(state)) continue;
             } else if (state.here().text == ".export") {
                 state.advance();
                 while (state.here().type != TokenType::EOL) {

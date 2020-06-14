@@ -106,6 +106,17 @@ struct Backpatch {
     int width;
 };
 
+struct TileDef {
+    Origin origin;
+    std::string identifier;
+    Value name;
+    Value artIndex;
+    Value red, green, blue;
+    Value interactTo;
+    Value animLength;
+    unsigned flags;
+};
+
 struct NpcType {
     Origin origin;
     std::string identifier;
@@ -131,6 +142,7 @@ struct Program {
     std::vector<std::string> exports;
     std::vector<ItemLocation> locations;
     std::vector<NpcType> npcTypes;
+    std::vector<TileDef> tileDefs;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

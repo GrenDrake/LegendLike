@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     Program code;
     code.exports.push_back("__locations");
     code.exports.push_back("__npctypes");
+    code.exports.push_back("__tiledefs");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -115,6 +116,25 @@ bool buildHeader(Program &code) {
     }
 
     {
+        // build the string table
+        AsmLabel *stringTableLabel = new AsmLabel(Origin(), "__string_table");
+        stringTable.push_back(stringTableLabel);
+        unsigned stringTableSize = 0;
+        for (auto iter : code.strings) {
+            AsmLabel *label = new AsmLabel(iter.second.origin, iter.first);
+            AsmData *data = new AsmData(iter.second.origin, 1, true);
+            for (char c : iter.second.text) {
+                data->data.push_back(Value{c});
+            }
+            data->data.push_back(Value{0});
+            stringTableSize += data->data.size() * data->width;
+            stringTable.push_back(label);
+            stringTable.push_back(data);
+        }
+        std::cerr << "String table size: " << stringTableSize << "\n";
+    }
+
+    {
         // build the item locations table
         AsmLabel *locationsLabel = new AsmLabel(Origin(), "__locations");
         stringTable.push_back(locationsLabel);
@@ -137,22 +157,34 @@ bool buildHeader(Program &code) {
     }
 
     {
-        // build the string table
-        AsmLabel *stringTableLabel = new AsmLabel(Origin(), "__string_table");
-        stringTable.push_back(stringTableLabel);
-        unsigned stringTableSize = 0;
-        for (auto iter : code.strings) {
-            AsmLabel *label = new AsmLabel(iter.second.origin, iter.first);
-            AsmData *data = new AsmData(iter.second.origin, 1, true);
-            for (char c : iter.second.text) {
-                data->data.push_back(Value{c});
-            }
-            data->data.push_back(Value{0});
-            stringTableSize += data->data.size() * data->width;
-            stringTable.push_back(label);
+        // build the tile defs table
+        AsmLabel *tiledefsLabel = new AsmLabel(Origin(), "__tiledefs");
+        stringTable.push_back(tiledefsLabel);
+        AsmData *tiledefsCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(tiledefsCountData);
+        Value tiledefCount;
+        tiledefCount.value = code.tileDefs.size();
+        tiledefsCountData->data.push_back(tiledefCount);
+        unsigned tiledefsSize = 4;
+        int counter = 0;
+        for (const TileDef &def : code.tileDefs) {
+            code.addSymbol(def.identifier, SymbolDef{def.origin, Value{counter}});
+            AsmData *data = new AsmData(def.origin, 4);
+            data->data.push_back(def.name);
+            data->data.push_back(def.artIndex);
+            data->data.push_back(def.red);
+            data->data.push_back(def.green);
+            data->data.push_back(def.blue);
+            data->data.push_back(def.interactTo);
+            data->data.push_back(def.animLength);
+            Value flags;
+            flags.value = def.flags;
+            data->data.push_back(Value{flags});
             stringTable.push_back(data);
+            tiledefsSize += data->data.size() * data->width;
+            ++counter;
         }
-        std::cerr << "String table size: " << stringTableSize << "\n";
+        std::cerr << "TileDefs size: " << tiledefsSize << " (" << counter << " items)\n";
     }
 
     {
