@@ -100,6 +100,7 @@ struct SymbolDef {
 };
 
 struct Backpatch {
+    Origin origin;
     unsigned long pos;
     std::string name;
     int width;

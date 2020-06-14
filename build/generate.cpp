@@ -17,7 +17,7 @@ void write8(std::ostream &out, std::uint8_t value) {
     out.write(reinterpret_cast<const char*>(&value), 1);
 }
 
-void writeValue(Program &code, std::ostream &out, unsigned filePos, int width, const Value &value) {
+void writeValue(Program &code, const Origin &origin, std::ostream &out, unsigned filePos, int width, const Value &value) {
     if (value.identifier.empty()) {
         switch(width) {
             case 1:
@@ -38,12 +38,12 @@ void writeValue(Program &code, std::ostream &out, unsigned filePos, int width, c
 
         const SymbolDef &symbol = code.getSymbol(value.identifier);
         if (symbol.valid) {
-            writeValue(code, out, filePos, width, symbol.value);
+            writeValue(code, origin, out, filePos, width, symbol.value);
         } else {
             unsigned long pos = out.tellp();
-            Backpatch patch{ pos, value.identifier, width };
+            Backpatch patch{ origin, pos, value.identifier, width };
             code.patches.push_back(patch);
-            writeValue(code, out, filePos, width, Value{0x7FFFFFFF});
+            writeValue(code, origin, out, filePos, width, Value{0x7FFFFFFF});
         }
     }
 }
@@ -61,12 +61,12 @@ void generate(Program &code, const std::string &outputFile) {
             write8(outfile, static_cast<int>(asmcode->mnemonic.opcode));
             ++filePos;
             if (asmcode->mnemonic.operandSize > 0) {
-                writeValue(code, outfile, filePos, asmcode->mnemonic.operandSize, asmcode->operandValue);
+                writeValue(code, asmcode->origin, outfile, filePos, asmcode->mnemonic.operandSize, asmcode->operandValue);
                 filePos += asmcode->mnemonic.operandSize;
             }
         } else if (data) {
             for (const Value &value : data->data) {
-                writeValue(code, outfile, filePos, data->width, value);
+                writeValue(code, data->origin, outfile, filePos, data->width, value);
                 filePos += data->width;
             }
         } else if (label) {
@@ -79,10 +79,10 @@ void generate(Program &code, const std::string &outputFile) {
     for (Backpatch patch : code.patches) {
         const SymbolDef &symbol = code.getSymbol(patch.name);
         if (!symbol.valid) {
-            code.errorLog.add(Origin(), "Undefined symbol " + patch.name);
+            code.errorLog.add(patch.origin, "Undefined symbol " + patch.name);
         } else {
             outfile.seekp(patch.pos);
-            writeValue(code, outfile, 0, patch.width, symbol.value);
+            writeValue(code, patch.origin, outfile, 0, patch.width, symbol.value);
         }
     }
 }
