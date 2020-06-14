@@ -21,6 +21,7 @@ GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov
 	 src/mode_mainmenu.o src/creature.o src/gfx_resource.o src/gfx_ui.o src/config.o src/textutil.o \
 	 src/logger.o src/gen_enemies.o src/mode_charinfo.o
 GAME=game
+DATA_FILES=data_src/gamedata.src  data_src/map0000.inc data_src/map0001.inc
 
 ASSEMBLE=build/build
 
@@ -41,9 +42,8 @@ assembler:
 	cd build && make
 
 datafiles: $(GAME_DAT) $(MOVES_DAT)
-$(GAME_DAT): build/build data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc
-	$(ASSEMBLE) data_src/gamedata.src data_src/stddefs.inc data_src/map0000.inc data_src/map0001.inc -o $(GAME_DAT)
-#	cd data_src && ../assemble gamedata.src ../$(GAME_DAT)
+$(GAME_DAT): $(DATA_FILES)
+	$(ASSEMBLE) $(DATA_FILES) -o $(GAME_DAT)
 
 tools: $(BEASTGEN) $(MOVED) $(TYPED)
 $(BEASTGEN): $(BEASTGEN_OBJS)

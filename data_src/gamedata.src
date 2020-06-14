@@ -1,5 +1,6 @@
 .export start map_info
 
+
 .tiledef tileGround         name="ground"           artIndex=0 red=192 green=192 blue=192
 .tiledef tileWall           name="wall"             artIndex=1 red=0   green=0   blue=0   solid opaque
 .tiledef tileDown           name="down stair"       artIndex=2 red=32  green=48  blue=255 interactTo=-10
@@ -65,8 +66,6 @@
 .tiledef tileLabSignRight   name="lab sign"         artIndex=69 red=127 green=127 blue=127 solid opaque
 .tiledef tileWater          name="water"            artIndex=78 red=127 green=127 blue=255 animLength=1
 
-.string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
-.string strDivider      "---"
 
 .define itmSwordUpgrade  0
 .define itmArmourUpgrade 1
@@ -84,20 +83,26 @@
 .define itmCapBomb       14
 
 
-start:
-    ; teleport the player to the starting location
-    @warpto     23 17 0
-    @saystr     strPrologText
-    textbox
-    @saystr     strDivider
-    textbox
-    ret
+.define aiStill           0
+.define aiRandom          1
+.define aiPaceHorz        2
+.define aiPaceVert        3
+.define aiPaceBox         4
+.define aiAvoidPlayer     5
+.define aiFollowPlayer    6
+.define aiEnemy           7
+
+
+.define eventAuto         0
+.define eventManual       1
+
 
 .npctype npcTypePlayer   name="sage"    artIndex=41 health=10 energy=10
 .npctype npcTypeSage     name="sage"    artIndex=11
 .npctype npcTypeOctopus  name="octopus" artIndex=71
 .npctype npcTypeGuard    name="guard"   artIndex=10
 .npctype npcTypeCow      name="cow"     artIndex=72
+
 
 map_info:
     ; level 0 (town)
@@ -155,6 +160,17 @@ map_info:
 
 .string random_foe_name "random foe"
 
+
+.string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
+start:
+    ; teleport the player to the starting location
+    @warpto     23 17 0
+    @saystr     strPrologText
+    textbox
+    @saystr     "---""
+    textbox
+    ret
+
 dungeon_fight_1:
     .word 9147  5  -1 -1 -1 -1
     .word 9148  7  -1 -1 -1 -1
@@ -186,7 +202,6 @@ dungeon_foe_info:
 
     .word   -1      ; random foe end marker
 
-    ;@mf_addactor    aiStill 14 46 11 map0_talk_professor map0_str_professor 0
 
 map_build_dungeon:
     @mf_makemaze    3
