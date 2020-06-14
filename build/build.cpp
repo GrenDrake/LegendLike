@@ -11,6 +11,7 @@ int main(int argc, char *argv[]) {
     std::vector<std::string> files;
     std::string outputFile = "output.bin";
     Program code;
+    code.exports.push_back("__locations");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
