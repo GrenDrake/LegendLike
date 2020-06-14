@@ -105,10 +105,17 @@ struct Backpatch {
     int width;
 };
 
+struct ItemLocation {
+    Origin origin;
+    std::string name;
+    Value itemId;
+};
+
 struct Program {
     ErrorLog errorLog;
     std::vector<AsmLine*> code;
     std::vector<std::string> exports;
+    std::vector<ItemLocation> locations;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

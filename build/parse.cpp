@@ -153,6 +153,38 @@ bool parseDefine(ParseState &state) {
     return true;
 }
 
+bool parseLocation(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .location
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value itemId;
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (!state.require(TokenType::Equals)) return false;
+        state.advance();
+
+        Value value = tokenToValue(state);
+        state.advance();
+
+        if (label == "item")          itemId = value;
+        else {
+            state.code.errorLog.add(origin, "Unknown location attribute " + label + ".");
+            return false;
+        }
+    }
+
+    ItemLocation newLoc{ origin, identifier, itemId };
+    state.code.locations.push_back(newLoc);
+    return true;
+}
+
 bool parseNPC(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .npc
@@ -345,6 +377,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseData(state, 2)) continue;
             } else if (state.here().text == ".byte") {
                 if (!parseData(state, 1)) continue;
+            } else if (state.here().text == ".location") {
+                if (!parseLocation(state)) continue;
             } else if (state.here().text == ".npc") {
                 if (!parseNPC(state)) continue;
 
