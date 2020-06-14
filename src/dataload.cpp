@@ -241,11 +241,9 @@ bool System::loadLocationsData() {
     }
     const unsigned locationCount = vm->readWord(locationsAddr);
     locationsAddr += 4;
-    for (unsigned i = 0; i < locationCount; ++i) {
-        unsigned counter = 0;
+    for (unsigned counter = 0; counter < locationCount; ++counter) {
         int itemId = vm->readWord(locationsAddr + counter * locationSize);
         itemLocations.push_back(ItemLocation{itemId});
-        ++counter;
     }
     log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
     return true;
