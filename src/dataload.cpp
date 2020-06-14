@@ -363,53 +363,6 @@ bool System::loadTileData() {
     }
     log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " npc types.");
     return true;
-
-
-    //         data->data.push_back(def.name);
-    //         data->data.push_back(def.artIndex);
-    //         data->data.push_back(def.red);
-    //         data->data.push_back(def.green);
-    //         data->data.push_back(def.blue);
-    //         data->data.push_back(def.interactTo);
-    //         data->data.push_back(def.animLength);
-
-
-    // Logger &log = Logger::getInstance();
-    // PHYSFS_file *fp = PHYSFS_openRead("tiles.dat");
-    // if (!fp) {
-    //     log.error("Failed to open tile data file.");
-    //     return false;
-    // }
-    // PHYSFS_uint32 tileId = 0;
-    // PHYSFS_readULE32(fp, &tileId);
-    // if (tileId != TILE_ID) {
-    //     log.error("tiles.dat has wrong datafile ID.");
-    //     return false;
-    // }
-    // PHYSFS_sint32 ident = 0;
-    // PHYSFS_readSLE32(fp, &ident);
-    // while (ident >= 0) {
-    //     TileInfo info;
-    //     char nameBuffer[32] = { 0 };
-    //     PHYSFS_uint8 u8;
-    //     PHYSFS_uint32 u32;
-
-    //     info.index = ident;
-    //     PHYSFS_readULE32(fp, &u32);     info.artIndex = u32;
-    //     PHYSFS_readULE32(fp, &u32);     info.interactTo = u32;
-    //     PHYSFS_readBytes(fp, &u8, 1);   info.red = u8;
-    //     PHYSFS_readBytes(fp, &u8, 1);   info.green = u8;
-    //     PHYSFS_readBytes(fp, &u8, 1);   info.blue = u8;
-    //     PHYSFS_readBytes(fp, &u8, 1);   info.animLength = u8;
-    //     PHYSFS_readULE32(fp, &u32);     info.flags = u32;
-    //     PHYSFS_readBytes(fp, nameBuffer, 32);
-    //     info.name = nameBuffer;
-    //     TileInfo::add(info);
-
-    //     PHYSFS_readSLE32(fp, &ident);
-    // }
-    // log.info("Loaded " + std::to_string(TileInfo::types.size()) + " tile types.");
-    // return true;
 }
 
 void System::unloadAll() {
