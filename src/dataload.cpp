@@ -186,25 +186,10 @@ bool System::load() {
 
     try {
         if (!loadStringData())      return false;
-
         if (!loadCreatureData())    return false;
+        if (!loadLocationsData())        return false;
         if (!loadMoveData())        return false;
         if (!loadTileData())        return false;
-
-        const unsigned locationSize = 5;
-        const unsigned locationsAddr = vm->getExport("locations");
-        if (locationsAddr != -1) {
-            unsigned counter = 0;
-            while (1) {
-                int itemId = vm->readWord(locationsAddr + counter * locationSize);
-                int qty = vm->readByte(locationsAddr + counter * locationSize + 4);
-                if (itemId < 0) break;
-                itemLocations.push_back(ItemLocation{itemId, qty});
-                ++counter;
-            }
-        }
-        log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
-
     } catch (VMError &e) {
         log.error(e.what());
         return false;
@@ -256,6 +241,29 @@ bool System::loadCreatureData() {
         }
     }
     log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " creatures.");
+    return true;
+}
+
+bool System::loadLocationsData() {
+    Logger &log = Logger::getInstance();
+    const unsigned locationSize = 4;
+    unsigned locationsAddr = vm->getExport("__locations");
+    if (locationsAddr == -1) {
+        log.error("Locations data not found.");
+        return false;
+    }
+    const unsigned locationCount = vm->readWord(locationsAddr);
+    locationsAddr += 4;
+    for (unsigned i = 0; i < locationCount; ++i) {
+        unsigned counter = 0;
+        while (1) {
+            int itemId = vm->readWord(locationsAddr + counter * locationSize);
+            if (itemId < 0) break;
+            itemLocations.push_back(ItemLocation{itemId});
+            ++counter;
+        }
+    }
+    log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
     return true;
 }
 

@@ -22,6 +22,23 @@
 .string map0_strTalkWell                "The well is full of fresh, clean water."
 .string map0_strTalkFire                "Ouch! The fire is hot!"
 
+.location locSwordUpgrade1  item=itmSwordUpgrade
+.location locSwordUpgrade2  item=itmSwordUpgrade
+.location locArmourUpgrade1 item=itmArmourUpgrade
+.location locHealthUpgrade1 item=itmHealthUpgrade
+.location locEnergyUpgrade1 item=itmEnergyUpgrade
+.location locBow            item=itmBow
+.location locHookshot       item=itmHookshot
+.location locIceRod         item=itmIceRod
+.location locFireRod        item=itmFireRod
+.location locMattock        item=itmMattock
+.location locAmmoArrow1     item=itmAmmoArrow
+.location locAmmoBomb1      item=itmAmmoBomb
+.location locCoin1          item=itmCoin
+.location locCapArrow1      item=itmCapArrow
+.location locCapBomb1       item=itmCapBomb
+
+
 map0_gotfirst_flag:
     .byte 0
 
@@ -39,7 +56,7 @@ map0_talk_archdean:
     @p_damage       1 10
     @saystr         map0_str_archdean_givebeast
     textbox
-    @p_giveitem     14
+    @p_giveitem     locCoin1
     ret
 
 map0_talk_gateguard:
@@ -60,8 +77,9 @@ map0_talkfire:
     ret
 
 map0_test_giveparty:
-    @p_giveitem     12
-    @p_giveitem     13
+    @p_giveitem     locCapArrow1
+    @p_giveitem     locCapBomb1
+    @p_giveitem     locSwordUpgrade2
     @p_learn        3
     @p_learn        4
     @p_learn        5
@@ -72,17 +90,18 @@ map0_test_giveparty:
     ret
 
 map0_test_fight:
-    @p_giveitem     0
-    @p_giveitem     1
-    @p_giveitem     2
-    @p_giveitem     3
-    @p_giveitem     4
-    @p_giveitem     5
-    @p_giveitem     7
-    @p_giveitem     8
-    @p_giveitem     10
-    @p_giveitem     11
-    @p_forget       5
+    @p_giveitem     locSwordUpgrade1
+    @p_giveitem     locMattock
+    @p_giveitem     locHealthUpgrade1
+    @p_giveitem     locHookshot
+    @p_giveitem     locAmmoArrow1
+    @p_giveitem     locFireRod
+    @p_giveitem     locAmmoBomb1
+    @p_giveitem     locIceRod
+    @p_giveitem     locEnergyUpgrade1
+    @p_giveitem     locArmourUpgrade1
+    @p_giveitem     locBow
+    @p_forget       0
     @saystr         map0_str_fledTestFight
     textbox
     ret

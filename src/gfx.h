@@ -83,7 +83,6 @@ struct Message {
 
 struct ItemLocation {
     int itemId;
-    int qty;
     bool used;
 };
 
@@ -198,6 +197,7 @@ public:
 
     bool loadCreatureData();
     bool loadMoveData();
+    bool loadLocationsData();
     bool loadStringData();
     bool loadTileData();
 

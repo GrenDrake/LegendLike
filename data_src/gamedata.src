@@ -1,4 +1,4 @@
-.export start map_info locations
+.export start map_info
 
 
 .string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
@@ -18,39 +18,6 @@
 .define itmCoin          12
 .define itmCapArrow      13
 .define itmCapBomb       14
-
-locations:
-    .word itmSwordUpgrade  ; item ID
-    .byte 1 ; quantity
-    .word itmArmourUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmHealthUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmEnergyUpgrade ; item ID
-    .byte 1 ; quantity
-    .word itmBow           ; item ID
-    .byte 1 ; quantity
-    .word itmHookshot      ; item ID
-    .byte 1 ; quantity
-    .word itmIceRod        ; item ID
-    .byte 1 ; quantity
-    .word itmFireRod       ; item ID
-    .byte 1 ; quantity
-    .word itmMattock       ; item ID
-    .byte 1 ; quantity
-    .word itmAmmoArrow     ; item ID
-    .byte 5 ; quantity
-    .word itmAmmoBomb      ; item ID
-    .byte 1 ; quantity
-    .word itmCoin          ; item ID
-    .byte 3 ; quantity
-    .word itmCapArrow      ; item ID
-    .byte 10 ; quantity
-    .word itmCapBomb       ; item ID
-    .byte 5 ; quantity
-    .word itmSwordUpgrade  ; item ID
-    .byte 1 ; quantity
-    .word -1               ; end of location list
 
 
 start:

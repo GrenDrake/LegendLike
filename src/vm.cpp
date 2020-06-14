@@ -690,23 +690,21 @@ bool VM::run(unsigned address) {
                         if (state->currentSubweapon < 0) state->currentSubweapon = SW_MATTOCK;
                         break;
                     case ITM_AMMO_ARROW:
-                        state->arrowCount += locationDef.qty;
                         if (state->arrowCount > state->arrowCapacity) state->arrowCount = state->arrowCapacity;
                         break;
                     case ITM_AMMO_BOMB:
-                        state->bombCount += locationDef.qty;
                         state->subweaponLevel[SW_BOMB] = 1;
                         if (state->bombCount > state->bombCapacity) state->bombCount = state->bombCapacity;
                         if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOMB;
                         break;
                     case ITM_COIN:
-                        state->coinCount += locationDef.qty;
+                        state->coinCount += 10;
                         break;
                     case ITM_CAP_ARROW:
-                        state->arrowCapacity += locationDef.qty;
+                        state->arrowCapacity += 5;
                         break;
                     case ITM_CAP_BOMB:
-                        state->bombCapacity += locationDef.qty;
+                        state->bombCapacity += 1;
                         break;
                     default:
                         state->addMessage("Tried to give unknown item #" + std::to_string(locationDef.itemId));
