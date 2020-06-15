@@ -27,8 +27,6 @@ ASSEMBLE=build/build
 
 BEASTGEN_OBJS=tools/beastgen.o
 BEASTGEN=beastgen
-MOVED_OBJS=tools/moved.o tools/common.o
-MOVED=moved
 TYPED_OBJS=tools/typed.o tools/common.o
 TYPED=typed
 
@@ -41,15 +39,13 @@ $(GAME): $(GAME_OBJS)
 assembler:
 	cd build && make
 
-datafiles: $(GAME_DAT) $(MOVES_DAT)
+datafiles: $(GAME_DAT)
 $(GAME_DAT): $(DATA_FILES)
 	$(ASSEMBLE) $(DATA_FILES) -o $(GAME_DAT)
 
-tools: $(BEASTGEN) $(MOVED) $(TYPED)
+tools: $(BEASTGEN) $(TYPED)
 $(BEASTGEN): $(BEASTGEN_OBJS)
 	$(CC) $(BEASTGEN_OBJS) -o $(BEASTGEN)
-$(MOVED): $(MOVED_OBJS)
-	$(CC) $(MOVED_OBJS) -lncurses -o $(MOVED)
 $(TYPED): $(TYPED_OBJS)
 	$(CC) $(TYPED_OBJS) -lncurses -o $(TYPED)
 
