@@ -34,7 +34,7 @@ int CreatureType::typeCount() {
 Creature::Creature(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
   aiType(aiStill), aiArg(0), talkFunc(0), talkArg(0),
-  ai_lastDir(Dir::None), ai_lastTarget(-1, -1)
+  ai_lastDir(Dir::None), ai_lastTarget(-1, -1), ai_moveCount(0)
 {
     typeIdent = type;
     typeInfo = &CreatureType::get(type);
@@ -67,7 +67,13 @@ bool Creature::isKOed() const {
 }
 
 void Creature::ai(System &system) {
-    if (system.coreRNG.next32() & 1) return;
+    // creatures have a 1 in moveRate chance of taking a turn
+    if (typeInfo->moveRate > 1) {
+        ++ai_moveCount;
+        if (ai_moveCount < typeInfo->moveRate) return;
+        ai_moveCount = 0;
+    }
+
     // dead things don't do AI
     if (curHealth <= 0) return;
     Board *board = system.getBoard();

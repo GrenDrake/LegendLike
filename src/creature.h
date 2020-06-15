@@ -66,6 +66,7 @@ public:
     Point ai_lastTarget;
     std::vector<Point> ai_lastPath;
     int ai_pathNext;
+    int ai_moveCount;
 
 
     void ai(System &system);

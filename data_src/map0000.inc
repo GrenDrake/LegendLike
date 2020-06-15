@@ -51,11 +51,6 @@ map0_test_giveparty:
     @p_giveitem     locCapArrow1
     @p_giveitem     locCapBomb1
     @p_giveitem     locSwordUpgrade2
-    @p_learn        3
-    @p_learn        4
-    @p_learn        5
-    @p_learn        6
-    @p_learn        7
     @saystr         "Woman: \"I am the stablemaster.\""
     textbox
     ret
@@ -72,7 +67,6 @@ map0_test_fight:
     @p_giveitem     locEnergyUpgrade1
     @p_giveitem     locArmourUpgrade1
     @p_giveitem     locBow
-    @p_forget       0
     @saystr         "Man: \"The depths too much for you, eh?\""
     textbox
     ret

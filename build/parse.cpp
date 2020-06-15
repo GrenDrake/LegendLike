@@ -254,7 +254,7 @@ bool parseNpcType(ParseState &state) {
     Value energy{10000};
     Value accuracy{0};
     Value evasion{0};
-    Value moveRate{2};
+    Value moveRate{1};
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
         const std::string &label = state.here().text;

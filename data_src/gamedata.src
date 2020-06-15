@@ -98,13 +98,13 @@
 
 
 .npctype npcTypePlayer   name="sage"    artIndex=41 health=10 energy=10
-.npctype npcTypeSage     name="sage"    artIndex=11
-.npctype npcTypeOctopus  name="octopus" artIndex=71
-.npctype npcTypeGuard    name="guard"   artIndex=10
-.npctype npcTypeCow      name="cow"     artIndex=72
+.npctype npcTypeSage     name="sage"    artIndex=11 moveRate=2
+.npctype npcTypeOctopus  name="octopus" artIndex=71 moveRate=3
+.npctype npcTypeGuard    name="guard"   artIndex=10 moveRate=2
+.npctype npcTypeCow      name="cow"     artIndex=72 moveRate=3
 
-.npctype npcTypeBrigand  name="brigand"   artIndex=10 health=3
-.npctype npcTypeBandit   name="bandit"    artIndex=10 health=2
+.npctype npcTypeBrigand  name="brigand"   artIndex=10 health=5
+.npctype npcTypeBandit   name="bandit"    artIndex=10 health=3
 
 
 map_info:
