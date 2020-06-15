@@ -54,6 +54,6 @@ $(TYPED): $(TYPED_OBJS)
 	$(CC) $(TYPED_OBJS) -lncurses -o $(TYPED)
 
 clean:
-	$(RM) src/*.o assembler/*.o $(ASSEMBLE) $(GAME) $(GAME_DAT)
+	$(RM) src/*.o $(GAME) $(GAME_DAT)
 
 .PHONY: all clean assembler datafiles tools
