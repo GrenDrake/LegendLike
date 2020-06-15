@@ -134,6 +134,7 @@ bool tryInteract(System &state, const Point &target) {
     return false;
 }
 
+#include <iostream>
 void gameloop(System &state) {
     state.returnToMenu = false;
     state.getBoard()->calcFOV(state.getPlayer()->position);
@@ -144,7 +145,14 @@ void gameloop(System &state) {
     while (!state.wantsToQuit && !state.returnToMenu) {
         if (state.runDirection != Dir::None) {
             bool hitWall = false;
+            int initialTile = -1;
             do {
+                if (initialTile < 0) initialTile = state.getBoard()->getTile(state.getPlayer()->position);
+                else if (state.getBoard()->getTile(state.getPlayer()->position) != initialTile) {
+                    hitWall = true;
+                    break;
+                }
+
                 Point t = state.getPlayer()->position.shift(state.runDirection, 1);
                 if (state.getPlayer()->tryMove(state.getBoard(), state.runDirection)) {
                     const Board::Event *e = state.getBoard()->eventAt(t);
