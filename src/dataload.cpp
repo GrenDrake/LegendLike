@@ -19,7 +19,6 @@
 
 const int END_MARKER    = -1;
 const int MAP_INFO_SIZE = 42;
-const int TILE_ID       = 0x454C4954;
 const int MOVE_ID       = 0x45564F4D;
 
 static bool fileHasExtension(const std::string &filename, const std::vector<std::string> &list) {
