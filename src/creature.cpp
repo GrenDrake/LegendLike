@@ -120,9 +120,10 @@ void Creature::ai(System &system) {
                 if (position.distanceTo(playerPos) < 2) {
                     Creature *player = board->getPlayer();
                     // do attack
-                    player->takeDamage(1);
+                    int damage = typeInfo->damage;
+                    player->takeDamage(damage);
                     std::stringstream msg;
-                    msg << getName() << " attacks you for " << 1 << " damage.";
+                    msg << getName() << " attacks you for " << damage << " damage.";
                     system.addMessage(upperFirst(msg.str()));
                     if (player->curHealth <= 0) system.appendMessage(" You die!");
                 } else {

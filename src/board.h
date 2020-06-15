@@ -13,6 +13,7 @@ class Random;
 struct TileInfo {
     int index;
     std::string name;
+    int group;
     int artIndex;
     int red;
     int green;

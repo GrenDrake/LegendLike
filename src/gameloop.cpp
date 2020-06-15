@@ -145,16 +145,16 @@ void gameloop(System &state) {
     while (!state.wantsToQuit && !state.returnToMenu) {
         if (state.runDirection != Dir::None) {
             bool hitWall = false;
-            int initialTile = -1;
+            const Point initalTilePos = state.getPlayer()->position.shift(state.runDirection, 1);
+            const TileInfo &initialTile = TileInfo::get(state.getBoard()->getTile(initalTilePos));
             do {
-                if (initialTile < 0) initialTile = state.getBoard()->getTile(state.getPlayer()->position);
-                else if (state.getBoard()->getTile(state.getPlayer()->position) != initialTile) {
-                    hitWall = true;
-                    break;
-                }
-
                 Point t = state.getPlayer()->position.shift(state.runDirection, 1);
                 if (state.getPlayer()->tryMove(state.getBoard(), state.runDirection)) {
+                    const TileInfo &thisTile = TileInfo::get(state.getBoard()->getTile(state.getPlayer()->position));
+                    if (initialTile.group != thisTile.group) {
+                        hitWall = true;
+                    }
+
                     const Board::Event *e = state.getBoard()->eventAt(t);
                     if (e && e->type == eventTypeAuto) state.vm->run(e->funcAddr);
                     state.requestTick();

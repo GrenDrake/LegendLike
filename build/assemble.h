@@ -110,6 +110,7 @@ struct TileDef {
     Origin origin;
     std::string identifier;
     Value name;
+    Value group;
     Value artIndex;
     Value red, green, blue;
     Value interactTo;
@@ -124,6 +125,7 @@ struct NpcType {
     Value artIndex;
     Value health;
     Value energy;
+    Value damage;
     Value accuracy;
     Value evasion;
     Value moveRate;

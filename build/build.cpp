@@ -171,6 +171,7 @@ bool buildHeader(Program &code) {
             code.addSymbol(def.identifier, SymbolDef{def.origin, Value{counter}});
             AsmData *data = new AsmData(def.origin, 4);
             data->data.push_back(def.name);
+            data->data.push_back(def.group);
             data->data.push_back(def.artIndex);
             data->data.push_back(def.red);
             data->data.push_back(def.green);
@@ -205,6 +206,7 @@ bool buildHeader(Program &code) {
             data->data.push_back(npcType.artIndex);
             data->data.push_back(npcType.health);
             data->data.push_back(npcType.energy);
+            data->data.push_back(npcType.damage);
             data->data.push_back(npcType.accuracy);
             data->data.push_back(npcType.evasion);
             data->data.push_back(npcType.moveRate);

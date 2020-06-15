@@ -203,7 +203,7 @@ bool System::load() {
 
 bool System::loadCreatureData() {
     Logger &log = Logger::getInstance();
-    const unsigned npcTypeSize = 28;
+    const unsigned npcTypeSize = 32;
     unsigned npcTypesAddr = vm->getExport("__npctypes");
     if (npcTypesAddr == static_cast<unsigned>(-1)) {
         log.error("NPC types data not found.");
@@ -216,12 +216,13 @@ bool System::loadCreatureData() {
         int nameAddr = vm->readWord(npcTypesAddr + counter * npcTypeSize);
         type.ident = counter;
         if (nameAddr) type.name = vm->readString(nameAddr);
-        type.artIndex = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
+        type.artIndex  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
         type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
         type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);
-        type.accuracy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
-        type.evasion = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
-        type.moveRate = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
+        type.damage    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
+        type.accuracy  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
+        type.evasion   = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
+        type.moveRate  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 28);
         CreatureType::add(type);
     }
     log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " npc types.");
@@ -283,7 +284,7 @@ bool System::loadStringData() {
 
 bool System::loadTileData() {
     Logger &log = Logger::getInstance();
-    const unsigned tileDefSize = 32;
+    const unsigned tileDefSize = 36;
     unsigned tileDefsAddr = vm->getExport("__tiledefs");
     if (tileDefsAddr == static_cast<unsigned>(-1)) {
         log.error("TileDef data not found.");
@@ -296,13 +297,14 @@ bool System::loadTileData() {
         tile.index = counter;
         int nameAddr = vm->readWord(tileDefsAddr + counter * tileDefSize);
         if (nameAddr) tile.name = vm->readWord(nameAddr);
-        tile.artIndex   = vm->readWord(tileDefsAddr + counter * tileDefSize + 4);
-        tile.red        = vm->readWord(tileDefsAddr + counter * tileDefSize + 8);
-        tile.green      = vm->readWord(tileDefsAddr + counter * tileDefSize + 12);
-        tile.blue       = vm->readWord(tileDefsAddr + counter * tileDefSize + 16);
-        tile.interactTo = vm->readWord(tileDefsAddr + counter * tileDefSize + 20);
-        tile.animLength = vm->readWord(tileDefsAddr + counter * tileDefSize + 24);
-        tile.flags      = vm->readWord(tileDefsAddr + counter * tileDefSize + 28);
+        tile.group      = vm->readWord(tileDefsAddr + counter * tileDefSize + 4);
+        tile.artIndex   = vm->readWord(tileDefsAddr + counter * tileDefSize + 8);
+        tile.red        = vm->readWord(tileDefsAddr + counter * tileDefSize + 12);
+        tile.green      = vm->readWord(tileDefsAddr + counter * tileDefSize + 16);
+        tile.blue       = vm->readWord(tileDefsAddr + counter * tileDefSize + 20);
+        tile.interactTo = vm->readWord(tileDefsAddr + counter * tileDefSize + 24);
+        tile.animLength = vm->readWord(tileDefsAddr + counter * tileDefSize + 28);
+        tile.flags      = vm->readWord(tileDefsAddr + counter * tileDefSize + 32);
         TileInfo::add(tile);
     }
     log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " npc types.");

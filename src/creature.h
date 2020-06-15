@@ -36,7 +36,7 @@ public:
     std::string name;
     int artIndex;
     int maxHealth, maxEnergy;
-    int accuracy, evasion, moveRate;
+    int damage, accuracy, evasion, moveRate;
 private:
     static std::vector<CreatureType> types;
 };

@@ -254,6 +254,7 @@ bool parseNpcType(ParseState &state) {
     Value energy{10000};
     Value accuracy{0};
     Value evasion{0};
+    Value damage{1};
     Value moveRate{1};
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
@@ -270,6 +271,7 @@ bool parseNpcType(ParseState &state) {
         else if (label == "artIndex") artIndex = value;
         else if (label == "health")   health = value;
         else if (label == "energy")   energy = value;
+        else if (label == "damage")   damage = value;
         else if (label == "accuracy") accuracy = value;
         else if (label == "evasion")  evasion = value;
         else if (label == "moveRate") moveRate = value;
@@ -279,7 +281,7 @@ bool parseNpcType(ParseState &state) {
         }
     }
 
-    NpcType npcType{ origin, identifier, name, artIndex, health, energy, accuracy, evasion, moveRate };
+    NpcType npcType{ origin, identifier, name, artIndex, health, energy, damage, accuracy, evasion, moveRate };
     state.code.npcTypes.push_back(npcType);
     return true;
 }
@@ -378,6 +380,7 @@ bool parseTileDef(ParseState &state) {
     Value blue{0};
     Value interactTo{-1};
     Value animLength{0};
+    Value group{0};
     bool isSolid = false, isOpaque = false, isDoor = false;
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
@@ -395,6 +398,7 @@ bool parseTileDef(ParseState &state) {
             state.advance();
 
             if (label == "name")            name = value;
+            else if (label == "group")      group = value;
             else if (label == "artIndex")   artIndex = value;
             else if (label == "red")        red = value;
             else if (label == "green")      green = value;
@@ -408,7 +412,7 @@ bool parseTileDef(ParseState &state) {
         }
     }
 
-    TileDef newTile{ origin, identifier, name, artIndex, red, green, blue, interactTo, animLength };
+    TileDef newTile{ origin, identifier, name, group, artIndex, red, green, blue, interactTo, animLength };
     if (isSolid)  newTile.flags |= TILE_ISSOLID;
     if (isOpaque) newTile.flags |= TILE_ISOPAQUE;
     if (isDoor)   newTile.flags |= TILE_ISDOOR;
