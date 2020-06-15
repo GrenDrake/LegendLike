@@ -57,9 +57,6 @@ enum class Opcode {
     p_stat,
     p_reset,
     p_damage,
-    p_learn,
-    p_forget,
-    p_knows,
     p_giveitem,
 
     warpto,

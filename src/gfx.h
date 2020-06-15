@@ -196,7 +196,6 @@ public:
 
 
     bool loadCreatureData();
-    bool loadMoveData();
     bool loadLocationsData();
     bool loadStringData();
     bool loadTileData();

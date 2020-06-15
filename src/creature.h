@@ -25,62 +25,6 @@ const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
 const int aiEnemy           = 7;
 
-const int shapeSquare       = 0;
-const int shapeCircle       = 1;
-const int shapeLong         = 2;
-const int shapeWide         = 3;
-const int shapeCone         = 4;
-
-const int formSelf          = 0;
-const int formBullet        = 1;
-const int formMelee         = 2;
-const int formLobbed        = 3;
-const int formFourway       = 4;
-
-
-const int damageTypeCount = 8;
-enum class DamageType {
-    Physical, Cold,   Fire,     Electric,
-    Toxic,    Divine, Infernal, Void,
-};
-
-const int statCount = 7;
-enum class Stat {
-    Health, Energy, Accuracy, Evasion,
-    DR,     DB,     Speed,
-};
-
-class MoveType {
-public:
-    static void add(const MoveType &type);
-    static const MoveType& get(int ident);
-    static bool valid(int ident);
-    static int typeCount();
-
-    std::string name;
-    int ident;
-    int accuracy;
-    int speed;
-    int cost;
-    int type;
-    int minRange;
-    int maxRange;
-    int damage;
-    int damageSize;
-    int shape;
-    int form;
-    int player_use;
-    int other_use;
-    int damageIcon;
-    unsigned flags;
-private:
-    static std::vector<MoveType> types;
-};
-
-struct MovesetRow {
-    int level;
-    int moveId;
-};
 
 class CreatureType {
 public:
@@ -106,7 +50,6 @@ public:
     int typeIdent;
     int level, xp;
     int curHealth, curEnergy;
-    std::vector<int> moves;
 
     int nextAction;
     bool isPlayer;
@@ -131,20 +74,9 @@ public:
     void reset();
     int takeDamage(int amount);
     bool isKOed() const;
-    void autolevel(int toLevel, Random &rng);
-    void learnMove(int moveId);
-    bool knowsMove(int moveId);
-    void forgetMove(int moveId);
-    void useAbility(System &system, int abilityNumber, const Point &aimedAt);
 };
 
-const char* getAbbrev(const Stat &stat);
-const char* getAbbrev(const DamageType &stat);
 
-std::string statName(const Stat &stat);
-std::ostream& operator<<(std::ostream &out, const Stat &stat);
-std::string damageTypeName(const DamageType &type);
-std::ostream& operator<<(std::ostream &out, const DamageType &stat);
 std::string damageFormName(const int &form);
 std::string damageShapeName(const int &shape);
 

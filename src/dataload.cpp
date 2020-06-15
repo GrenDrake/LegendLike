@@ -19,7 +19,6 @@
 
 const int END_MARKER    = -1;
 const int MAP_INFO_SIZE = 42;
-const int MOVE_ID       = 0x45564F4D;
 
 static bool fileHasExtension(const std::string &filename, const std::vector<std::string> &list) {
     std::string::size_type pos = filename.find_last_of('.');
@@ -186,8 +185,7 @@ bool System::load() {
     try {
         if (!loadStringData())      return false;
         if (!loadCreatureData())    return false;
-        if (!loadLocationsData())        return false;
-        if (!loadMoveData())        return false;
+        if (!loadLocationsData())   return false;
         if (!loadTileData())        return false;
     } catch (VMError &e) {
         log.error(e.what());
@@ -247,59 +245,6 @@ bool System::loadLocationsData() {
     log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
     return true;
 }
-
-bool System::loadMoveData() {
-    Logger &log = Logger::getInstance();
-    VM moves;
-    if (!moves.loadFromFile("moves.dat", false)) {
-        log.error("Failed to load move info.");
-        return false;
-    }
-
-    int magicWord = moves.readWord();
-    if (magicWord != MOVE_ID) {
-        log.error("File moves.dat is corrupt or invalid.");
-        return false;
-    }
-
-    int ident = moves.readWord();
-    while (ident > 0) {
-        MoveType type;
-        type.ident          = ident;
-        int nameId          = moves.readWord();
-        auto nameStr = strings.find(nameId);
-        if (nameStr == strings.end()) {
-            type.name = "attack #" + std::to_string(ident);
-        } else {
-            type.name = nameStr->second;
-        }
-
-        type.accuracy       = moves.readWord();
-        type.speed          = moves.readWord();
-        type.cost           = moves.readWord();
-
-        type.type           = moves.readWord();
-        type.minRange       = moves.readWord();
-        type.maxRange       = moves.readWord();
-
-        type.damage         = moves.readWord();
-        type.damageSize     = moves.readWord();
-        type.shape          = moves.readWord();
-        type.form           = moves.readWord();
-
-        type.player_use     = moves.readWord();
-        type.other_use      = moves.readWord();
-        type.damageIcon     = moves.readWord();
-        type.flags          = moves.readWord();
-
-        MoveType::add(type);
-        ident = moves.readWord();
-    }
-
-    log.info("Loaded " + std::to_string(MoveType::typeCount()) + " moves.");
-    return true;
-}
-
 
 bool System::loadStringData() {
     Logger &log = Logger::getInstance();
