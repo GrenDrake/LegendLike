@@ -3,6 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "command.h"
+#include "config.h"
 #include "game.h"
 #include "gfx.h"
 #include "menu.h"
@@ -30,6 +31,8 @@ void showVersion(System &state) {
 }
 
 int runMenu(System &state, MenuOption *menu, int defaultOption) {
+    bool showInfo = false;
+    const std::string writeDir = state.config->getString("writeDir", "unknown");
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -94,6 +97,10 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
             }
         }
 
+        if (showInfo) {
+            state.smallFont->out(0, screenHeight - state.smallFont->getCharHeight(), writeDir);
+        }
+
         showVersion(state);
         state.advanceFrame();
         SDL_RenderPresent(state.renderer);
@@ -125,6 +132,10 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                     } else if (menu[option].type == MenuType::Bool) {
                         menu[option].value = !menu[option].value;
                     }
+                    break;
+                case Command::Debug_ShowInfo:
+                    showInfo = !showInfo;
+                    SDL_SetClipboardText(writeDir.c_str());
                     break;
                 case Command::Close:
                     return menuClose;

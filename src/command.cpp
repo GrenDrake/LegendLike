@@ -157,6 +157,7 @@ CommandDef menuCommands[] = {
     { Command::Move,        Dir::South, SDLK_DOWN },
     { Command::Move,        Dir::West,  SDLK_LEFT },
     { Command::Move,        Dir::East,  SDLK_RIGHT },
+    { Command::Debug_ShowInfo, Dir::None, SDLK_F5 },
 
     { Command::None }
 };

@@ -52,13 +52,13 @@ int main(int argc, char *argv[]) {
     PHYSFS_mount((baseDir+"data").c_str(), "/", 0);
     PHYSFS_mount(baseDir.c_str(), "/root", 1);
     PHYSFS_mount(prefDir, "/save", 1);
-    std::cerr << GAME_NAME " write directory: " << prefDir << "\n";
 
     Logger &log = Logger::getInstance();
     printVersions();
 
     Config config;
     config.loadFromFile("/save/game.cfg");
+    config.set("writeDir", prefDir);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0){
         log.error(std::string("SDL_Init Error: ") + SDL_GetError());
