@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <SDL2/SDL.h>
@@ -188,6 +189,16 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
         }
         if (event.type == SDL_KEYDOWN) {
             switch(event.key.keysym.sym) {
+                case SDLK_c:
+                    if ((event.key.keysym.mod & SDLK_LCTRL) || (event.key.keysym.mod & SDLK_LCTRL)) {
+                        SDL_SetClipboardText(text.c_str());
+                    }
+                    break;
+                case SDLK_v:
+                    if ((event.key.keysym.mod & SDLK_LCTRL) || (event.key.keysym.mod & SDLK_LCTRL)) {
+                        text = SDL_GetClipboardText();
+                    }
+                    break;
                 case SDLK_BACKSPACE:
                     if (!text.empty()) text.erase(text.size() - 1);
                     break;
