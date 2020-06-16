@@ -21,35 +21,22 @@ GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov
 	 src/mode_mainmenu.o src/creature.o src/gfx_resource.o src/gfx_ui.o src/config.o src/textutil.o \
 	 src/logger.o src/gen_enemies.o src/mode_charinfo.o
 GAME=game
-DATA_FILES=data_src/gamedata.src  data_src/map0000.inc data_src/map0001.inc
 
 ASSEMBLE=build/build
-
-BEASTGEN_OBJS=tools/beastgen.o
-BEASTGEN=beastgen
-TYPED_OBJS=tools/typed.o tools/common.o
-TYPED=typed
-
+DATA_FILES=data_src/gamedata.src  data_src/map0000.inc data_src/map0001.inc
 GAME_DAT=data/game.dat
 
-all: $(GAME) datafiles tools
+all: $(GAME) $(GAME_DAT) tools
 
 $(GAME): $(GAME_OBJS)
 	$(CXX) $(GAME_OBJS) $(GAME_LIBS) -o $(GAME)
 assembler:
 	cd build && make
 
-datafiles: $(GAME_DAT)
 $(GAME_DAT): $(DATA_FILES)
 	$(ASSEMBLE) $(DATA_FILES) -o $(GAME_DAT)
-
-tools: $(BEASTGEN) $(TYPED)
-$(BEASTGEN): $(BEASTGEN_OBJS)
-	$(CC) $(BEASTGEN_OBJS) -o $(BEASTGEN)
-$(TYPED): $(TYPED_OBJS)
-	$(CC) $(TYPED_OBJS) -lncurses -o $(TYPED)
 
 clean:
 	$(RM) src/*.o $(GAME) $(GAME_DAT)
 
-.PHONY: all clean assembler datafiles tools
+.PHONY: all clean assembler
