@@ -239,6 +239,60 @@ bool parseNPC(ParseState &state) {
     state.code.add(npcDataB);
     return true;
 }
+const unsigned MF_UPSTAIRS = 0x01;
+const unsigned MF_DOWNSTAIRS = 0x02;
+bool parseMapData(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .mapdata
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{0};
+    Value mapId{-1};
+    Value width{16};
+    Value height{16};
+    Value onBuild{0};
+    Value onEnter{0};
+    Value onReset{0};
+    Value musicTrack{1};
+    bool genUpStairs, genDownStairs;
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (label == "addUpStairs") genUpStairs = true;
+        else if (label == "addDownStairs") genDownStairs = true;
+        else {
+            if (!state.require(TokenType::Equals)) return false;
+            state.advance();
+
+            Value value = tokenToValue(state);
+            state.advance();
+
+            if (label == "name")            name = value;
+            else if (label == "mapId")      mapId = value;
+            else if (label == "width")      width = value;
+            else if (label == "height")     height = value;
+            else if (label == "onBuild")    onBuild = value;
+            else if (label == "onEnter")    onEnter = value;
+            else if (label == "onReset")    onReset = value;
+            else if (label == "musicTrack") musicTrack = value;
+            else {
+                state.code.errorLog.add(origin, "Unknown map data attribute " + label + ".");
+                return false;
+            }
+        }
+    }
+
+    MapData mapData{ origin, identifier, name, mapId, width, height, onBuild, onEnter, onReset, musicTrack };
+    if (genUpStairs)   mapData.flags |= MF_UPSTAIRS;
+    if (genDownStairs) mapData.flags |= MF_DOWNSTAIRS;
+    state.code.mapData.push_back(mapData);
+    return true;
+}
 
 bool parseNpcType(ParseState &state) {
     const Origin &origin = state.here().origin;
@@ -487,6 +541,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseNPC(state)) continue;
             } else if (state.here().text == ".npctype") {
                 if (!parseNpcType(state)) continue;
+            } else if (state.here().text == ".mapdata") {
+                if (!parseMapData(state)) continue;
             } else if (state.here().text == ".tiledef") {
                 if (!parseTileDef(state)) continue;
             } else if (state.here().text == ".export") {

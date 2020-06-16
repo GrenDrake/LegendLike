@@ -17,8 +17,6 @@
 #include "gfx.h"
 #include "physfsrwops.h"
 
-const int END_MARKER    = -1;
-const int MAP_INFO_SIZE = 42;
 
 static bool fileHasExtension(const std::string &filename, const std::vector<std::string> &list) {
     std::string::size_type pos = filename.find_last_of('.');
@@ -126,25 +124,31 @@ bool System::load() {
         log.info("Loaded " + std::to_string(mAudio.size()) + " audio effects.");
 
         // LOAD MAP INFO
-        const int mapBase = vm->getExport("map_info");
+        unsigned mapBase = vm->getExport("__mapdata");
         if (mapBase < 0) {
             log.error("VM image lacks map info.");
             return false;
         }
-        int counter = 0;
-        while (1) {
-            int base = mapBase + counter * MAP_INFO_SIZE;
-            int ident = vm->readShort(base);
-            if (ident == END_MARKER) break;
-            int width = vm->readShort(base + 2);
-            int height = vm->readShort(base + 4);
-            int func = vm->readWord(base + 6);
-            int onEnter = vm->readWord(base + 10);
-            unsigned flags = vm->readWord(base + 14);
-            int track = vm->readWord(base + 18);
-            std::string name = vm->readString(base + 22);
-            MapInfo::add(MapInfo{ident, width, height, func, onEnter, flags, track, name});
+        const unsigned mapDataSize = 36;
+        int mapCount = vm->readWord(mapBase);
+        unsigned counter = 0;
+        mapBase += 4;
+        for (unsigned i = 0; i < mapCount; ++i) {
+            MapInfo mapInfo;
+            int nameAddr = vm->readWord(mapBase);
+            if (nameAddr) mapInfo.name = vm->readString(nameAddr);
+            mapInfo.index = vm->readWord(mapBase + 4);
+            mapInfo.width = vm->readWord(mapBase + 8);
+            mapInfo.height = vm->readWord(mapBase + 12);
+            mapInfo.onBuild = vm->readWord(mapBase + 16);
+            mapInfo.onEnter = vm->readWord(mapBase + 20);
+            mapInfo.onReset = vm->readWord(mapBase + 24);
+            mapInfo.musicTrack = vm->readWord(mapBase + 28);
+            mapInfo.flags = vm->readWord(mapBase + 32);
+
+            MapInfo::add(mapInfo);
             ++counter;
+            mapBase += mapDataSize;
         }
         log.info("Loaded " + std::to_string(counter) + " maps.");
 

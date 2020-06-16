@@ -131,6 +131,17 @@ struct NpcType {
     Value moveRate;
 };
 
+struct MapData {
+    Origin origin;
+    std::string identifier;
+    Value name;
+    Value mapId;
+    Value width, height;
+    Value onBuild, onEnter, onReset;
+    Value musicTrack;
+    unsigned flags;
+};
+
 struct ItemLocation {
     Origin origin;
     std::string name;
@@ -145,6 +156,7 @@ struct Program {
     std::vector<ItemLocation> locations;
     std::vector<NpcType> npcTypes;
     std::vector<TileDef> tileDefs;
+    std::vector<MapData> mapData;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

@@ -1,5 +1,3 @@
-.export start map_info
-
 
 .tiledef tileGround         name="dirt"              art="dirt"            red=192 green=192 blue=192
 .tiledef tileWall           name="wall"              art="std_wall"        red=0   green=0   blue=0   solid opaque
@@ -97,74 +95,26 @@
 .define eventManual       1
 
 
-.npctype npcTypePlayer   name="sage"    art="player" health=10 energy=10
-.npctype npcTypeSage     name="sage"    art="sage" moveRate=2
-.npctype npcTypeOctopus  name="octopus" art="octopus" moveRate=3
-.npctype npcTypeGuard    name="guard"   art="guard" moveRate=2
-.npctype npcTypeCow      name="cow"     art="cow" moveRate=3
+.npctype npcTypePlayer    name="sage"    art="player" health=10 energy=10
+.npctype npcTypeSage      name="sage"    art="sage" moveRate=2
+.npctype npcTypeOctopus   name="octopus" art="octopus" moveRate=3
+.npctype npcTypeGuard     name="guard"   art="guard" moveRate=2
+.npctype npcTypeCow       name="cow"     art="cow" moveRate=3
 
-.npctype npcTypeBrigand  name="brigand"   art="brigand" damage=2 health=5
-.npctype npcTypeBandit   name="bandit"    art="bandit" damage=3 health=3
+.npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5
+.npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3
 
-
-map_info:
-    ; level 0 (town)
-    .short      0  ; depth
-    .short      66 ; width
-    .short      66 ; height
-    .word       map0_build ; build func
-    .word       map0_enter ; onEnter
-    .word       0 ; map flags
-    .word       1 ; music track
-    .string_pad 20 "Town"
-
-    ; level 1 (basements)
-    .short      1  ; depth
-    .short      66 ; width
-    .short      66 ; height
-    .word       map1_build ; build func
-    .word       0 ; onEnter
-    .word       0 ; map flags
-    .word       1 ; music track
-    .string_pad 20 "Town"
-
-    ; level 1 (dungeon)
-    .short      2
-    .short      95
-    .short      95
-    .word       map_build_dungeon
-    .word       0 ; no onEnter
-    .word       3
-    .word       2 ; music track
-    .string_pad 20 "Dungeon Level 1"
-
-    ; level 2 (dungeon)
-    .short      3
-    .short      95
-    .short      95
-    .word       map_build_dungeon
-    .word       0 ; no onEnter
-    .word       3
-    .word       2 ; music track
-    .string_pad 20 "Dungeon Level 2"
-
-    ; level 3 (dungeon)
-    .short      4
-    .short      95
-    .short      95
-    .word       map_build_dungeon_bottom
-    .word       0 ; no onEnter
-    .word       1
-    .word       2 ; music track
-    .string_pad 20 "Dungeon Level 3"
-
-    ; end of list marker
-    .short      -1
+.mapdata mapTown            name="Town"             mapId=0 width=66 height=66 onBuild=map0_build onEnter=map0_enter musicTrack=1
+.mapdata mapTownUnderground name="Town Underground" mapId=1 width=66 height=66 onBuild=map1_build musicTrack=1
+.mapdata mapTownDungeon1    name="Dungeon Level 1"  mapId=2 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
+.mapdata mapTownDungeon2    name="Dungeon Level 2"  mapId=3 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
+.mapdata mapTownDungeon3    name="Dungeon Level 3"  mapId=4 width=95 height=95 onBuild=map_build_dungeon_bottom musicTrack=2 addUpStairs
 
 .string random_foe_name "random foe"
 
 
 .string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
+.export start
 start:
     ; teleport the player to the starting location
     @warpto     23 17 0

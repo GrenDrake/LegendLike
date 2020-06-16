@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     code.exports.push_back("__locations");
     code.exports.push_back("__npctypes");
     code.exports.push_back("__tiledefs");
+    code.exports.push_back("__mapdata");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -186,6 +187,38 @@ bool buildHeader(Program &code) {
             ++counter;
         }
         std::cerr << "TileDefs size: " << tiledefsSize << " (" << counter << " items)\n";
+    }
+
+    {
+        // build the map data table
+        AsmLabel *mapDataLabel = new AsmLabel(Origin(), "__mapdata");
+        stringTable.push_back(mapDataLabel);
+        AsmData *mapDataCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(mapDataCountData);
+        Value mapDataCount;
+        mapDataCount.value = code.mapData.size();
+        mapDataCountData->data.push_back(mapDataCount);
+        unsigned mapDataSizeSize = 4;
+        int counter = 0;
+        for (const MapData &mapData : code.mapData) {
+            code.addSymbol(mapData.identifier, SymbolDef{mapData.origin, mapData.mapId});
+            AsmData *data = new AsmData(mapData.origin, 4);
+            data->data.push_back(mapData.name);
+            data->data.push_back(mapData.mapId);
+            data->data.push_back(mapData.width);
+            data->data.push_back(mapData.height);
+            data->data.push_back(mapData.onBuild);
+            data->data.push_back(mapData.onEnter);
+            data->data.push_back(mapData.onReset);
+            data->data.push_back(mapData.musicTrack);
+            Value flags;
+            flags.value = mapData.flags;
+            data->data.push_back(flags);
+            stringTable.push_back(data);
+            mapDataSizeSize += data->data.size() * data->width;
+            ++counter;
+        }
+        std::cerr << "Map data size: " << mapDataSizeSize << " (" << counter << " items)\n";
     }
 
     {

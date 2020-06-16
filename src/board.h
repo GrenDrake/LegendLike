@@ -66,7 +66,7 @@ struct MapInfo {
     int index;
     int width;
     int height;
-    int buildFunction, enterFunction;
+    int onBuild, onEnter, onReset;
     unsigned flags;
     int musicTrack;
     std::string name;

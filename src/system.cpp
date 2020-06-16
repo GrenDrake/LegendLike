@@ -171,12 +171,12 @@ bool System::build(int forIndex) {
     } else {
         Board *newBoard = new Board(info.width, info.height, info.name);
         mCurrentBoard = newBoard;
-        if (info.buildFunction) {
-            vm->run(info.buildFunction);
+        if (info.onBuild) {
+            vm->run(info.onBuild);
         }
         mBoards.insert(std::make_pair(forIndex, mCurrentBoard));
     }
-    if (info.enterFunction) vm->run(info.enterFunction);
+    if (info.onEnter) vm->run(info.onEnter);
     depth = forIndex;
     if (info.musicTrack >= 0) {
 
