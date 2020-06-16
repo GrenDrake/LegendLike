@@ -1,3 +1,15 @@
+.define aiStill           0
+.define aiRandom          1
+.define aiPaceHorz        2
+.define aiPaceVert        3
+.define aiPaceBox         4
+.define aiAvoidPlayer     5
+.define aiFollowPlayer    6
+.define aiEnemy           7
+
+.define eventAuto         0
+.define eventManual       1
+
 
 .tiledef tileGround         name="dirt"              art="dirt"            red=192 green=192 blue=192
 .tiledef tileWall           name="wall"              art="std_wall"        red=0   green=0   blue=0   solid opaque
@@ -64,7 +76,6 @@
 .tiledef tileLabSignRight   name="lab sign"          art="sign_lab_right" red=127 green=127 blue=127 solid opaque
 .tiledef tileWater          name="water"             art="water" red=127 green=127 blue=255 animLength=1
 
-
 .define itmSwordUpgrade  0
 .define itmArmourUpgrade 1
 .define itmHealthUpgrade 2
@@ -79,21 +90,6 @@
 .define itmCoin          12
 .define itmCapArrow      13
 .define itmCapBomb       14
-
-
-.define aiStill           0
-.define aiRandom          1
-.define aiPaceHorz        2
-.define aiPaceVert        3
-.define aiPaceBox         4
-.define aiAvoidPlayer     5
-.define aiFollowPlayer    6
-.define aiEnemy           7
-
-
-.define eventAuto         0
-.define eventManual       1
-
 
 .npctype npcTypePlayer    name="sage"    art="player" health=10 energy=10
 .npctype npcTypeSage      name="sage"    art="sage" moveRate=2
@@ -110,7 +106,7 @@
 .mapdata mapTownDungeon2    name="Dungeon Level 2"  mapId=3 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
 .mapdata mapTownDungeon3    name="Dungeon Level 3"  mapId=4 width=95 height=95 onBuild=map_build_dungeon_bottom musicTrack=2 addUpStairs
 
-.string random_foe_name "random foe"
+
 
 
 .string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
@@ -124,29 +120,12 @@ start:
     textbox
     ret
 
-dungeon_fight_1:
-    .word 9147  5  -1 -1 -1 -1
-    .word 9148  7  -1 -1 -1 -1
-    .word 0     0  -1 -1 -1 -1
-    .word 0     0  -1 -1 -1 -1
-    .word 0     ; fight type
-    .word 2     ; fight bg
-
-dungeon_fight_2:
-    .word 8631  3  -1 -1 -1 -1
-    .word 8631  4  -1 -1 -1 -1
-    .word 8632  4  -1 -1 -1 -1
-    .word 0     0  -1 -1 -1 -1
-    .word 0     ; fight type
-    .word 2     ; fight bg
-
 
 dungeon_foe_info:
     .word   100     ; foes to add to map
     .word   npcTypeBandit
     .word   npcTypeBrigand
     .word   -1      ; random foe end marker
-
 
 map_build_dungeon:
     @mf_makemaze    3
