@@ -268,7 +268,7 @@ bool parseNpcType(ParseState &state) {
         state.advance();
 
         if (label == "name")          name = value;
-        else if (label == "artIndex") artIndex = value;
+        else if (label == "art")      artIndex = value;
         else if (label == "health")   health = value;
         else if (label == "energy")   energy = value;
         else if (label == "damage")   damage = value;
@@ -399,7 +399,7 @@ bool parseTileDef(ParseState &state) {
 
             if (label == "name")            name = value;
             else if (label == "group")      group = value;
-            else if (label == "artIndex")   artIndex = value;
+            else if (label == "art")        artIndex = value;
             else if (label == "red")        red = value;
             else if (label == "green")      green = value;
             else if (label == "blue")       blue = value;

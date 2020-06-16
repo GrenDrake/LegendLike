@@ -62,23 +62,23 @@ void gfx_drawMap(System &state) {
 
                 if (tileHere != tileOutOfBounds) {
                     const TileInfo &tileInfo = TileInfo::get(tileHere);
-                    SDL_Texture *tile = nullptr;
-                    if (tileInfo.animLength > 0) {
-                        tile = state.getTile(tileInfo.artIndex + ((state.framecount / 12) % (tileInfo.animLength + 1)));
-                    } else {
-                        tile = state.getTile(tileInfo.artIndex);
-                    }
-                    if (tile) {
-                        if (visible) SDL_SetTextureColorMod(tile, 255, 255, 255);
-                        else         SDL_SetTextureColorMod(tile,  96,  96,  96);
-                        SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                    // SDL_Texture *tile = tileInfo.art;
+                    // if (tileInfo.animLength > 0) {
+                    //     tile = state.getTile(tileInfo.artIndex + ((state.framecount / 12) % (tileInfo.animLength + 1)));
+                    // } else {
+                    //     tile = state.getTile(tileInfo.artIndex);
+                    // }
+                    if (tileInfo.art) {
+                        if (visible) SDL_SetTextureColorMod(tileInfo.art, 255, 255, 255);
+                        else         SDL_SetTextureColorMod(tileInfo.art,  96,  96,  96);
+                        SDL_RenderCopy(state.renderer, tileInfo.art, nullptr, &texturePosition);
                     }
                 }
 
                 if (visible) {
                     Creature *creature = state.getBoard()->actorAt(here);
                     if (creature) {
-                        SDL_Texture *tile = state.getTile(creature->typeInfo->artIndex);
+                        SDL_Texture *tile = creature->typeInfo->art;
                         if (tile) {
                             SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
@@ -123,8 +123,8 @@ void gfx_drawMap(System &state) {
                             didAnimation = true;
                             curAnim.points.pop_front();
                             if (visible) {
-                                SDL_Texture *tile = state.getTile(curAnim.tileNum);
-                                SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                                // SDL_Texture *tile = state.getTile(curAnim.tileNum);
+                                // SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                             }
                             if (curAnim.points.empty()) {
                                 state.animationQueue.pop_front();
@@ -135,8 +135,8 @@ void gfx_drawMap(System &state) {
                         // draw all cells
                         if (std::find(curAnim.points.begin(), curAnim.points.end(), here) != curAnim.points.end()) {
                             didAnimation = true;
-                            SDL_Texture *tile = state.getTile(curAnim.tileNum);
-                            SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                            // SDL_Texture *tile = state.getTile(curAnim.tileNum);
+                            // SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
                         break;
                 }

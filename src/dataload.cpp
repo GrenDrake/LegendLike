@@ -62,34 +62,6 @@ bool System::load() {
             return false;
         }
 
-        // LOAD TILE IMAGES
-        char **tileArt = PHYSFS_enumerateFiles("/gfx/tiles");
-        char **tileIter = tileArt;
-        for (; *tileIter != nullptr; ++tileIter) {
-            std::string filename = "/gfx/tiles/";
-            filename += *tileIter;
-            if (!fileHasExtension(filename, {".png",".jpg",".bmp",".tga",".tif"})) {
-                log.info("File " + filename + " does not appear to be an image file.");
-                continue;
-            }
-            int index = getFileIndexNumber(*tileIter);
-            if (mTiles.find(index) != mTiles.end()) {
-                log.error("Attempted to load as tile " + std::to_string(index) + " \"" + filename + "\", but that tile number was already in use.");
-            } else {
-                SDL_Texture *t = getImageCore(filename);
-                if (!t) {
-                    std::stringstream line;
-                    line << "Failed creating tile " << index << ": ";
-                    line << SDL_GetError();
-                    log.error(line.str());
-                } else {
-                    mTiles.insert(std::make_pair(index, t));
-                }
-            }
-        }
-        PHYSFS_freeList(tileArt);
-        log.info("Loaded " + std::to_string(mTiles.size()) + " tiles.");
-
         // LOAD MUSIC TRACKS
         char **musicTracks = PHYSFS_enumerateFiles("/music");
         char **trackIter = musicTracks;
@@ -215,14 +187,16 @@ bool System::loadCreatureData() {
         CreatureType type;
         int nameAddr = vm->readWord(npcTypesAddr + counter * npcTypeSize);
         type.ident = counter;
-        if (nameAddr) type.name = vm->readString(nameAddr);
-        type.artIndex  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
+        if (nameAddr) type.name    = vm->readString(nameAddr);
+        int artAddr    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
+        if (artAddr)  type.artFile = vm->readString(artAddr);
         type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
         type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);
         type.damage    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
         type.accuracy  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
         type.evasion   = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
         type.moveRate  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 28);
+        if (!type.artFile.empty()) type.art = getImage("actors/" + type.artFile + ".png");
         CreatureType::add(type);
     }
     log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " npc types.");
@@ -296,18 +270,20 @@ bool System::loadTileData() {
         TileInfo tile;
         tile.index = counter;
         int nameAddr = vm->readWord(tileDefsAddr + counter * tileDefSize);
-        if (nameAddr) tile.name = vm->readWord(nameAddr);
+        if (nameAddr) tile.name    = vm->readWord(nameAddr);
         tile.group      = vm->readWord(tileDefsAddr + counter * tileDefSize + 4);
-        tile.artIndex   = vm->readWord(tileDefsAddr + counter * tileDefSize + 8);
+        int artAddr     = vm->readWord(tileDefsAddr + counter * tileDefSize + 8);
+        if (artAddr)  tile.artFile = vm->readString(artAddr);
         tile.red        = vm->readWord(tileDefsAddr + counter * tileDefSize + 12);
         tile.green      = vm->readWord(tileDefsAddr + counter * tileDefSize + 16);
         tile.blue       = vm->readWord(tileDefsAddr + counter * tileDefSize + 20);
         tile.interactTo = vm->readWord(tileDefsAddr + counter * tileDefSize + 24);
         tile.animLength = vm->readWord(tileDefsAddr + counter * tileDefSize + 28);
         tile.flags      = vm->readWord(tileDefsAddr + counter * tileDefSize + 32);
+        if (!tile.artFile.empty()) tile.art = getImage("tiles/" + tile.artFile + ".png");
         TileInfo::add(tile);
     }
-    log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " npc types.");
+    log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " tiles.");
     return true;
 }
 

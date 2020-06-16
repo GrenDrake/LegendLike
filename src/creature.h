@@ -34,9 +34,11 @@ public:
 
     int ident;
     std::string name;
-    int artIndex;
+    std::string artFile;
     int maxHealth, maxEnergy;
     int damage, accuracy, evasion, moveRate;
+
+    SDL_Texture *art;
 private:
     static std::vector<CreatureType> types;
 };

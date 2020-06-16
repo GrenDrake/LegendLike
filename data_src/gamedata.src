@@ -1,70 +1,70 @@
 .export start map_info
 
 
-.tiledef tileGround         name="ground"           artIndex=0 red=192 green=192 blue=192
-.tiledef tileWall           name="wall"             artIndex=1 red=0   green=0   blue=0   solid opaque
-.tiledef tileDown           name="down stair"       artIndex=2 red=32  green=48  blue=255 interactTo=-10 group=4
-.tiledef tileUp             name="up stair"         artIndex=3 red=48  green=32  blue=255 interactTo=-11 group=4
-.tiledef tileClosedDoor     name="closed door"      artIndex=4 red=160 green=160 blue=64  interactTo=tileOpenDoor   solid opaque door group=1
-.tiledef tileOpenDoor       name="open door"        artIndex=5 red=160 green=160 blue=64  interactTo=tileClosedDoor group=1
-.tiledef tileWindow         name="window"           artIndex=6 red=127 green=127 blue=127 solid
-.tiledef tileInterior       name="interior"         artIndex=7 red=255 green=64  blue=127
-.tiledef tileGrass          name="grass"            artIndex=7 red=159 green=192 blue=159
-.tiledef tileFence          name="fence"            artIndex=8 red=63 green=64 blue=63 solid
-.tiledef tileWell           name="well"             artIndex=13 red=63 green=64 blue=63 solid
-.tiledef tileCandelabra     name="candelabra"       artIndex=18 red=63 green=64 blue=63 solid
-.tiledef tileSink           name="sink"             artIndex=19 red=63 green=64 blue=63 solid
-.tiledef tileStove          name="stove"            artIndex=20 red=63 green=64 blue=63 solid
-.tiledef tileFire           name="fire"             artIndex=21 red=255 green=0 blue=0 solid
-.tiledef tileClosedGate     name="closed gate"      artIndex=22 red=63 green=64 blue=63 interactTo=tileOpenGate solid door group=1
-.tiledef tileOpenGate       name="open gate"        artIndex=23 red=63 green=64 blue=63 interactTo=tileClosedGate group=1
-.tiledef tileBookcase       name="bookcase"         artIndex=24 red=63 green=64 blue=63 solid
-.tiledef tileShelf          name="shelf"            artIndex=25 red=63 green=64 blue=63 solid
-.tiledef tileMirror         name="mirror"           artIndex=26 red=63 green=64 blue=63 solid
-.tiledef tileUpArrow        name="up arrow"         artIndex=14 red=192 green=192 blue=192
-.tiledef tileDownArrow      name="down arrow"       artIndex=15 red=192 green=192 blue=192
-.tiledef tileRightArrow     name="right arrow"      artIndex=16 red=192 green=192 blue=192
-.tiledef tileLeftArrow      name="left arrow"       artIndex=17 red=192 green=192 blue=192
-.tiledef tileStool          name="stool"            artIndex=27 red=63 green=64 blue=63 solid
-.tiledef tileBed            name="bed"              artIndex=28 red=62 green=63 blue=62 solid
-.tiledef tilePot            name="pot"              artIndex=29 red=63 green=64 blue=63 solid
-.tiledef tileSkull          name="skull"            artIndex=30 red=63 green=64 blue=63 solid
-.tiledef tileLargeSkull     name="large skull"      artIndex=31 red=63 green=64 blue=63 solid
-.tiledef tileChair          name="chair"            artIndex=33 red=63 green=64 blue=63 solid
-.tiledef tileChair2         name="chair"            artIndex=33 red=63 green=64 blue=63 solid
-.tiledef tileTable          name="table"            artIndex=34 red=63 green=64 blue=63 solid
-.tiledef tileBathtub        name="bathtub"          artIndex=35 red=63 green=64 blue=63 solid
-.tiledef tileToilet         name="toilet"           artIndex=36 red=63 green=64 blue=63 solid
-.tiledef tileToilet2        name="toilet"           artIndex=37 red=63 green=64 blue=63 solid
-.tiledef tileCabinet        name="cabinet"          artIndex=38 red=63 green=64 blue=63 solid
-.tiledef tileInnSign        name="inn sign"         artIndex=39 red=63 green=64 blue=63 solid
-.tiledef tileSign           name="sign"             artIndex=40 red=63 green=64 blue=63 solid
-.tiledef tileLockedDoor     name="locked door"      artIndex=42 red=160 green=160 blue=64 solid opaque
-.tiledef tileInteriorFloor  name="floor"            artIndex=43 red=192 green=192 blue=192
-.tiledef tileTileNSRoad     name="north/south road" artIndex=44 red=127 green=127 blue=127 group=2
-.tiledef tileTileEWRoad     name="east/west road"   artIndex=45 red=127 green=127 blue=127 group=2
-.tiledef tileTileSERoad     name="south/east road"  artIndex=46 red=127 green=127 blue=127 group=2
-.tiledef tileTileSWRoad     name="south/west road"  artIndex=47 red=127 green=127 blue=127 group=2
-.tiledef tileTileNERoad     name="north/east road"  artIndex=48 red=127 green=127 blue=127 group=2
-.tiledef tileTileNWRoad     name="north/west"       artIndex=49 red=127 green=127 blue=127 group=2
-.tiledef tileTile4WayRoad   name="4-way road"       artIndex=50 red=127 green=127 blue=127 group=3
-.tiledef tileTileNESRoad    name="north/east/south road" artIndex=51 red=127 green=127 blue=127 group=3
-.tiledef tileTileESWRoad    name="east/south/west"  artIndex=52 red=127 green=127 blue=127 group=3
-.tiledef tileTileNEWRoad    name="north/east/west road" artIndex=53 red=127 green=127 blue=127 group=3
-.tiledef tileTileNSWRoad    name="north/south/west road" artIndex=54 red=127 green=127 blue=127 group=3
-.tiledef tileTileSRoad      name="south road end"   artIndex=55 red=127 green=127 blue=127 group=2
-.tiledef tileTileWRoad      name="west road end"    artIndex=56 red=127 green=127 blue=127 group=2
-.tiledef tileTileERoad      name="east road end"    artIndex=57 red=127 green=127 blue=127 group=2
-.tiledef tileTileNRoad      name="north road end"   artIndex=58 red=127 green=127 blue=127 group=2
-.tiledef tileGrass2         name="grass"            artIndex=59 red=129 green=192 blue=159
-.tiledef tileGrass3         name="grass"            artIndex=60 red=129 green=192 blue=159
-.tiledef tileRocks          name="rocks"            artIndex=61 red=127 green=127 blue=127 solid
-.tiledef tileTree1          name="tree"             artIndex=62 red=80 green=95 blue=80 solid opaque
-.tiledef tileTree2          name="tree"             artIndex=63 red=80 green=95 blue=80 solid opaque
-.tiledef tileTree3          name="tree"             artIndex=64 red=80 green=95 blue=80 solid opaque
-.tiledef tileLabSignLeft    name="lab sign"         artIndex=68 red=127 green=127 blue=127 solid opaque
-.tiledef tileLabSignRight   name="lab sign"         artIndex=69 red=127 green=127 blue=127 solid opaque
-.tiledef tileWater          name="water"            artIndex=78 red=127 green=127 blue=255 animLength=1
+.tiledef tileGround         name="dirt"              art="dirt"            red=192 green=192 blue=192
+.tiledef tileWall           name="wall"              art="std_wall"        red=0   green=0   blue=0   solid opaque
+.tiledef tileDown           name="down stair"        art="std_down"        red=32  green=48  blue=255 interactTo=-10 group=4
+.tiledef tileUp             name="up stair"          art="std_up"          red=48  green=32  blue=255 interactTo=-11 group=4
+.tiledef tileClosedDoor     name="closed door"       art="std_door_closed" red=160 green=160 blue=64  interactTo=tileOpenDoor   solid opaque door group=1
+.tiledef tileOpenDoor       name="open door"         art="std_door_open"  red=160 green=160 blue=64  interactTo=tileClosedDoor group=1
+.tiledef tileWindow         name="window"            art="std_window"     red=127 green=127 blue=127 solid
+.tiledef tileInterior       name="floor"             art="std_interior"   red=255 green=64  blue=127
+.tiledef tileGrass          name="grass"             art="grass1"         red=159 green=192 blue=159
+.tiledef tileFence          name="fence"             art="fence"          red=63 green=64 blue=63 solid
+.tiledef tileWell           name="well"              art="well"           red=63 green=64 blue=63 solid
+.tiledef tileCandelabra     name="candelabra"        art="candelabra"     red=63 green=64 blue=63 solid
+.tiledef tileSink           name="sink"              art="sink"           red=63 green=64 blue=63 solid
+.tiledef tileStove          name="stove"             art="stove"          red=63 green=64 blue=63 solid
+.tiledef tileFire           name="fire"              art="fire"           red=255 green=0 blue=0 solid
+.tiledef tileClosedGate     name="closed gate"       art="gate_closed"    red=63 green=64 blue=63 interactTo=tileOpenGate solid door group=1
+.tiledef tileOpenGate       name="open gate"         art="gate_open"      red=63 green=64 blue=63 interactTo=tileClosedGate group=1
+.tiledef tileBookcase       name="bookcase"          art="bookcase"       red=63 green=64 blue=63 solid
+.tiledef tileShelf          name="shelf"             art="shelf"          red=63 green=64 blue=63 solid
+.tiledef tileMirror         name="mirror"            art="mirror"         red=63 green=64 blue=63 solid
+.tiledef tileUnused1
+.tiledef tileUnused2
+.tiledef tileUnused3
+.tiledef tileUnused4
+.tiledef tileStool          name="stool"             art="stool"          red=63 green=64 blue=63 solid
+.tiledef tileBed            name="bed"               art="bed"            red=62 green=63 blue=62 solid
+.tiledef tilePot            name="pot"               art="pot"            red=63 green=64 blue=63 solid
+.tiledef tileSkull          name="skull"             art="skull"          red=63 green=64 blue=63 solid
+.tiledef tileLargeSkull     name="large skull"       art="skull_large"    red=63 green=64 blue=63 solid
+.tiledef tileChair          name="chair"             art="chair_east"     red=63 green=64 blue=63 solid
+.tiledef tileChair2         name="chair"             art="chair_south"    red=63 green=64 blue=63 solid
+.tiledef tileTable          name="table"             art="table"          red=63 green=64 blue=63 solid
+.tiledef tileBathtub        name="bathtub"           art="bathtub"        red=63 green=64 blue=63 solid
+.tiledef tileToilet         name="toilet"            art="toilet_east"    red=63 green=64 blue=63 solid
+.tiledef tileToilet2        name="toilet"            art="toilet_south"   red=63 green=64 blue=63 solid
+.tiledef tileCabinet        name="cabinet"           art="cabinet"        red=63 green=64 blue=63 solid
+.tiledef tileInnSign        name="inn sign"          art="sign_inn"       red=63 green=64 blue=63 solid
+.tiledef tileSign           name="sign"              art="sign"           red=63 green=64 blue=63 solid
+.tiledef tileLockedDoor     name="locked door"       art="heavy_door_closed" red=160 green=160 blue=64 solid opaque
+.tiledef tileInteriorFloor  name="floor"             art="std_floor" red=192 green=192 blue=192
+.tiledef tileTileNSRoad     name="road"              art="road_ns" red=127 green=127 blue=127 group=2
+.tiledef tileTileEWRoad     name="road"              art="road_ew" red=127 green=127 blue=127 group=2
+.tiledef tileTileSERoad     name="road"              art="road_es" red=127 green=127 blue=127 group=2
+.tiledef tileTileSWRoad     name="road"              art="road_sw" red=127 green=127 blue=127 group=2
+.tiledef tileTileNERoad     name="road"              art="road_ne" red=127 green=127 blue=127 group=2
+.tiledef tileTileNWRoad     name="road"              art="road_nw" red=127 green=127 blue=127 group=2
+.tiledef tileTile4WayRoad   name="road intersection" art="road_nesw" red=127 green=127 blue=127 group=3
+.tiledef tileTileNESRoad    name="road intersection" art="road_nes" red=127 green=127 blue=127 group=3
+.tiledef tileTileESWRoad    name="road intersection" art="road_esw" red=127 green=127 blue=127 group=3
+.tiledef tileTileNEWRoad    name="road intersection" art="road_new" red=127 green=127 blue=127 group=3
+.tiledef tileTileNSWRoad    name="road intersection" art="road_nsw" red=127 green=127 blue=127 group=3
+.tiledef tileTileSRoad      name="road"              art="road_s" red=127 green=127 blue=127 group=2
+.tiledef tileTileWRoad      name="road"              art="road_w" red=127 green=127 blue=127 group=2
+.tiledef tileTileERoad      name="road"              art="road_e" red=127 green=127 blue=127 group=2
+.tiledef tileTileNRoad      name="road"              art="road_n" red=127 green=127 blue=127 group=2
+.tiledef tileGrass2         name="grass"             art="grass2" red=129 green=192 blue=159
+.tiledef tileGrass3         name="grass"             art="grass2" red=129 green=192 blue=159
+.tiledef tileRocks          name="rocks"             art="rocks" red=127 green=127 blue=127 solid
+.tiledef tileTree1          name="tree"              art="tree1" red=80 green=95 blue=80 solid opaque
+.tiledef tileTree2          name="tree"              art="tree2" red=80 green=95 blue=80 solid opaque
+.tiledef tileTree3          name="tree"              art="tree3" red=80 green=95 blue=80 solid opaque
+.tiledef tileLabSignLeft    name="lab sign"          art="sign_lab_left" red=127 green=127 blue=127 solid opaque
+.tiledef tileLabSignRight   name="lab sign"          art="sign_lab_right" red=127 green=127 blue=127 solid opaque
+.tiledef tileWater          name="water"             art="water" red=127 green=127 blue=255 animLength=1
 
 
 .define itmSwordUpgrade  0
@@ -97,14 +97,14 @@
 .define eventManual       1
 
 
-.npctype npcTypePlayer   name="sage"    artIndex=41 health=10 energy=10
-.npctype npcTypeSage     name="sage"    artIndex=11 moveRate=2
-.npctype npcTypeOctopus  name="octopus" artIndex=71 moveRate=3
-.npctype npcTypeGuard    name="guard"   artIndex=10 moveRate=2
-.npctype npcTypeCow      name="cow"     artIndex=72 moveRate=3
+.npctype npcTypePlayer   name="sage"    art="player" health=10 energy=10
+.npctype npcTypeSage     name="sage"    art="sage" moveRate=2
+.npctype npcTypeOctopus  name="octopus" art="octopus" moveRate=3
+.npctype npcTypeGuard    name="guard"   art="guard" moveRate=2
+.npctype npcTypeCow      name="cow"     art="cow" moveRate=3
 
-.npctype npcTypeBrigand  name="brigand"   artIndex=10 damage=2 health=5
-.npctype npcTypeBandit   name="bandit"    artIndex=10 damage=3 health=3
+.npctype npcTypeBrigand  name="brigand"   art="brigand" damage=2 health=5
+.npctype npcTypeBandit   name="bandit"    art="bandit" damage=3 health=3
 
 
 map_info:

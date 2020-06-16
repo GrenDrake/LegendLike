@@ -109,7 +109,6 @@ public:
     Font* getFont(const std::string &name);
 
     void setFontScale(int scale);
-    SDL_Texture* getTile(unsigned index);
 
     void queueAnimation(const Animation &anim);
 

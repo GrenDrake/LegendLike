@@ -97,14 +97,6 @@ Font* System::getFont(const std::string &name) {
     return font;
 }
 
-SDL_Texture* System::getTile(unsigned index) {
-    auto iter = mTiles.find(index);
-    if (iter != mTiles.end()) {
-        return iter->second;
-    }
-    return nullptr;
-}
-
 void System::playMusic(int trackNumber) {
     if (mCurrentTrack == trackNumber) return;
 

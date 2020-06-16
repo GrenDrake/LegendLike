@@ -9,18 +9,21 @@
 class System;
 class Creature;
 class Random;
+struct SDL_Texture;
 
 struct TileInfo {
     int index;
     std::string name;
+    std::string artFile;
     int group;
-    int artIndex;
     int red;
     int green;
     int blue;
     int interactTo;
     int animLength;
     unsigned flags;
+
+    SDL_Texture *art;
 
     bool is(unsigned flag) const;
     static void add(const TileInfo &type);
