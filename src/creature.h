@@ -80,6 +80,6 @@ public:
 };
 
 
-int getAccuracyModifier(Creature *attacker, Creature *target, bool isMelee);
+bool doAccuracyCheck(System &state, Creature *attacker, Creature *target, bool isMelee);
 
 #endif

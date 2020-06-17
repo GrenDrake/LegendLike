@@ -18,10 +18,6 @@
 
 void gfx_handleInput(System &state);
 
-int getAccuracyModifier(Creature *attacker, Creature *target, bool isMelee) {
-    return isMelee ? 2 : 0;
-}
-
 struct ProjectileInfo {
     std::string name;
     int damageDice, damageSides;
@@ -43,19 +39,11 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
 
         actor = board->actorAt(work);
         if (actor) {
-            int roll = -10000;
-            int modifier = getAccuracyModifier(state.getPlayer(), actor, false);
+            bool isHit = false;
             if (actor->aiType == aiEnemy) {
-                roll = state.coreRNG.roll(1,10);
-                if (state.showDieRolls) {
-                    std::stringstream msg;
-                    msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5: ";
-                    if (roll + modifier > 5)    msg << "hit]";
-                    else                        msg << "miss]";
-                    state.addMessage(msg.str());
-                }
+                isHit = doAccuracyCheck(state, state.getPlayer(), actor, false);
             }
-            if (roll + modifier <= 5) {
+            if (!isHit) {
                 state.addMessage("Your " + projectile.name + " misses " + actor->getName() + ".");
                 actor = nullptr;
             }
@@ -162,18 +150,11 @@ bool tryInteract(System &state, const Point &target) {
         } else if (state.swordLevel <= 0) {
             state.addMessage("You don't have a sword!");
         } else {
-            int roll = -10000;
-            int modifier = getAccuracyModifier(state.getPlayer(), actor, true);
-            roll = state.coreRNG.roll(1,10);
-            if (state.showDieRolls) {
-                std::stringstream msg;
-                msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
-                state.addMessage(msg.str());
-            }
-            if (roll + modifier <= 5) {
+            bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, true);
+            if (!isHit) {
                 state.addMessage("You miss " + actor->getName() + ".");
             } else {
-                roll = state.coreRNG.roll(state.swordLevel, 4);
+                int roll = state.coreRNG.roll(state.swordLevel, 4);
                 if (state.showDieRolls) {
                     std::stringstream msg2;
                     msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';

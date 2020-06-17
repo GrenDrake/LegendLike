@@ -120,16 +120,8 @@ void Creature::ai(System &system) {
                 if (position.distanceTo(playerPos) < 2) {
                     Creature *player = board->getPlayer();
                     // do attack
-
-                    int roll = -10000;
-                    int modifier = getAccuracyModifier(this, player, true);
-                    roll = system.coreRNG.roll(1,10);
-                    if (system.showDieRolls) {
-                        std::stringstream msg;
-                        msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
-                        system.addMessage(msg.str());
-                    }
-                    if (roll + modifier <= 5) {
+                    bool isHit = doAccuracyCheck(system, this, player, true);
+                    if (!isHit) {
                         system.addMessage(upperFirst(getName()) + " misses you.");
                     } else {
                         int damage = typeInfo->damage;
@@ -197,4 +189,19 @@ bool Creature::tryMove(Board *board, Dir direction) {
 
     position = newPosition;
     return true;
+}
+
+bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, bool isMelee) {
+    int roll = -10000;
+    int modifier = isMelee ? 2 : 0;
+
+    roll = system.coreRNG.roll(1,10);
+    if (system.showDieRolls) {
+        std::stringstream msg;
+        msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
+        system.addMessage(msg.str());
+    }
+
+    if (roll + modifier > 5) return true;
+    return false;
 }
