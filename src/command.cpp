@@ -99,9 +99,11 @@ CommandDef gameCommands[] = {
     { Command::PrevSubweapon,   Dir::None, SDLK_LEFTBRACKET },
     { Command::Subweapon,       Dir::None, SDLK_s },
 
+    { Command::Debug_Restore, Dir::None, SDLK_F1 },
     { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
     { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
     { Command::Debug_ShowInfo, Dir::None, SDLK_F5 },
+    { Command::Debug_ShowChecks, Dir::None, SDLK_F6 },
     { Command::Debug_ShowFPS,  Dir::None, SDLK_F7 },
     { Command::Debug_TestPathfinder, Dir::None, SDLK_F9 },
     { Command::Debug_WriteMapBinary, Dir::None, SDLK_F10 },
@@ -264,6 +266,8 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::PrevSubweapon:    out << "prev subweapon"; break;
         case Command::Subweapon:        out << "subweapon"; break;
 
+        case Command::Debug_ShowChecks: out << "show die rolls (debug)"; break;
+        case Command::Debug_Restore:    out << "full restore (debug)"; break;
         case Command::Debug_Reveal:     out << "reveal full map (debug)"; break;
         case Command::Debug_NoFOV:      out << "disable FOV (debug)"; break;
         case Command::Debug_ShowInfo:   out << "show info (debug)"; break;

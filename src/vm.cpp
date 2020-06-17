@@ -669,9 +669,11 @@ bool VM::run(unsigned address) {
                         if (state->currentSubweapon < 0) state->currentSubweapon = SW_MATTOCK;
                         break;
                     case ITM_AMMO_ARROW:
+                        state->arrowCount += 5;
                         if (state->arrowCount > state->arrowCapacity) state->arrowCount = state->arrowCapacity;
                         break;
                     case ITM_AMMO_BOMB:
+                        state->bombCount += 1;
                         state->subweaponLevel[SW_BOMB] = 1;
                         if (state->bombCount > state->bombCapacity) state->bombCount = state->bombCapacity;
                         if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOMB;

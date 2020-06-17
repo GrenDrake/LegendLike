@@ -18,6 +18,70 @@
 
 void gfx_handleInput(System &state);
 
+int getAccuracyModifier(Creature *attacker, Creature *target, bool isMelee) {
+    return isMelee ? 2 : 0;
+}
+
+struct ProjectileInfo {
+    std::string name;
+    int damageDice, damageSides;
+};
+
+bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
+    Board *board = state.getBoard();
+    Creature *actor = nullptr;
+
+    Point work(state.getPlayer()->position);
+    while (1) {
+        work = work.shift(d);
+        if (!board->valid(work)) break;
+        const TileInfo &tileInfo = TileInfo::get(board->getTile(work));
+        if (tileInfo.flags & TF_SOLID) {
+            state.addMessage("Your " + projectile.name + " hits the " + tileInfo.name + ".");
+            return false;
+        }
+
+        actor = board->actorAt(work);
+        if (actor) {
+            int roll = -10000;
+            int modifier = getAccuracyModifier(state.getPlayer(), actor, false);
+            if (actor->aiType == aiEnemy) {
+                roll = state.coreRNG.roll(1,10);
+                if (state.showDieRolls) {
+                    std::stringstream msg;
+                    msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5: ";
+                    if (roll + modifier > 5)    msg << "hit]";
+                    else                        msg << "miss]";
+                    state.addMessage(msg.str());
+                }
+            }
+            if (roll + modifier <= 5) {
+                state.addMessage("Your " + projectile.name + " misses " + actor->getName() + ".");
+                actor = nullptr;
+            }
+            else break;
+        }
+    }
+
+    if (actor) {
+        int d = projectile.damageDice;
+        if (d <= 0) d = state.subweaponLevel[SW_BOW];
+        int damage = state.coreRNG.roll(d, projectile.damageSides);
+        if (state.showDieRolls) {
+            std::stringstream msg;
+            msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
+            state.addMessage(msg.str());
+        }
+        actor->takeDamage(damage);
+        state.addMessage(upperFirst(actor->getName()) + " takes " + std::to_string(damage) + " damage from your " + projectile.name + ". ");
+        if (actor->curHealth <= 0) {
+            state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
+        }
+        return true;
+    }
+    return false;
+}
+
 Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false) {
     system.addMessage(prompt + "; which way?");
     while (1) {
@@ -98,14 +162,28 @@ bool tryInteract(System &state, const Point &target) {
         } else if (state.swordLevel <= 0) {
             state.addMessage("You don't have a sword!");
         } else {
-            int roll = 0;
-            for (int i = 0; i < state.swordLevel; ++i) {
-                roll += 1 + rand() % 4;
+            int roll = -10000;
+            int modifier = getAccuracyModifier(state.getPlayer(), actor, true);
+            roll = state.coreRNG.roll(1,10);
+            if (state.showDieRolls) {
+                std::stringstream msg;
+                msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
+                state.addMessage(msg.str());
             }
-            actor->takeDamage(roll);
-            state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
-            if (actor->curHealth <= 0) {
-                state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
+            if (roll + modifier <= 5) {
+                state.addMessage("You miss " + actor->getName() + ".");
+            } else {
+                roll = state.coreRNG.roll(state.swordLevel, 4);
+                if (state.showDieRolls) {
+                    std::stringstream msg2;
+                    msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
+                    state.addMessage(msg2.str());
+                }
+                actor->takeDamage(roll);
+                state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
+                if (actor->curHealth <= 0) {
+                    state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
+                }
             }
         }
         state.requestTick();
@@ -134,7 +212,6 @@ bool tryInteract(System &state, const Point &target) {
     return false;
 }
 
-#include <iostream>
 void gameloop(System &state) {
     state.returnToMenu = false;
     state.getBoard()->calcFOV(state.getPlayer()->position);
@@ -308,9 +385,48 @@ void gfx_handleInput(System &state) {
                     d = gfx_GetDirection(state, state.subweapons[state.currentSubweapon].name);
                     if (d == Dir::None) break;
                 }
-                state.addMessage("You activate your " + state.subweapons[state.currentSubweapon].name + ".");
+                switch(state.currentSubweapon) {
+                    case SW_BOW:
+                        if (state.arrowCount <= 0) {
+                            state.addMessage("Out of ammo!");
+                            break;
+                        }
+                        --state.arrowCount;
+                        state.requestTick();
+                        basicProjectileAttack(state, ProjectileInfo{"arrow", 0, 6}, d);
+                        break;
+                    case SW_FIREROD:
+                        if (state.getPlayer()->curEnergy < 3) {
+                            state.addMessage("Out of energy!");
+                            break;
+                        }
+                        state.getPlayer()->curEnergy -= 3;
+                        state.requestTick();
+                        basicProjectileAttack(state, ProjectileInfo{"fire bolt", 2, 6}, d);
+                        break;
+                    case SW_ICEROD:
+                        if (state.getPlayer()->curEnergy < 3) {
+                            state.addMessage("Out of energy!");
+                            break;
+                        }
+                        state.getPlayer()->curEnergy -= 3;
+                        state.requestTick();
+                        basicProjectileAttack(state, ProjectileInfo{"ice bolt", 2, 6}, d);
+                        break;
+                    default:
+                        state.addMessage("The " + state.subweapons[state.currentSubweapon].name + " is not implemented.");
+                }
                 break; }
 
+            case Command::Debug_Restore:
+                state.getPlayer()->curHealth = state.getPlayer()->typeInfo->maxHealth;
+                state.getPlayer()->curEnergy = state.getPlayer()->typeInfo->maxEnergy;
+                state.bombCount = state.bombCapacity;
+                state.arrowCount = state.arrowCapacity;
+                break;
+            case Command::Debug_ShowChecks:
+                state.showDieRolls = !state.showDieRolls;
+                break;
             case Command::Debug_Reveal:
                 state.getBoard()->dbgRevealAll();
                 break;

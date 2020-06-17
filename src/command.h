@@ -37,6 +37,8 @@ enum class Command {
     Debug_ShowFPS,
     Debug_TestPathfinder,
     Debug_WriteMapBinary,
+    Debug_Restore,
+    Debug_ShowChecks,
 };
 
 struct CommandDef {

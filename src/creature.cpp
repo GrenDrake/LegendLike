@@ -120,12 +120,25 @@ void Creature::ai(System &system) {
                 if (position.distanceTo(playerPos) < 2) {
                     Creature *player = board->getPlayer();
                     // do attack
-                    int damage = typeInfo->damage;
-                    player->takeDamage(damage);
-                    std::stringstream msg;
-                    msg << getName() << " attacks you for " << damage << " damage.";
-                    system.addMessage(upperFirst(msg.str()));
-                    if (player->curHealth <= 0) system.appendMessage(" You die!");
+
+                    int roll = -10000;
+                    int modifier = getAccuracyModifier(this, player, true);
+                    roll = system.coreRNG.roll(1,10);
+                    if (system.showDieRolls) {
+                        std::stringstream msg;
+                        msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
+                        system.addMessage(msg.str());
+                    }
+                    if (roll + modifier <= 5) {
+                        system.addMessage(upperFirst(getName()) + " misses you.");
+                    } else {
+                        int damage = typeInfo->damage;
+                        player->takeDamage(damage);
+                        std::stringstream msg;
+                        msg << upperFirst(getName()) << " attacks you for " << damage << " damage.";
+                        system.addMessage(msg.str());
+                        if (player->curHealth <= 0) system.appendMessage(" You die!");
+                    }
                 } else {
                     // move towards player
                     // std::cerr << this << " can see player\n";
