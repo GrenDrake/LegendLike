@@ -274,7 +274,7 @@ bool System::loadTileData() {
         TileInfo tile;
         tile.index = counter;
         int nameAddr = vm->readWord(tileDefsAddr + counter * tileDefSize);
-        if (nameAddr) tile.name    = vm->readWord(nameAddr);
+        if (nameAddr) tile.name    = vm->readString(nameAddr);
         tile.group      = vm->readWord(tileDefsAddr + counter * tileDefSize + 4);
         int artAddr     = vm->readWord(tileDefsAddr + counter * tileDefSize + 8);
         if (artAddr)  tile.artFile = vm->readString(artAddr);
