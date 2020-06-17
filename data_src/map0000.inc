@@ -93,7 +93,7 @@ map0_talkSage:
 .npc npcCow3           name="cow"          x=30 y=15 aiType=aiPaceVert      typeId=npcTypeCow
 .npc npcCow4           name="cow"          x=33 y=13 aiType=aiFollowPlayer  typeId=npcTypeCow
 .npc npcStablemaster   name="stablemaster" x=27 y=18 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_test_giveparty
-.npc npcDungeonGuard   name="guard"        x=25 y=29 aiType=aiStill         typeId=npcTypeGuard talkFunc=map0_talk_gateguard
+.npc npcDungeonGuard   name="guard"        x=29 y=25 aiType=aiStill         typeId=npcTypeGuard talkFunc=map0_talk_gateguard
 .npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=npcTypeGuard talkFunc=map0_test_fight
 .npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talkSage
 
