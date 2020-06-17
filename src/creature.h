@@ -80,8 +80,6 @@ public:
 };
 
 
-std::string damageFormName(const int &form);
-std::string damageShapeName(const int &shape);
 int getAccuracyModifier(Creature *attacker, Creature *target, bool isMelee);
 
 #endif
