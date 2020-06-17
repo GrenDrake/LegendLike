@@ -1,3 +1,5 @@
+.version 0 0 0
+
 .define aiStill           0
 .define aiRandom          1
 .define aiPaceHorz        2

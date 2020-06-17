@@ -163,6 +163,7 @@ struct Program {
     std::vector<Backpatch> patches;
 
     bool doTokenDump;
+    Value gameId, gameMajorVersion, gameMinorVersion;
 
     void addSymbol(const std::string &name, const SymbolDef &symbol);
     const SymbolDef& getSymbol(const std::string &name);

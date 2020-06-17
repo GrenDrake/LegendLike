@@ -475,6 +475,22 @@ bool parseTileDef(ParseState &state) {
     return true;
 }
 
+bool parseVersion(ParseState &state) {
+    state.advance(); // skip .version
+
+    state.code.gameId = tokenToValue(state);
+    state.advance();
+
+    state.code.gameMajorVersion = tokenToValue(state);
+    state.advance();
+
+    state.code.gameMinorVersion = tokenToValue(state);
+    state.advance();
+
+    state.checkForEOL();
+    return true;
+}
+
 bool parsePaddedString(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .string_pad
@@ -545,6 +561,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseMapData(state)) continue;
             } else if (state.here().text == ".tiledef") {
                 if (!parseTileDef(state)) continue;
+            } else if (state.here().text == ".version") {
+                if (!parseVersion(state)) continue;
             } else if (state.here().text == ".export") {
                 state.advance();
                 while (state.here().type != TokenType::EOL) {
