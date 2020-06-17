@@ -120,7 +120,7 @@ void Creature::ai(System &system) {
                 if (position.distanceTo(playerPos) < 2) {
                     Creature *player = board->getPlayer();
                     // do attack
-                    bool isHit = doAccuracyCheck(system, this, player, true);
+                    bool isHit = doAccuracyCheck(system, this, player, 2);
                     if (!isHit) {
                         system.addMessage(upperFirst(getName()) + " misses you.");
                     } else {
@@ -191,9 +191,8 @@ bool Creature::tryMove(Board *board, Dir direction) {
     return true;
 }
 
-bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, bool isMelee) {
+bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, int modifier) {
     int roll = -10000;
-    int modifier = isMelee ? 2 : 0;
 
     roll = system.coreRNG.roll(1,10);
     if (system.showDieRolls) {

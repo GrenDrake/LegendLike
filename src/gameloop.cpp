@@ -41,7 +41,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         if (actor) {
             bool isHit = false;
             if (actor->aiType == aiEnemy) {
-                isHit = doAccuracyCheck(state, state.getPlayer(), actor, false);
+                isHit = doAccuracyCheck(state, state.getPlayer(), actor, 0);
             }
             if (!isHit) {
                 state.addMessage("Your " + projectile.name + " misses " + actor->getName() + ".");
@@ -150,7 +150,7 @@ bool tryInteract(System &state, const Point &target) {
         } else if (state.swordLevel <= 0) {
             state.addMessage("You don't have a sword!");
         } else {
-            bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, true);
+            bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, 2);
             if (!isHit) {
                 state.addMessage("You miss " + actor->getName() + ".");
             } else {
@@ -394,6 +394,30 @@ void gfx_handleInput(System &state) {
                         state.requestTick();
                         basicProjectileAttack(state, ProjectileInfo{"ice bolt", 2, 6}, d);
                         break;
+                    case SW_MATTOCK: {
+                        Creature *actor = state.getBoard()->actorAt(state.getPlayer()->position.shift(d));
+                        if (actor) {
+                            state.requestTick();
+                            bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, -2);
+                            if (!isHit) {
+                                state.addMessage("You miss " + actor->getName() + ".");
+                            } else {
+                                int roll = state.coreRNG.roll(3, 4);
+                                if (state.showDieRolls) {
+                                    std::stringstream msg2;
+                                    msg2 << "[damage: 3d4" << '=' << roll << ']';
+                                    state.addMessage(msg2.str());
+                                }
+                                actor->takeDamage(roll);
+                                state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
+                                if (actor->curHealth <= 0) {
+                                    state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
+                                }
+                            }
+                        } else {
+                            state.addMessage("Your pick has no impact.");
+                        }
+                        break; }
                     default:
                         state.addMessage("The " + state.subweapons[state.currentSubweapon].name + " is not implemented.");
                 }
