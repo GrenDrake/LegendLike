@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include <deque>
 
@@ -77,6 +78,7 @@ void gfx_drawMap(System &state) {
 
                 if (visible) {
                     Actor *actor = state.getBoard()->actorAt(here);
+                    Item *item = state.getBoard()->itemAt(here);
                     if (actor) {
                         SDL_Texture *tile = actor->typeInfo->art;
                         if (tile) {
@@ -89,6 +91,11 @@ void gfx_drawMap(System &state) {
                             box.w *= hpPercent;
                             SDL_SetRenderDrawColor(state.renderer, 127, 255, 127, SDL_ALPHA_OPAQUE);
                             SDL_RenderFillRect(state.renderer, &box);
+                        }
+                    } else if (item) {
+                        SDL_Texture *tile = item->typeInfo->art;
+                        if (tile) {
+                            SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
                     }
                 }
@@ -382,11 +389,17 @@ void gfx_doDrawToolTip(System &state) {
         Point here(tileX, tileY);
         int tileHere = state.getBoard()->getTile(here);
         Actor *actor = state.getBoard()->actorAt(here);
+        Item *item = state.getBoard()->itemAt(here);
+
+        if (!state.getBoard()->isVisible(here)) return;
         if (tileHere != tileOutOfBounds) {
             if (state.getBoard()->isKnown(here)) { // show tooltip
                 std::stringstream ss;
-                if (actor && state.getBoard()->isVisible(here)) {
+                if (actor) {
                     ss << actor->getName() << "\n";
+                }
+                if (item) {
+                    ss << item->typeInfo->name << "\n";
                 }
                 const TileInfo &tileInfo = TileInfo::get(tileHere);
                 ss << tileInfo.name;

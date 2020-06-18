@@ -99,6 +99,20 @@ struct LootTable {
     std::vector<LootRow> rows;
 };
 
+struct ItemDef {
+    std::string name;
+    std::string artFile;
+    int itemId;
+
+    SDL_Texture *art;
+};
+
+struct Item {
+    const ItemDef *typeInfo;
+    Point position;
+    int fromLocation;
+};
+
 class System {
 public:
     System(SDL_Renderer *renderer, Random &rng);
@@ -187,6 +201,7 @@ public:
     std::vector<ItemLocation> itemLocations;
     std::vector<Subweapon> subweapons;
     std::vector<LootTable> lootTables;
+    std::vector<ItemDef> itemDefs;
     std::deque<Animation> animationQueue;
 
     // system modules
@@ -208,6 +223,7 @@ public:
 
     bool loadAudioTracks();
     bool loadActorData();
+    bool loadItemDefs();
     bool loadLocationsData();
     bool loadMapInfoData();
     bool loadMusicTracks();

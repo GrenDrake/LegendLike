@@ -8,6 +8,7 @@
 
 class System;
 class Actor;
+struct Item;
 class Random;
 struct SDL_Texture;
 
@@ -121,8 +122,13 @@ public:
     void removeActor(Actor *actor);
     void removeActor(const Point &p);
     void doDamage(System &state, Actor *to, int amount, int type, const std::string &source);
-    void makeLoot(System &state, const Actor *from);
+    void makeLoot(System &state, const Actor *from, const Point &where);
     Actor* getPlayer();
+
+    Item* itemAt(const Point &where);
+    void addItem(Item *item, const Point &where);
+    void removeAndDeleteItem(Item *item);
+    void removeAndDeleteItem(const Point &p);
 
     void clearTo(int tile);
     void setTile(const Point &where, int tile);
@@ -162,6 +168,7 @@ private:
     int mWidth, mHeight;
     Tile *tiles;
     std::vector<Actor*> actors;
+    std::vector<Item*> items;
     std::vector<Event> events;
     bool dbgDisableFOV;
 };

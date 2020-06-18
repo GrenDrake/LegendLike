@@ -1,20 +1,20 @@
 ; data for map of the starting town
 
-.location locSwordUpgrade1  item=itmSwordUpgrade
-.location locSwordUpgrade2  item=itmSwordUpgrade
-.location locArmourUpgrade1 item=itmArmourUpgrade
-.location locHealthUpgrade1 item=itmHealthUpgrade
-.location locEnergyUpgrade1 item=itmEnergyUpgrade
-.location locBow            item=itmBow
-.location locHookshot       item=itmHookshot
-.location locIceRod         item=itmIceRod
-.location locFireRod        item=itmFireRod
-.location locPickaxe        item=itmPickaxe
-.location locAmmoArrow1     item=itmAmmoArrow
-.location locAmmoBomb1      item=itmAmmoBomb
-.location locCoin1          item=itmCoin
-.location locCapArrow1      item=itmCapArrow
-.location locCapBomb1       item=itmCapBomb
+.location locSwordUpgrade1  item=itemClassSwordUpgrade
+.location locSwordUpgrade2  item=itemClassSwordUpgrade
+.location locArmourUpgrade1 item=itemClassArmourUpgrade
+.location locHealthUpgrade1 item=itemClassHealthUpgrade
+.location locEnergyUpgrade1 item=itemClassEnergyUpgrade
+.location locBow            item=itemClassBow
+.location locHookshot       item=itemClassHookshot
+.location locIceRod         item=itemClassIceRod
+.location locFireRod        item=itemClassFireRod
+.location locPickaxe        item=itemClassPickaxe
+.location locAmmoArrow1     item=itemClassAmmoArrow
+.location locAmmoBomb1      item=itemClassAmmoBomb
+.location locCoin1          item=itemClassCoin
+.location locCapArrow1      item=itemClassCapArrow
+.location locCapBomb1       item=itemClassCapBomb
 
 
 map0_talk_professor:
@@ -35,13 +35,13 @@ map0_talk_archdean:
     ret
 
 map0_talk_gateguard:
-    @p_hasitem      itmSwordUpgrade
+    @p_hasitem      itemClassSwordUpgrade
     @jnz            map0_talk_gateguard_has_sword
     @saystr         "Guard: \"It is not safe beyond this point. You need to find yourself a sword.\""
     textbox
     ret
 map0_talk_gateguard_has_sword:
-    @p_hasitem      itmArmourUpgrade
+    @p_hasitem      itemClassArmourUpgrade
     @jnz            map0_talk_gateguard_has_armour
     @saystr         "Guard: \"I see you've got a sword. Now you just need to find some armour.\""
     textbox
@@ -100,7 +100,7 @@ map0_downToDungeon:
     ret
 
 map0_talkSage:
-    @p_giveitem_imm itmAmmoArrow
+    @p_giveitem_imm itemClassAmmoArrow
     @saystr     "Sage: Hello! It is a pleasant morning, is it not?"
     textbox
     ret
@@ -138,5 +138,7 @@ map0_build:
     ; village green
     @mf_addevent    26 40 map0_talkwell eventManual
     @mf_addevent    28 36 map0_talkfire eventManual
+
+    @mf_additem     28 28 itemCoin
 
     ret

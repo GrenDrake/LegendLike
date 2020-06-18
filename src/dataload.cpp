@@ -57,7 +57,8 @@ bool System::load() {
     try {
         if (!vm->loadFromFile("game.dat", true))    return false;
         if (!loadAudioTracks())                     return false;
-        if (!loadActorData())                    return false;
+        if (!loadActorData())                       return false;
+        if (!loadItemDefs())                        return false;
         if (!loadLocationsData())                   return false;
         if (!loadLootTables())                      return false;
         if (!loadMapInfoData())                     return false;
@@ -213,6 +214,31 @@ bool System::loadActorData() {
         ActorType::add(type);
     }
     log.info(std::string("Loaded ") + std::to_string(ActorType::typeCount()) + " npc types.");
+    return true;
+}
+
+bool System::loadItemDefs() {
+    Logger &log = Logger::getInstance();
+    const unsigned itemdefSize = 12;
+    unsigned itemdefsAddr = vm->getExport("__itemdefs");
+    if (itemdefsAddr == static_cast<unsigned>(-1)) {
+        log.error("itemdefs data not found.");
+        return false;
+    }
+    const unsigned itemdefCount = vm->readWord(itemdefsAddr);
+    itemdefsAddr += 4;
+    for (unsigned counter = 0; counter < itemdefCount; ++counter) {
+        ItemDef itemDef;
+        int nameStrAddr = vm->readWord(itemdefsAddr + counter * itemdefSize);
+        int artStrAddr = vm->readWord(itemdefsAddr + counter * itemdefSize + 4);
+        itemDef.itemId = vm->readWord(itemdefsAddr + counter * itemdefSize + 8);
+        if (nameStrAddr) itemDef.name    = vm->readString(nameStrAddr);
+        if (artStrAddr)  itemDef.artFile = vm->readString(artStrAddr);
+        if (!itemDef.artFile.empty()) itemDef.art = getImage("items/" + itemDef.artFile + ".png");
+        else itemDef.art = nullptr;
+        itemDefs.push_back(itemDef);
+    }
+    log.info(std::string("Loaded ") + std::to_string(itemDefs.size()) + " item itemdefs.");
     return true;
 }
 

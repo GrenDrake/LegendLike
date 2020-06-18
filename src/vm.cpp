@@ -562,6 +562,20 @@ bool VM::run(unsigned address) {
                     baseAddr += npcSize;
                 }
                 break; }
+            case Opcode::mf_additem: {
+                int itemId = pop();
+                int x = pop();
+                int y = pop();
+                if (board) {
+                    if (itemId < 0 || itemId >= static_cast<int>(state->itemDefs.size())) {
+                        state->addError("Tried to add unknown item " + std::to_string(itemId) + ".");
+                    } else {
+                        Item *item = new Item;
+                        item->typeInfo = &state->itemDefs[itemId];
+                        board->addItem(item, Point(x, y));
+                    }
+                }
+                break; }
             case Opcode::mf_addevent: {
                 int type = pop();
                 int target = pop();

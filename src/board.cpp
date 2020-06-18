@@ -101,6 +101,7 @@ void Board::removeActor(const Point &p) {
 
 void Board::doDamage(System &state, Actor *to, int amount, int type, const std::string &source) {
     if (!to) return;
+    Point pos = to->position;
     to->takeDamage(amount);
     state.addMessage(upperFirst(to->getName()) + " takes " + std::to_string(amount) + " damage from " + source + ". ");
     if (to->curHealth <= 0) {
@@ -108,12 +109,12 @@ void Board::doDamage(System &state, Actor *to, int amount, int type, const std::
             state.appendMessage("You die!");
         } else {
             state.appendMessage(upperFirst(to->getName()) + " is defeated! ");
-            makeLoot(state, to);
+            makeLoot(state, to, pos);
         }
     }
 }
 
-void Board::makeLoot(System &state, const Actor *from) {
+void Board::makeLoot(System &state, const Actor *from, const Point &where) {
     if (!from) return;
     switch(from->typeInfo->lootType) {
         case lootNone:
@@ -128,7 +129,9 @@ void Board::makeLoot(System &state, const Actor *from) {
                 if (table.rows[i].chance >= roll) break;
             }
             if (i == 0 || i > table.rows.size()) break; // rolled off table
-            state.grantItem(table.rows[i - 1].itemId);
+            Item *item = new Item;
+            item->typeInfo = &state.itemDefs[table.rows[i - 1].itemId];
+            addItem(item, where);
             break; }
         case lootLocation: {
             int locationNum = from->typeInfo->loot;
@@ -153,6 +156,43 @@ Actor* Board::getPlayer() {
 
     return nullptr;
 }
+
+Item* Board::itemAt(const Point &where) {
+    for (Item *item : items) {
+        if (item->position == where) {
+            return item;
+        }
+    }
+    return nullptr;
+}
+
+void Board::addItem(Item *item, const Point &where) {
+    item->position = where;
+    items.push_back(item);
+}
+
+void Board::removeAndDeleteItem(Item *item) {
+    for (auto iter = items.begin(); iter != items.end();) {
+        if (*iter == item) {
+            iter = items.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+    delete item;
+}
+
+void Board::removeAndDeleteItem(const Point &p) {
+    for (auto iter = items.begin(); iter != items.end();) {
+        if ((*iter)->position == p) {
+            delete *iter;
+            iter = items.erase(iter);
+        } else {
+            ++iter;
+        }
+    }
+}
+
 
 void Board::clearTo(int tile) {
     for (int y = 0; y < height(); ++y) {

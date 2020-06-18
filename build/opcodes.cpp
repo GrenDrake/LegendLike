@@ -55,6 +55,7 @@ std::vector<Mnemonic> mnemonics{
     {   Opcode::mf_vertline, "mf_vertline",  0 },
     {   Opcode::mf_addactor, "mf_addactor",  0 },
     {   Opcode::mf_addactors,"mf_addactors", 0 },
+    {   Opcode::mf_additem,  "mf_additem",   0 },
     {   Opcode::mf_clear,    "mf_clear",     0 },
     {   Opcode::mf_addevent, "mf_addevent",  0 },
     {   Opcode::mf_makemaze, "mf_makemaze",  0 },

@@ -51,6 +51,7 @@ enum class Opcode {
     mf_vertline,
     mf_addactor,
     mf_addactors,
+    mf_additem,
     mf_clear,
     mf_addevent,
     mf_fromfile,

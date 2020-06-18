@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
     code.exports.push_back("__tiledefs");
     code.exports.push_back("__mapdata");
     code.exports.push_back("__loottables");
+    code.exports.push_back("__itemdefs");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -143,6 +144,29 @@ bool buildHeader(Program &code) {
             stringTable.push_back(data);
         }
         std::cerr << "String table size: " << stringTableSize << "\n";
+    }
+
+    {
+        // build the item defs table
+        AsmLabel *itemDefsLabel = new AsmLabel(Origin(), "__itemdefs");
+        stringTable.push_back(itemDefsLabel);
+        AsmData *itemDefsCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(itemDefsCountData);
+        Value itemDefCount(code.itemDefs.size());
+        itemDefsCountData->data.push_back(itemDefCount);
+        unsigned itemDefsSize = 4;
+        int counter = 0;
+        for (const ItemDef &itemDef : code.itemDefs) {
+            code.addSymbol(itemDef.identifier, SymbolDef{itemDef.origin, Value{counter}});
+            AsmData *data = new AsmData(itemDef.origin, 4);
+            data->data.push_back(itemDef.name);
+            data->data.push_back(itemDef.artFile);
+            data->data.push_back(itemDef.itemId);
+            stringTable.push_back(data);
+            itemDefsSize += data->data.size() * data->width;
+            ++counter;
+        }
+        std::cerr << "ItemDefs size: " << itemDefsSize << " (" << counter << " items)\n";
     }
 
     {

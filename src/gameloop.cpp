@@ -266,6 +266,12 @@ void gfx_handleInput(System &state) {
                 }
                 Point dest = state.getPlayer()->position.shift(cmd.direction);
                 if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
+                    Item *item = state.getBoard()->itemAt(dest);
+                    if (item) {
+                        state.grantItem(item->typeInfo->itemId);
+                        state.addMessage("Claimed: " + item->typeInfo->name + ".");
+                        state.getBoard()->removeAndDeleteItem(item);
+                    }
                     const Board::Event *e = state.getBoard()->eventAt(dest);
                     if (e && e->type == eventTypeAuto) {
                         state.vm->run(e->funcAddr);

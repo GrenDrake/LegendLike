@@ -152,6 +152,42 @@ bool parseDefine(ParseState &state) {
     return true;
 }
 
+bool parseItemDef(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .itemdef
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{0};
+    Value artFile{0};
+    Value itemId{0};
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (!state.require(TokenType::Equals)) return false;
+        state.advance();
+
+        Value value = tokenToValue(state);
+        state.advance();
+
+        if (label == "name")          name = value;
+        else if (label == "art")      artFile = value;
+        else if (label == "itemId")   itemId = value;
+        else {
+            state.code.errorLog.add(origin, "Unknown item def attribute " + label + ".");
+            return false;
+        }
+    }
+
+    ItemDef newItemDef{ origin, identifier, name, artFile, itemId };
+    state.code.itemDefs.push_back(newItemDef);
+    return true;
+}
+
 bool parseLocation(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .location
@@ -260,6 +296,7 @@ bool parseNPC(ParseState &state) {
     state.code.add(npcDataB);
     return true;
 }
+
 const unsigned MF_UPSTAIRS = 0x01;
 const unsigned MF_DOWNSTAIRS = 0x02;
 bool parseMapData(ParseState &state) {
@@ -595,6 +632,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseVersion(state)) continue;
             } else if (state.here().text == ".loottable") {
                 if (!parseLootTable(state)) continue;
+            } else if (state.here().text == ".itemdef") {
+                if (!parseItemDef(state)) continue;
             } else if (state.here().text == ".export") {
                 state.advance();
                 while (state.here().type != TokenType::EOL) {

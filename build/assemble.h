@@ -172,6 +172,14 @@ struct LootTable {
     std::vector<LootRow> rows;
 };
 
+struct ItemDef {
+    Origin origin;
+    std::string identifier;
+    Value name;
+    Value artFile;
+    Value itemId;
+};
+
 struct Program {
     Program();
     ErrorLog errorLog;
@@ -182,6 +190,7 @@ struct Program {
     std::vector<TileDef> tileDefs;
     std::vector<MapData> mapData;
     std::vector<LootTable> lootTables;
+    std::vector<ItemDef> itemDefs;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;
