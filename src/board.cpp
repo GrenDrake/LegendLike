@@ -398,6 +398,27 @@ void Board::tick(System &system) {
     if (player) calcFOV(player->position);
 }
 
+void Board::dbgShiftMap(Dir d) {
+    Tile *newTiles = new Tile[mWidth * mHeight];
+    memset(newTiles, 0, mWidth * mHeight * sizeof(Tile));
+
+    for (int y = 0; y < mHeight; ++y) {
+        for (int x = 0; x < mWidth; ++x) {
+            Point from(x, y);
+            Point to = from.shift(d);
+            int fromPos = coord(from);
+            if (to.x() < 0 || to.y() < 0 || to.x() >= mWidth || to.y() >= mHeight) {
+                ;
+            } else {
+                int toPos   = coord(to);
+                newTiles[toPos] = tiles[fromPos];
+            }
+        }
+    }
+    delete[] tiles;
+    tiles = newTiles;
+}
+
 void Board::dbgRevealAll() {
     for (int i = 0; i < mWidth * mHeight; ++i) {
         tiles[i].fov |= FOV_EVER_SEEN;

@@ -383,6 +383,12 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
             case Command::Subweapon: {
+                if (state.mapEditMode) {
+                    Dir d = gfx_GetDirection(state, "Shift map");
+                    if (d == Dir::None) break;
+                    state.getBoard()->dbgShiftMap(d);
+                    break;
+                }
                 if (state.currentSubweapon == -1) {
                     state.addMessage("You don't have any subweapons.");
                     break;

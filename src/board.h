@@ -146,6 +146,7 @@ public:
 
     void tick(System &system);
 
+    void dbgShiftMap(Dir d);
     void dbgRevealAll();
     void dbgToggleFOV();
     void resetMark();
