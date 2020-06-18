@@ -3,6 +3,7 @@
 #include <cstring>
 #include <queue>
 #include <map>
+#include <sstream>
 #include <vector>
 #include <physfs.h>
 
@@ -11,6 +12,7 @@
 #include "point.h"
 #include "random.h"
 #include "gfx.h"
+#include "logger.h"
 
 
 std::vector<TileInfo> TileInfo::types;
@@ -445,12 +447,17 @@ bool Board::readFromFile(const std::string &filename) {
     PHYSFS_readULE16(inf, &fileWidth);
     PHYSFS_readULE16(inf, &fileHeight);
     if (fileWidth != mWidth || fileHeight != mHeight) {
-        return false;
+        Logger &log = Logger::getInstance();
+        std::stringstream msg;
+        msg << "Loaded map " << filename << " is unexpected size; file is ";
+        msg << fileWidth << 'x' << fileHeight << ", but map expected ";
+        msg << mWidth << 'x' << mHeight << '.';
+        log.warn(msg.str());
     }
 
     PHYSFS_uint32 tile;
-    for (int y = 0; y < mHeight; ++y) {
-        for (int x = 0; x < mWidth; ++x) {
+    for (int y = 0; y < fileHeight; ++y) {
+        for (int x = 0; x < fileWidth; ++x) {
             PHYSFS_readULE32(inf, &tile);
             at(Point(x, y)).tile = tile;
         }
