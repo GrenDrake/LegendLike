@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -54,6 +55,10 @@ int main(int argc, char *argv[]) {
     }
 
     buildHeader(code);
+    if (!code.errorLog.errors.empty()) {
+        dumpErrors(code);
+        return 1;
+    }
 
     generate(code, outputFile);
     if (!code.errorLog.errors.empty()) {
@@ -191,6 +196,18 @@ bool buildHeader(Program &code) {
             ++counter;
         }
         std::cerr << "TileDefs size: " << tiledefsSize << " (" << counter << " items)\n";
+    }
+
+    for (const MapData &outer : code.mapData) {
+        for (const MapData &inner : code.mapData) {
+            if (outer.identifier == inner.identifier) continue;
+            if (outer.mapId.value == inner.mapId.value) {
+                std::stringstream msg;
+                msg << "Map " << outer.identifier << " shares map id " << outer.mapId.value << " with ";
+                msg << inner.identifier << '.';
+                code.errorLog.add(outer.origin, msg.str());
+            }
+        }
     }
 
     {
