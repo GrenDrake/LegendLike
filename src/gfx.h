@@ -194,9 +194,11 @@ public:
     bool wantsTick;
     bool showDieRolls;
 
-
+    bool loadAudioTracks();
     bool loadCreatureData();
     bool loadLocationsData();
+    bool loadMapInfoData();
+    bool loadMusicTracks();
     bool loadStringData();
     bool loadTileData();
 

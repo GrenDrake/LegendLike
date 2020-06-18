@@ -55,114 +55,14 @@ bool System::load() {
     Logger &log = Logger::getInstance();
 
     try {
-        if (!vm->loadFromFile("game.dat", true)) {
-            log.error("Failed to load VM image.");
-            return false;
-        }
-
-        // LOAD MUSIC TRACKS
-        char **musicTracks = PHYSFS_enumerateFiles("/music");
-        char **trackIter = musicTracks;
-        for (; *trackIter != nullptr; ++trackIter) {
-            std::string filename = "/music/";
-            filename += *trackIter;
-            if (!fileHasExtension(filename, {".ogg",".wav",".mp3"})) {
-                log.info("File " + filename + " does not appear to be an music file.");
-                continue;
-            }
-            int index = getFileIndexNumber(*trackIter);
-            if (index < 0) {
-                log.error("Invalid index " + std::to_string(index) + " for track " + filename + ".");
-            } else {
-                if (mTracks.find(index) != mTracks.end()) {
-                    log.error("Attempted to load as track " + std::to_string(index) + " \"" + filename + "\", but that track number was already in use.");
-                } else {
-                    std::vector<std::string> result = explode(*trackIter, "~");
-                    TrackInfo info = { index, filename };
-                    if (result.size() != 3) {
-                        log.warn(std::string("Track has malformed name: ") + *trackIter);
-                        info.name = filename;
-                        info.artist = "unknown";
-                        mTracks.insert(std::make_pair(index, info));
-                    } else {
-                        info.name = result[1];
-                        info.artist = result[2];
-                        mTracks.insert(std::make_pair(index, info));
-                    }
-                }
-            }
-        }
-        PHYSFS_freeList(musicTracks);
-        log.info("Loaded " + std::to_string(mTracks.size()) + " tracks.");
-
-        // LOAD AUDIO EFFECTS
-        char **audioEffects = PHYSFS_enumerateFiles("/audio");
-        char **audioIter = audioEffects;
-        for (; *audioIter != nullptr; ++audioIter) {
-            std::string filename = *audioIter;
-            if (!fileHasExtension(filename, {".ogg",".wav",".aiff"})) {
-                log.info("File " + filename + " does not appear to be an audio file.");
-                continue;
-            }
-            if (filename.substr(filename.length() - 4) != ".ogg") continue;
-            int index = getFileIndexNumber(*audioIter);
-            if (mAudio.find(index) != mAudio.end()) {
-                log.error("Attempted to load as effect " + std::to_string(index) + " \"" + filename + "\", but that effect number was already in use.");
-            } else {
-                Mix_Chunk *a = getAudio(filename);
-                if (!a) {
-                    std::stringstream line;
-                    line << "Failed loading track : ";
-                    line << Mix_GetError();
-                    log.error(line.str());
-                } else {
-                    mAudio.insert(std::make_pair(index, a));
-                }
-            }
-        }
-        PHYSFS_freeList(audioEffects);
-        log.info("Loaded " + std::to_string(mAudio.size()) + " audio effects.");
-
-        // LOAD MAP INFO
-        unsigned mapBase = vm->getExport("__mapdata");
-        if (mapBase < 0) {
-            log.error("VM image lacks map info.");
-            return false;
-        }
-        const unsigned mapDataSize = 36;
-        int mapCount = vm->readWord(mapBase);
-        unsigned counter = 0;
-        mapBase += 4;
-        for (unsigned i = 0; i < mapCount; ++i) {
-            MapInfo mapInfo;
-            int nameAddr = vm->readWord(mapBase);
-            if (nameAddr) mapInfo.name = vm->readString(nameAddr);
-            mapInfo.index = vm->readWord(mapBase + 4);
-            mapInfo.width = vm->readWord(mapBase + 8);
-            mapInfo.height = vm->readWord(mapBase + 12);
-            mapInfo.onBuild = vm->readWord(mapBase + 16);
-            mapInfo.onEnter = vm->readWord(mapBase + 20);
-            mapInfo.onReset = vm->readWord(mapBase + 24);
-            mapInfo.musicTrack = vm->readWord(mapBase + 28);
-            mapInfo.flags = vm->readWord(mapBase + 32);
-
-            MapInfo::add(mapInfo);
-            ++counter;
-            mapBase += mapDataSize;
-        }
-        log.info("Loaded " + std::to_string(counter) + " maps.");
-
-
-    } catch (VMError &e) {
-        log.error(std::string("Failed to initialize VM: ") + e.what());
-        return false;
-    }
-
-    try {
-        if (!loadStringData())      return false;
-        if (!loadCreatureData())    return false;
-        if (!loadLocationsData())   return false;
-        if (!loadTileData())        return false;
+        if (!vm->loadFromFile("game.dat", true))    return false;
+        if (!loadStringData())                      return false;
+        if (!loadAudioTracks())                     return false;
+        if (!loadCreatureData())                    return false;
+        if (!loadLocationsData())                   return false;
+        if (!loadMapInfoData())                     return false;
+        if (!loadMusicTracks())                     return false;
+        if (!loadTileData())                        return false;
     } catch (VMError &e) {
         log.error(e.what());
         return false;
@@ -174,6 +74,107 @@ bool System::load() {
     subweapons.push_back(Subweapon{ "mattock",  "ui/mattock.png",  true });
     subweapons.push_back(Subweapon{ "firerod",  "ui/firerod.png",  true });
     subweapons.push_back(Subweapon{ "icerod",   "ui/icerod.png",   true });
+    return true;
+}
+
+bool System::loadMusicTracks() {
+    Logger &log = Logger::getInstance();
+    char **musicTracks = PHYSFS_enumerateFiles("/music");
+    char **trackIter = musicTracks;
+    for (; *trackIter != nullptr; ++trackIter) {
+        std::string filename = "/music/";
+        filename += *trackIter;
+        if (!fileHasExtension(filename, {".ogg",".wav",".mp3"})) {
+            log.info("File " + filename + " does not appear to be an music file.");
+            continue;
+        }
+        int index = getFileIndexNumber(*trackIter);
+        if (index < 0) {
+            log.error("Invalid index " + std::to_string(index) + " for track " + filename + ".");
+        } else {
+            if (mTracks.find(index) != mTracks.end()) {
+                log.error("Attempted to load as track " + std::to_string(index) + " \"" + filename + "\", but that track number was already in use.");
+            } else {
+                std::vector<std::string> result = explode(*trackIter, "~");
+                TrackInfo info = { index, filename };
+                if (result.size() != 3) {
+                    log.warn(std::string("Track has malformed name: ") + *trackIter);
+                    info.name = filename;
+                    info.artist = "unknown";
+                    mTracks.insert(std::make_pair(index, info));
+                } else {
+                    info.name = result[1];
+                    info.artist = result[2];
+                    mTracks.insert(std::make_pair(index, info));
+                }
+            }
+        }
+    }
+    PHYSFS_freeList(musicTracks);
+    log.info("Loaded " + std::to_string(mTracks.size()) + " tracks.");
+    return true;
+}
+
+bool System::loadAudioTracks() {
+    Logger &log = Logger::getInstance();
+    char **audioEffects = PHYSFS_enumerateFiles("/audio");
+    char **audioIter = audioEffects;
+    for (; *audioIter != nullptr; ++audioIter) {
+        std::string filename = *audioIter;
+        if (!fileHasExtension(filename, {".ogg",".wav",".aiff"})) {
+            log.info("File " + filename + " does not appear to be an audio file.");
+            continue;
+        }
+        if (filename.substr(filename.length() - 4) != ".ogg") continue;
+        int index = getFileIndexNumber(*audioIter);
+        if (mAudio.find(index) != mAudio.end()) {
+            log.error("Attempted to load as effect " + std::to_string(index) + " \"" + filename + "\", but that effect number was already in use.");
+        } else {
+            Mix_Chunk *a = getAudio(filename);
+            if (!a) {
+                std::stringstream line;
+                line << "Failed loading track : ";
+                line << Mix_GetError();
+                log.error(line.str());
+            } else {
+                mAudio.insert(std::make_pair(index, a));
+            }
+        }
+    }
+    PHYSFS_freeList(audioEffects);
+    log.info("Loaded " + std::to_string(mAudio.size()) + " audio effects.");
+    return true;
+}
+
+bool System::loadMapInfoData() {
+    Logger &log = Logger::getInstance();
+    unsigned mapBase = vm->getExport("__mapdata");
+    if (mapBase < 0) {
+        log.error("VM image lacks map info.");
+        return false;
+    }
+    const unsigned mapDataSize = 36;
+    int mapCount = vm->readWord(mapBase);
+    unsigned counter = 0;
+    mapBase += 4;
+    for (int i = 0; i < mapCount; ++i) {
+        MapInfo mapInfo;
+        int nameAddr = vm->readWord(mapBase);
+        if (nameAddr) mapInfo.name = vm->readString(nameAddr);
+        mapInfo.index = vm->readWord(mapBase + 4);
+        mapInfo.width = vm->readWord(mapBase + 8);
+        mapInfo.height = vm->readWord(mapBase + 12);
+        mapInfo.onBuild = vm->readWord(mapBase + 16);
+        mapInfo.onEnter = vm->readWord(mapBase + 20);
+        mapInfo.onReset = vm->readWord(mapBase + 24);
+        mapInfo.musicTrack = vm->readWord(mapBase + 28);
+        mapInfo.flags = vm->readWord(mapBase + 32);
+
+        MapInfo::add(mapInfo);
+        ++counter;
+        mapBase += mapDataSize;
+    }
+    log.info("Loaded " + std::to_string(counter) + " maps.");
     return true;
 }
 

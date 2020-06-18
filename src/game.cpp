@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
     System renderState(renderer, coreRandom);
     renderState.window = win;
     renderState.config = &config;
-    innerMain(renderState);
+    int returnCode = innerMain(renderState);
     config.writeToFile();
     log.endLog();
 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
     SDL_DestroyWindow(win);
     SDL_Quit();
     PHYSFS_deinit();
-    return 0;
+    return returnCode;
 }
 
 bool printVersions() {
@@ -209,6 +209,8 @@ int innerMain(System &renderState) {
     renderState.tinyFont->setMetrics(9, 18, 1);
 
     if (!renderState.load()) {
+        Logger &log = Logger::getInstance();
+        log.error("Fatal error: failed to load game data.");
         return 1;
     }
 
@@ -219,6 +221,7 @@ int innerMain(System &renderState) {
     } catch (GameError &e) {
         Logger &log = Logger::getInstance();
         log.error(std::string("Fatal Error: ") + e.what());
+        return 1;
     }
 
     renderState.unloadAll();
