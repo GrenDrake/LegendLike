@@ -2,6 +2,7 @@
 #define GFX_H
 
 #include <SDL2/SDL_mixer.h>
+
 #include <deque>
 #include <map>
 #include <string>
@@ -11,16 +12,12 @@
 class Board;
 class Actor;
 class Random;
-class GameState;
 struct SDL_Renderer;
 struct SDL_Window;
 struct SDL_Texture;
 class Font;
 class VM;
-class ResourceManager;
-struct Mix_Chunk;
 class Config;
-struct SDL_Keysym;
 struct SDL_Rect;
 
 const int quickSlotUnused = 0;
