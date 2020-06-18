@@ -245,35 +245,13 @@ void gfx_drawSidebar(System &state) {
     yPos -= 10;
     if (firstYPos > yPos) yPos = firstYPos;
 
-    // for (int i = 2; i < statCount; ++i) {
-    //     Stat stat = static_cast<Stat>(i);
-    //     std::stringstream line;
-    //     line << getAbbrev(stat) << ": " << player->getStat(stat);
-    //     state.tinyFont->out(xPos, yPos, line.str());
-    //     yPos += tinyLineHeight;
-    // }
-    // for (unsigned i = 0; i < quickSlotCount; ++i) {
-    //     std::string content = "";
-    //     switch(state.quickSlots[i].type) {
-    //         case quickSlotAbility:
-    //             content = MoveType::get(state.quickSlots[i].action).name;
-    //             break;
-    //         case quickSlotItem:
-    //             content = "item";
-    //             break;
-    //     }
-    //     state.tinyFont->out(xPos, yPos, std::to_string(i+1) + ": " + content);
-    //     yPos += tinyLineHeight;
-    // }
-    // yPos = statTop;
-    // for (int i = 0; i < damageTypeCount; ++i) {
-    //     DamageType damageType = static_cast<DamageType>(i);
-    //     std::stringstream line;
-    //     line << std::fixed << std::setprecision(3);
-    //     line << getAbbrev(damageType) << ": " << player->getResist(damageType);
-    //     state.tinyFont->out(column2, yPos, line.str());
-    //     yPos += tinyLineHeight;
-    // }
+    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
+    //  MAP AND TIMER INFO
+    const int mapInfoTop = yPos + tinyLineHeight;
+    gfx_HLine(state, sidebarX, screenWidth, mapInfoTop - 1, uiColor);
+    yPos += tinyLineHeight * 1.5;
+    state.tinyFont->out(xPos, yPos, state.getBoard()->getInfo().name);
+    yPos += tinyLineHeight / 2;
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  MESSAGE LOG

@@ -169,7 +169,7 @@ bool System::build(int forIndex) {
     if (oldBoard != mBoards.end()) {
         mCurrentBoard = oldBoard->second;
     } else {
-        Board *newBoard = new Board(info.width, info.height, info.name);
+        Board *newBoard = new Board(info);
         mCurrentBoard = newBoard;
         if (info.onBuild) {
             vm->run(info.onBuild);

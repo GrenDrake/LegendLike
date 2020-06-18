@@ -100,7 +100,7 @@ public:
         int type;
     };
 
-    Board(int width, int height, const std::string &name);
+    Board(const MapInfo &mapInfo);
     ~Board();
 
     int width() const {
@@ -109,11 +109,11 @@ public:
     int height() const {
         return mHeight;
     }
-    const std::string &getName() const {
-        return name;
-    }
     bool valid(const Point &where) const {
         return coord(where) >= 0;
+    }
+    const MapInfo& getInfo() const {
+        return mapInfo;
     }
 
     Creature* actorAt(const Point &where);
@@ -155,11 +155,11 @@ public:
 private:
     int coord(const Point &p) const;
 
+    const MapInfo &mapInfo;
     int mWidth, mHeight;
     Tile *tiles;
     std::vector<Creature*> creatures;
     std::vector<Event> events;
-    std::string name;
     bool dbgDisableFOV;
 };
 

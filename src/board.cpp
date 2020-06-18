@@ -49,11 +49,11 @@ const MapInfo& MapInfo::get(int ident) {
     return BAD_MAP;
 }
 
-Board::Board(int width, int height, const std::string &name)
-: mWidth(width), mHeight(height), name(name), dbgDisableFOV(false)
+Board::Board(const MapInfo &mapInfo)
+: mapInfo(mapInfo), mWidth(mapInfo.width), mHeight(mapInfo.height), dbgDisableFOV(false)
 {
-    tiles = new Tile[width * height];
-    memset(tiles, 0, width * height * sizeof(Tile));
+    tiles = new Tile[mWidth * mHeight];
+    memset(tiles, 0, mWidth * mHeight * sizeof(Tile));
 }
 Board::~Board() {
     delete[] tiles;
@@ -108,9 +108,9 @@ Creature* Board::getPlayer() {
 void Board::clearTo(int tile) {
     for (int y = 0; y < height(); ++y) {
         for (int x = 0; x < width(); ++x) {
-            tiles[x+y*width()].tile = tile;
-            tiles[x+y*width()].fov = 0;
-            tiles[x+y*width()].mark = false;
+            tiles[x+y*mWidth].tile = tile;
+            tiles[x+y*mWidth].fov = 0;
+            tiles[x+y*mWidth].mark = false;
         }
     }
 }
