@@ -198,6 +198,93 @@ bool System::build(int forIndex) {
     return true;
 }
 
+bool System::grantItem(int itemId) {
+    switch(itemId) {
+        case ITM_SWORD_UPGRADE:
+            ++swordLevel;
+            break;
+        case ITM_ARMOUR_UPGRADE:
+            ++armourLevel;
+            break;
+        case ITM_ENERGY_UPGRADE:
+            addError("Energy upgrade not implemented.");
+            break;
+        case ITM_HEALTH_UPGRADE:
+            addError("Health upgrade not implemented.");
+            break;
+        case ITM_BOW:
+            ++subweaponLevel[SW_BOW];
+            if (currentSubweapon < 0) currentSubweapon = SW_BOW;
+            break;
+        case ITM_HOOKSHOT:
+            ++subweaponLevel[SW_HOOKSHOT];
+            if (currentSubweapon < 0) currentSubweapon = SW_HOOKSHOT;
+            break;
+        case ITM_ICEROD:
+            ++subweaponLevel[SW_ICEROD];
+            if (currentSubweapon < 0) currentSubweapon = SW_ICEROD;
+            break;
+        case ITM_FIREROD:
+            ++subweaponLevel[SW_FIREROD];
+            if (currentSubweapon < 0) currentSubweapon = SW_FIREROD;
+            break;
+        case ITM_PICKAXE:
+            ++subweaponLevel[SW_PICKAXE];
+            if (currentSubweapon < 0) currentSubweapon = SW_PICKAXE;
+            break;
+        case ITM_AMMO_ARROW:
+            arrowCount += 5;
+            if (arrowCount > arrowCapacity) arrowCount = arrowCapacity;
+            break;
+        case ITM_AMMO_BOMB:
+            bombCount += 1;
+            subweaponLevel[SW_BOMB] = 1;
+            if (bombCount > bombCapacity) bombCount = bombCapacity;
+            if (currentSubweapon < 0) currentSubweapon = SW_BOMB;
+            break;
+        case ITM_COIN:
+            coinCount += 10;
+            break;
+        case ITM_CAP_ARROW:
+            arrowCapacity += 5;
+            break;
+        case ITM_CAP_BOMB:
+            bombCapacity += 1;
+            break;
+        default:
+            addError("Tried to give unknown item #" + std::to_string(itemId));
+            return false;
+    }
+    return true;
+}
+
+bool System::hasItem(int itemId) {
+    switch(itemId) {
+        case ITM_SWORD_UPGRADE:     return swordLevel > 0;
+        case ITM_ARMOUR_UPGRADE:    return armourLevel > 0;
+        case ITM_ENERGY_UPGRADE:
+            addError("Energy upgrade not implemented.");
+            return false;
+        case ITM_HEALTH_UPGRADE:
+            addError("Health upgrade not implemented.");
+            return false;
+        case ITM_BOW:               return subweaponLevel[SW_BOW] > 0;
+        case ITM_HOOKSHOT:          return subweaponLevel[SW_HOOKSHOT] > 0;
+        case ITM_ICEROD:            return subweaponLevel[SW_ICEROD] > 0;
+        case ITM_FIREROD:           return subweaponLevel[SW_FIREROD] > 0;
+        case ITM_PICKAXE:           return subweaponLevel[SW_PICKAXE] > 0;
+        case ITM_AMMO_ARROW:        return arrowCount > 0;
+        case ITM_AMMO_BOMB:         return bombCount > 0;
+        case ITM_COIN:              return coinCount > 0;
+        case ITM_CAP_ARROW:         return true;
+        case ITM_CAP_BOMB:          return true;
+        default:
+            addError("Tried to check for unknown item #" + std::to_string(itemId));
+            return false;
+    }
+    return false;
+}
+
 void System::advanceFrame() {
     ++framecount;
     ++timerFrames;

@@ -141,6 +141,8 @@ public:
     bool down();
     bool up();
     bool build(int forIndex);
+    bool grantItem(int itemId);
+    bool hasItem(int itemId);
 
     void advanceFrame();
     unsigned getFPS() const;

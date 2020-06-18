@@ -60,6 +60,9 @@ enum class Opcode {
     p_reset,
     p_damage,
     p_giveitem,
+    p_claimed,
+    p_giveitem_imm,
+    p_hasitem,
 
     warpto,
 

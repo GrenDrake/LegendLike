@@ -35,9 +35,22 @@ map0_talk_archdean:
     ret
 
 map0_talk_gateguard:
-    @saystr         "Guard: \"It is not safe beyond this point. Speak to the archdean at the academy before you leave.\""
+    @p_hasitem      itmSwordUpgrade
+    @jnz            map0_talk_gateguard_has_sword
+    @saystr         "Guard: \"It is not safe beyond this point. You need to find yourself a sword.\""
     textbox
     ret
+map0_talk_gateguard_has_sword:
+    @p_hasitem      itmArmourUpgrade
+    @jnz            map0_talk_gateguard_has_armour
+    @saystr         "Guard: \"I see you've got a sword. Now you just need to find some armour.\""
+    textbox
+    ret
+map0_talk_gateguard_has_armour:
+    @saystr         "Guard: \"You look well prepared; good luck in there!\""
+    textbox
+    ret
+
 map0_talkwell:
     @saystr         "The well is full of fresh, clean water."
     textbox
@@ -56,6 +69,8 @@ map0_test_giveparty:
     ret
 
 map0_test_fight:
+    @p_claimed      locSwordUpgrade1
+    @jnz            map0_test_fight_already_gave
     @p_giveitem     locSwordUpgrade1
     @p_giveitem     locPickaxe
     @p_giveitem     locHealthUpgrade1
@@ -70,6 +85,10 @@ map0_test_fight:
     @saystr         "Man: \"The depths too much for you, eh?\""
     textbox
     ret
+map0_test_fight_already_gave:
+    @saystr         "Man: \"I've given you everything I can.\""
+    textbox
+    ret
 
 
 map0_downToAcademyCellar:
@@ -81,6 +100,7 @@ map0_downToDungeon:
     ret
 
 map0_talkSage:
+    @p_giveitem_imm itmAmmoArrow
     @saystr     "Sage: Hello! It is a pleasant morning, is it not?"
     textbox
     ret

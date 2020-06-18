@@ -64,6 +64,9 @@ std::vector<Mnemonic> mnemonics{
     {   Opcode::p_reset,     "p_reset",      0 },
     {   Opcode::p_damage,    "p_damage",     0 },
     {   Opcode::p_giveitem,  "p_giveitem",     0 },
+    {   Opcode::p_claimed,   "p_claimed",     0 },
+    {   Opcode::p_giveitem_imm, "p_giveitem_imm",     0 },
+    {   Opcode::p_hasitem,   "p_hasitem",     0 },
 
     {   Opcode::warpto,      "warpto",       0 },
 };

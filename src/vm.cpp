@@ -631,61 +631,26 @@ bool VM::run(unsigned address) {
                     break;
                 }
                 locationDef.used = true;
-                switch(locationDef.itemId) {
-                    case ITM_SWORD_UPGRADE:
-                        ++state->swordLevel;
-                        break;
-                    case ITM_ARMOUR_UPGRADE:
-                        ++state->armourLevel;
-                        break;
-                    case ITM_ENERGY_UPGRADE:
-                        state->addError("Energy upgrade not implemented.");
-                        break;
-                    case ITM_HEALTH_UPGRADE:
-                        state->addError("Health upgrade not implemented.");
-                        break;
-                    case ITM_BOW:
-                        ++state->subweaponLevel[SW_BOW];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOW;
-                        break;
-                    case ITM_HOOKSHOT:
-                        ++state->subweaponLevel[SW_HOOKSHOT];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_HOOKSHOT;
-                        break;
-                    case ITM_ICEROD:
-                        ++state->subweaponLevel[SW_ICEROD];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_ICEROD;
-                        break;
-                    case ITM_FIREROD:
-                        ++state->subweaponLevel[SW_FIREROD];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_FIREROD;
-                        break;
-                    case ITM_PICKAXE:
-                        ++state->subweaponLevel[SW_PICKAXE];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_PICKAXE;
-                        break;
-                    case ITM_AMMO_ARROW:
-                        state->arrowCount += 5;
-                        if (state->arrowCount > state->arrowCapacity) state->arrowCount = state->arrowCapacity;
-                        break;
-                    case ITM_AMMO_BOMB:
-                        state->bombCount += 1;
-                        state->subweaponLevel[SW_BOMB] = 1;
-                        if (state->bombCount > state->bombCapacity) state->bombCount = state->bombCapacity;
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_BOMB;
-                        break;
-                    case ITM_COIN:
-                        state->coinCount += 10;
-                        break;
-                    case ITM_CAP_ARROW:
-                        state->arrowCapacity += 5;
-                        break;
-                    case ITM_CAP_BOMB:
-                        state->bombCapacity += 1;
-                        break;
-                    default:
-                        state->addError("Tried to give unknown item #" + std::to_string(locationDef.itemId));
+                state->grantItem(locationDef.itemId);
+                break; }
+            case Opcode::p_claimed: {
+                int locationNumber = pop();
+                if (locationNumber < 0 || locationNumber >= static_cast<int>(state->itemLocations.size())) {
+                    state->addError("Invalid location #" + std::to_string(locationNumber));
+                    push(0);
+                    break;
                 }
+                ItemLocation &locationDef = state->itemLocations[locationNumber];
+                if (locationDef.used)   push(1);
+                else                    push(0);
+                break; }
+            case Opcode::p_giveitem_imm: {
+                int itemId = pop();
+                state->grantItem(itemId);
+                break; }
+            case Opcode::p_hasitem: {
+                int itemId = pop();
+                push(state->hasItem(itemId) ? 1 : 0);
                 break; }
 
             case Opcode::warpto: {
