@@ -238,16 +238,15 @@ void gfx_DrawTooltip(System &system, int x, int y, const std::string &text) {
     system.tinyFont->out(x + offset, y + offset, text);
 }
 
-void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, const std::string &text) {
+void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const std::string &text) {
     const int charWidth = system.smallFont->getCharWidth();
-    SDL_Rect box = { x, y, w, h };
-        if (selected)   SDL_SetRenderDrawColor(system.renderer, 63, 63, 63, SDL_ALPHA_OPAQUE);
-        else            SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    if (selected)   SDL_SetRenderDrawColor(system.renderer, 63, 63, 63, SDL_ALPHA_OPAQUE);
+    else            SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(system.renderer, &box);
     SDL_SetRenderDrawColor(system.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawRect(system.renderer, &box);
-    const int offset = (w - text.size() * charWidth) / 2;
-    system.smallFont->out(x + 4 + offset, y + 4, text);
+    const int offset = (box.w - text.size() * charWidth) / 2;
+    system.smallFont->out(box.x + 4 + offset, box.y + 4, text);
 }
 
 int keyToIndex(const SDL_Keysym &key) {

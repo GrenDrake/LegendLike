@@ -63,12 +63,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
         doneButton.w = tabWidth;
         doneButton.h = tabHeight;
     };
-    SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(state.renderer, &doneButton);
-    SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawRect(state.renderer, &doneButton);
-    const int offset = (tabWidth - 4 * charWidth) / 2;
-    state.smallFont->out(xPos + 4 + offset, yPos + 4, "Done");
+    gfx_DrawButton(state, doneButton, false, "Done");
 
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////

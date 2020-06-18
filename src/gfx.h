@@ -250,7 +250,7 @@ void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
 void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
-void gfx_DrawButton(System &system, int x, int y, int w, int h, bool selected, const std::string &text);
+void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const std::string &text);
 int keyToIndex(const SDL_Keysym &key);
 void gfx_Clear(System &system);
 void gfx_DrawRect(System &system, int x, int y, int x2, int y2, const Color &color);

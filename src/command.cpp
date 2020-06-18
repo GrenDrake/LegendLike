@@ -129,19 +129,12 @@ CommandDef characterCommands[] = {
 
 CommandDef mapCommands[] = {
     { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
-    { Command::Move,        Dir::North, SDLK_UP },
-    { Command::Move,        Dir::South, SDLK_DOWN },
-    { Command::Move,        Dir::West,  SDLK_LEFT },
-    { Command::Move,        Dir::East,  SDLK_RIGHT },
     { Command::Close,       Dir::None,  SDLK_ESCAPE },
     { Command::Close,       Dir::None,  SDLK_SPACE },
     { Command::Close,       Dir::None,  SDLK_RETURN },
     { Command::Close,       Dir::None,  SDLK_m },
+    { Command::Close,       Dir::None,  SDLK_z },
     { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
-    { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
-    { Command::NextMode,    Dir::None,  SDLK_TAB },
-    { Command::Debug_Reveal,Dir::None,  SDLK_F3 },
-    { Command::Debug_NoFOV, Dir::None,  SDLK_F4 },
 
     { Command::None }
 };

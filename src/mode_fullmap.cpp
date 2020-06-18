@@ -7,11 +7,7 @@
 #include "gfx.h"
 #include "command.h"
 
-const int maxScale = 20;
-const int minScale = 4;
-static int scale = minScale;
-static std::vector<SDL_Rect> tabButtons;
-static Point scroll;
+static SDL_Rect doneButton = { -1 };
 
 void gfx_DrawMap(System &system) {
     int dispWidth, dispHeight;
@@ -19,29 +15,28 @@ void gfx_DrawMap(System &system) {
     Board *board = system.getBoard();
     const int lineHeight = system.smallFont->getLineHeight();
 
-    const int fullmapTileWidth = dispWidth / scale;
-    const int fullmapTileHeight = dispHeight / scale;
+    int mapTileWidth = dispWidth / board->width();
+    int mapTileHeight = dispHeight / board->height();
+    if (mapTileWidth > mapTileHeight)   mapTileWidth = mapTileHeight;
+    else                                mapTileHeight = mapTileWidth;
 
-    const int playerX = system.getPlayer()->position.x() + scroll.x();
-    const int playerY = system.getPlayer()->position.y() + scroll.y();
-    const int offsetX = playerX - fullmapTileWidth / 2;
-    const int offsetY = playerY - fullmapTileHeight / 2;
+    const int offsetX = (dispWidth  - mapTileWidth  * board->width()) / 2;
+    const int offsetY = (dispHeight - mapTileHeight * board->height()) / 2;
 
     SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(system.renderer);
 
-    for (int y = 0; y < fullmapTileHeight; ++y) {
-        for (int x = 0; x < fullmapTileWidth; ++x) {
-            const Point here(x + offsetX, y + offsetY);
-            if (here.x() < 0 || here.y() < 0 || here.x() >= board->width() || here.y() >= board->height()) {
-                continue;
-            }
+    for (int y = 0; y < board->height(); ++y) {
+        for (int x = 0; x < board->width(); ++x) {
+            const Point here(x, y);
+
             if (!board->isKnown(here)) continue;
             const bool visible = board->isVisible(here);
 
             SDL_Rect texturePosition = {
-                x * scale,  y * scale,
-                scale,      scale
+                offsetX + x * mapTileWidth,
+                offsetY + y * mapTileHeight,
+                mapTileWidth,      mapTileHeight
             };
 
             const TileInfo &tileInfo = TileInfo::get(board->getTile(here));
@@ -74,25 +69,13 @@ void gfx_DrawMap(System &system) {
         }
     }
 
-    const int tabWidth = 200;
-    const int tabHeight = lineHeight + 8;
-    int xPos = 0;
-    int yPos = dispHeight - tabHeight;
-    tabButtons.clear();
-    for (int i = 0; i < 3; ++i) {
-        std::string text;
-        switch(i) {
-            case 0: text = "Zoom In"; break;
-            case 1: text = "Zoom Out"; break;
-            case 2: text = "Done"; break;
-        }
-
-        gfx_DrawButton(system, xPos, yPos, tabWidth, tabHeight, false, text);
-
-        SDL_Rect box = { xPos, yPos, tabWidth, tabHeight };
-        tabButtons.push_back(box);
-        xPos += tabWidth;
+    if (doneButton.x < 0) {
+        doneButton.w = 200;
+        doneButton.h = lineHeight + 8;
+        doneButton.x = 0;
+        doneButton.y = dispHeight - doneButton.h;
     }
+    gfx_DrawButton(system, doneButton, false, "Done");
 
     if (system.showFPS) {
         std::stringstream ss;
@@ -105,8 +88,6 @@ void gfx_DrawMap(System &system) {
 }
 
 void doShowMap(System &system) {
-    scroll = Point(0, 0);
-
     while (1) {
         gfx_DrawMap(system);
 
@@ -115,30 +96,8 @@ void doShowMap(System &system) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int mx = event.button.x;
-                int my = event.button.y;
-                for (unsigned i = 0; i < tabButtons.size(); ++i) {
-                    const SDL_Rect &box = tabButtons[i];
-                    if (mx < box.x || my < box.y) continue;
-                    if (mx >= box.x + box.w || my >= box.y + box.h) continue;
-                    switch (i) {
-                        case 0:
-                            if (scale < maxScale) ++scale;
-                            break;
-                        case 1:
-                            if (scale > minScale) --scale;
-                            break;
-                        case 2:
-                            return;
-                    }
-                    break;
-                }
-            } else if (event.type == SDL_MOUSEWHEEL) {
-                if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) event.wheel.y = -event.wheel.y;
-                if (event.wheel.y < 0) {
-                    if (scale > minScale) --scale;
-                } else if (event.wheel.y > 0) {
-                    if (scale < maxScale) ++scale;
+                if (pointInBox(event.button.x, event.button.y, doneButton)) {
+                    return;
                 }
             } else {
                 const CommandDef &cmd = getCommand(system, event, mapCommands);
@@ -147,24 +106,6 @@ void doShowMap(System &system) {
                         system.wantsToQuit = true;
                     case Command::Close:
                         return;
-
-                    case Command::Move:
-                        scroll = scroll.shift(cmd.direction, 10);
-                        break;
-
-                    case Command::PrevMode:
-                        if (scale > minScale) --scale;
-                        break;
-                    case Command::NextMode:
-                        if (scale < maxScale) ++scale;
-                        break;
-
-                    case Command::Debug_Reveal:
-                        system.getBoard()->dbgRevealAll();
-                        break;
-                    case Command::Debug_NoFOV:
-                        system.getBoard()->dbgToggleFOV();
-                        break;
                     default:
                         // do nothing
                         break;
