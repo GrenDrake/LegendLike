@@ -153,31 +153,6 @@ void gfx_drawMap(System &state) {
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
-
-    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
-    //  TOOLTIP
-    int mouseX, mouseY;
-    SDL_GetMouseState(&mouseX, &mouseY);
-    if (state.showTooltip && mouseX < mapWidthPixels) {
-        int mapMouseX = mouseX + mapOffsetX;
-        int mapMouseY = mouseY + mapOffsetY;
-        int tileX = viewX + mapMouseX / (scaledTileWidth);
-        int tileY = viewY + mapMouseY / (scaledTileHeight);
-        Point here(tileX, tileY);
-        int tileHere = state.getBoard()->getTile(here);
-        Creature *creature = state.getBoard()->actorAt(here);
-        if (tileHere != tileOutOfBounds) {
-            if (state.getBoard()->isKnown(here)) { // show tooltip
-                std::stringstream ss;
-                if (creature && state.getBoard()->isVisible(here)) {
-                    ss << creature->getName() << "\n";
-                }
-                const TileInfo &tileInfo = TileInfo::get(tileHere);
-                ss << tileInfo.name;
-                gfx_DrawTooltip(state, mouseX, mouseY + 20, ss.str());
-            }
-        }
-    }
 }
 
 void gfx_drawSidebar(System &state) {
@@ -375,6 +350,52 @@ void gfx_drawSidebar(System &state) {
     }
 }
 
+void gfx_doDrawToolTip(System &state) {
+    if (!state.showTooltip) return;
+
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+
+    int tileScale = state.config->getInt("tile_scale", 1);
+    if (tileScale < 1) tileScale = 1;
+    const int scaledTileWidth = tileWidth * tileScale;
+    const int scaledTileHeight = tileHeight * tileScale;
+
+    const int sidebarWidth = 30 * state.smallFont->getCharWidth();
+    const int mapOffsetX = scaledTileWidth / 3 * 2;
+    const int mapOffsetY = scaledTileHeight / 3 * 2;
+    const int mapWidthPixels = screenWidth - sidebarWidth;
+    const int mapHeightPixels = screenHeight;
+    const int mapWidthTiles = mapWidthPixels / scaledTileWidth + 2;
+    const int mapHeightTiles = mapHeightPixels / scaledTileHeight + 2;
+    int viewX = state.getPlayer()->position.x() - (mapWidthTiles / 2);
+    int viewY = state.getPlayer()->position.y() - (mapHeightTiles  / 2);
+
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    if (mouseX < mapWidthPixels) {
+        int mapMouseX = mouseX + mapOffsetX;
+        int mapMouseY = mouseY + mapOffsetY;
+        int tileX = viewX + mapMouseX / (scaledTileWidth);
+        int tileY = viewY + mapMouseY / (scaledTileHeight);
+        Point here(tileX, tileY);
+        int tileHere = state.getBoard()->getTile(here);
+        Creature *creature = state.getBoard()->actorAt(here);
+        if (tileHere != tileOutOfBounds) {
+            if (state.getBoard()->isKnown(here)) { // show tooltip
+                std::stringstream ss;
+                if (creature && state.getBoard()->isVisible(here)) {
+                    ss << creature->getName() << "\n";
+                }
+                const TileInfo &tileInfo = TileInfo::get(tileHere);
+                ss << tileInfo.name;
+                gfx_DrawTooltip(state, mouseX, mouseY + 20, ss.str());
+            }
+        }
+    }
+}
+
 bool repaint(System &state, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
@@ -383,10 +404,9 @@ bool repaint(System &state, bool callPresent) {
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(state.renderer);
 
-    Animation noAnimation{AnimType::None};
-
-    gfx_drawSidebar(state);
     gfx_drawMap(state);
+    gfx_drawSidebar(state);
+    if (callPresent) gfx_doDrawToolTip(state);
 
     state.advanceFrame();
     if (callPresent) SDL_RenderPresent(state.renderer);
