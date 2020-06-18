@@ -664,9 +664,9 @@ bool VM::run(unsigned address) {
                         ++state->subweaponLevel[SW_FIREROD];
                         if (state->currentSubweapon < 0) state->currentSubweapon = SW_FIREROD;
                         break;
-                    case ITM_MATTOCK:
-                        ++state->subweaponLevel[SW_MATTOCK];
-                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_MATTOCK;
+                    case ITM_PICKAXE:
+                        ++state->subweaponLevel[SW_PICKAXE];
+                        if (state->currentSubweapon < 0) state->currentSubweapon = SW_PICKAXE;
                         break;
                     case ITM_AMMO_ARROW:
                         state->arrowCount += 5;

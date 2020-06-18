@@ -86,7 +86,7 @@
 .define itmHookshot      5
 .define itmIceRod        7
 .define itmFireRod       8
-.define itmMattock       9
+.define itmPickaxe       9
 .define itmAmmoArrow     10
 .define itmAmmoBomb      11
 .define itmCoin          12

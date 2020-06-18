@@ -9,7 +9,7 @@
 .location locHookshot       item=itmHookshot
 .location locIceRod         item=itmIceRod
 .location locFireRod        item=itmFireRod
-.location locMattock        item=itmMattock
+.location locPickaxe        item=itmPickaxe
 .location locAmmoArrow1     item=itmAmmoArrow
 .location locAmmoBomb1      item=itmAmmoBomb
 .location locCoin1          item=itmCoin
@@ -57,7 +57,7 @@ map0_test_giveparty:
 
 map0_test_fight:
     @p_giveitem     locSwordUpgrade1
-    @p_giveitem     locMattock
+    @p_giveitem     locPickaxe
     @p_giveitem     locHealthUpgrade1
     @p_giveitem     locHookshot
     @p_giveitem     locAmmoArrow1

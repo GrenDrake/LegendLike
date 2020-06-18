@@ -394,7 +394,7 @@ void gfx_handleInput(System &state) {
                         state.requestTick();
                         basicProjectileAttack(state, ProjectileInfo{"ice bolt", 2, 6}, d);
                         break;
-                    case SW_MATTOCK: {
+                    case SW_PICKAXE: {
                         Creature *actor = state.getBoard()->actorAt(state.getPlayer()->position.shift(d));
                         if (actor) {
                             state.requestTick();
@@ -415,7 +415,7 @@ void gfx_handleInput(System &state) {
                                 }
                             }
                         } else {
-                            state.addMessage("Your pick has no impact.");
+                            state.addMessage("Your pickaxe has no impact.");
                         }
                         break; }
                     default:
