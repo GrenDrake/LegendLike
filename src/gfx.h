@@ -121,6 +121,8 @@ public:
     void setAudioVolume(int volume);
 
     void addMessage(const std::string &text);
+    void addInfo(const std::string &text);
+    void addError(const std::string &text);
     void appendMessage(const std::string &newText);
     void replaceMessage(const std::string &newText);
     void removeMessage();

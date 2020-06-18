@@ -580,7 +580,7 @@ bool VM::run(unsigned address) {
                 unsigned fileStrAddr = pop();
                 std::string fromFile = readString(fileStrAddr);
                 if (!state->getBoard()->readFromFile("maps/" + fromFile)) {
-                    state->addMessage("Failed to load map file " + fromFile + ".");
+                    state->addError("Failed to load map file " + fromFile + ".");
                 }
                 break; }
             case Opcode::mf_makemaze: {
@@ -622,12 +622,12 @@ bool VM::run(unsigned address) {
             case Opcode::p_giveitem: {
                 int locationNumber = pop();
                 if (locationNumber < 0 || locationNumber >= static_cast<int>(state->itemLocations.size())) {
-                    state->addMessage("Invalid location #" + std::to_string(locationNumber));
+                    state->addError("Invalid location #" + std::to_string(locationNumber));
                     break;
                 }
                 ItemLocation &locationDef = state->itemLocations[locationNumber];
                 if (locationDef.used) {
-                    state->addMessage("Tried to regive location #" + std::to_string(locationNumber));
+                    state->addError("Tried to regive location #" + std::to_string(locationNumber));
                     break;
                 }
                 locationDef.used = true;
@@ -639,10 +639,10 @@ bool VM::run(unsigned address) {
                         ++state->armourLevel;
                         break;
                     case ITM_ENERGY_UPGRADE:
-                        state->addMessage("Energy upgrade not implemented.");
+                        state->addError("Energy upgrade not implemented.");
                         break;
                     case ITM_HEALTH_UPGRADE:
-                        state->addMessage("Health upgrade not implemented.");
+                        state->addError("Health upgrade not implemented.");
                         break;
                     case ITM_BOW:
                         ++state->subweaponLevel[SW_BOW];
@@ -684,7 +684,7 @@ bool VM::run(unsigned address) {
                         state->bombCapacity += 1;
                         break;
                     default:
-                        state->addMessage("Tried to give unknown item #" + std::to_string(locationDef.itemId));
+                        state->addError("Tried to give unknown item #" + std::to_string(locationDef.itemId));
                 }
                 break; }
 

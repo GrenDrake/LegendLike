@@ -200,7 +200,7 @@ bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, int m
     if (system.config->getBool("showrolls", false)) {
         std::stringstream msg;
         msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
-        system.addMessage(msg.str());
+        system.addInfo(msg.str());
     }
 
     if (roll + modifier > 5) return true;

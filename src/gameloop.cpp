@@ -59,7 +59,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         if (state.config->getBool("showrolls", false)) {
             std::stringstream msg;
             msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
-            state.addMessage(msg.str());
+            state.addInfo(msg.str());
         }
         actor->takeDamage(damage);
         state.addMessage(upperFirst(actor->getName()) + " takes " + std::to_string(damage) + " damage from your " + projectile.name + ". ");
@@ -161,7 +161,7 @@ bool tryInteract(System &state, Dir d, const Point &target) {
                 if (state.config->getBool("showrolls", false)) {
                     std::stringstream msg2;
                     msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
-                    state.addMessage(msg2.str());
+                    state.addInfo(msg2.str());
                 }
                 actor->takeDamage(roll);
                 state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
@@ -438,7 +438,7 @@ void gfx_handleInput(System &state) {
                                 if (state.config->getBool("showrolls", false)) {
                                     std::stringstream msg2;
                                     msg2 << "[damage: 3d4" << '=' << roll << ']';
-                                    state.addMessage(msg2.str());
+                                    state.addInfo(msg2.str());
                                 }
                                 actor->takeDamage(roll);
                                 state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
@@ -451,14 +451,14 @@ void gfx_handleInput(System &state) {
                         }
                         break; }
                     default:
-                        state.addMessage("The " + state.subweapons[state.currentSubweapon].name + " is not implemented.");
+                        state.addError("The " + state.subweapons[state.currentSubweapon].name + " is not implemented.");
                 }
                 break; }
 
             case Command::Debug_MapEditMode:
                 state.mapEditMode = !state.mapEditMode;
-                if (state.mapEditMode)  state.addMessage("Entering map editing mode");
-                else                    state.addMessage("Exiting map editing mode");
+                if (state.mapEditMode)  state.addError("Entering map editing mode");
+                else                    state.addError("Exiting map editing mode");
                 break;
             case Command::Debug_Restore:
                 state.getPlayer()->curHealth = state.getPlayer()->typeInfo->maxHealth;
@@ -480,9 +480,9 @@ void gfx_handleInput(System &state) {
                 break;
             case Command::Debug_WriteMapBinary: {
                 if (state.getBoard()->writeToFile("binary.map")) {
-                    state.addMessage("Wrote map to disk as binary.map.");
+                    state.addError("Wrote map to disk as binary.map.");
                 } else {
-                    state.addMessage("Failed to write map to disk.");
+                    state.addError("Failed to write map to disk.");
                 }
                 break; }
             case Command::Debug_TestPathfinder: {
@@ -492,12 +492,12 @@ void gfx_handleInput(System &state) {
                 Point dest = board->findRandomTile(state.coreRNG, tileFloor);
                 std::stringstream line;
                 line << "Finding path from " << src << " to " << dest << '.';
-                state.addMessage(line.str());
+                state.addError(line.str());
                 auto points = board->findPath(src, dest);
                 if (points.empty()) {
-                    state.addMessage("No path found.");
+                    state.addError("No path found.");
                 } else {
-                    state.addMessage("Path has " + std::to_string(points.size()) + " tiles.");
+                    state.addError("Path has " + std::to_string(points.size()) + " tiles.");
                     for (const Point &p : points) {
                         board->at(p).mark = true;
                     }

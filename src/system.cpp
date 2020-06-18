@@ -76,6 +76,20 @@ void System::addMessage(const std::string &text) {
     });
 }
 
+void System::addInfo(const std::string &text) {
+    messages.push_back(Message{
+        turnNumber,
+        "\x1B\x02\x7F\x7F\xFF" + text
+    });
+}
+
+void System::addError(const std::string &text) {
+    messages.push_back(Message{
+        turnNumber,
+        "\x1B\x02\xFF\x7F\x7F" + text
+    });
+}
+
 void System::appendMessage(const std::string &newText) {
     if (messages.empty()) {
         addMessage(newText);
