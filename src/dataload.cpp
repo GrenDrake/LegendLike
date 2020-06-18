@@ -56,7 +56,6 @@ bool System::load() {
 
     try {
         if (!vm->loadFromFile("game.dat", true))    return false;
-        if (!loadStringData())                      return false;
         if (!loadAudioTracks())                     return false;
         if (!loadCreatureData())                    return false;
         if (!loadLocationsData())                   return false;
@@ -229,41 +228,6 @@ bool System::loadLocationsData() {
         itemLocations.push_back(ItemLocation{itemId});
     }
     log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
-    return true;
-}
-
-bool System::loadStringData() {
-    Logger &log = Logger::getInstance();
-    char *text = slurpFile("strings.dat");
-    if (text == nullptr) return false;
-    std::stringstream fulltext(text);
-    delete[] text;
-    std::string line;
-    int lineNo = 0;
-    while (std::getline(fulltext, line)) {
-        ++lineNo;
-        // skip blank lines and comments
-        if (line.empty()) continue;
-        std::string::size_type pos = line.find_first_not_of(" \t");
-        if (pos == std::string::npos || line[pos] == ';') continue;
-        // break lines into parts
-        pos = line.find_first_of("=");
-        if (pos == std::string::npos) {
-            log.warn("strings.dat: malformed string def on line " + std::to_string(lineNo));
-            continue;
-        }
-        std::string number = trim(line.substr(0, pos));
-        std::string text = trim(line.substr(pos + 1));
-        // save new string
-        unescapeString(text);
-        int textNo = strToInt(number);
-        auto old = strings.find(textNo);
-        if (old != strings.end()) {
-            log.warn("String ID " + number + " used on line " + std::to_string(lineNo) + " was previously defined.");
-        }
-        strings[textNo] = text;
-    }
-    log.info("Loaded " + std::to_string(strings.size()) + " strings.");
     return true;
 }
 
