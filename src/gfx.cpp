@@ -210,6 +210,8 @@ void gfx_drawSidebar(System &state) {
         yPos += tinyLineHeight;
         state.tinyFont->out(xPos + 36, yPos, info.name);
         yPos += tinyLineHeight;
+        state.tinyFont->out(xPos + 36, yPos, std::to_string(player->position.x()) + ", " + std::to_string(player->position.y()));
+        yPos += tinyLineHeight;
 
     } else {
         SDL_Rect artPos{ xPos, yPos, 16, 16 };
