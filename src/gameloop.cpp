@@ -147,9 +147,9 @@ bool tryInteract(System &state, Dir d, const Point &target) {
     if (actor && actor != state.getPlayer()) {
         if (actor->aiType == aiPushable) {
             actor->tryMove(state.getBoard(), d);
-        } else if (actor->talkFunc) {
-            // has talk function, is friendly
-            state.vm->run(actor->talkFunc);
+        } else if (actor->aiType != aiEnemy) {
+            if (actor->talkFunc) state.vm->run(actor->talkFunc);
+            else                    state.addMessage(upperFirst(actor->getName()) + " has nothing to say.");
         } else if (state.swordLevel <= 0) {
             state.addMessage("You don't have a sword!");
         } else {
