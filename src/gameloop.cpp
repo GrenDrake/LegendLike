@@ -242,7 +242,7 @@ void gameloop(System &state) {
 
         gfx_handleInput(state);
         if (state.wantsToQuit) {
-            if (!gfx_confirm(state, "Confirm", "Are you sure you want to quit?")) {
+            if (!gfx_Confirm(state, "Are you sure you want to quit?", "Your progress will NOT be saved.")) {
                 state.wantsToQuit = false;
             }
         }

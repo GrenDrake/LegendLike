@@ -244,17 +244,15 @@ void doCredits(System &state);
 void doGameMenu(System &state);
 void doShowMap(System &system);
 
-bool pointInBox(int x, int y, const SDL_Rect &box);
-bool gfx_confirm(System &state, const std::string &title, const std::string &message, bool defaultResult = true);
-void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
-void gfx_DrawFrame(System &system, int x, int y, int w, int h);
-void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
+bool gfx_Confirm(System &state, const std::string &line1, const std::string &line2, bool defaultResult = true);
+void gfx_Alert(System &state, const std::string &line1, const std::string &line2);
 bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
+void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
+
+bool pointInBox(int x, int y, const SDL_Rect &box);
+int gfx_DrawFrame(System &system, int x, int y, int w, int h, const std::string &title);
+void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
 void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const std::string &text);
-int keyToIndex(const SDL_Keysym &key);
-void gfx_Clear(System &system);
-void gfx_DrawRect(System &system, int x, int y, int x2, int y2, const Color &color);
-void gfx_FillRect(System &system, int x, int y, int x2, int y2, const Color &color);
 void gfx_HLine(System &system, int x, int y, int y2, const Color &color);
 void gfx_VLine(System &system, int x, int x2, int y, const Color &color);
 

@@ -370,7 +370,8 @@ bool repaint(System &state, bool callPresent) {
 
     const Color uiColor{255, 255, 255};
 
-    gfx_Clear(state);
+    SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(state.renderer);
 
     Animation noAnimation{AnimType::None};
 

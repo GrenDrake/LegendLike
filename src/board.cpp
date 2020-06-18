@@ -386,6 +386,7 @@ void Board::tick(System &system) {
             iter = creatures.erase(iter);
             if (who->isPlayer) {
                 who->reset();
+                gfx_Alert(system, "You have died!", "You will awaken in your home.");
                 system.addMessage("You can take no more and collapse!\nWhen you awaken, you find that you have been brought back to the Demon Laboratory.");
                 system.warpTo(0, 44, 14);
             } else {
