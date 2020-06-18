@@ -11,6 +11,7 @@ beasts.dat
 beasts.txt
 labels.txt
 *.o
+*.res
 .DS_Store
 unused
 .vscode
