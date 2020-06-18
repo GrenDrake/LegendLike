@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 
-#include "creature.h"
+#include "actor.h"
 #include "logger.h"
 #include "board.h"
 #include "vm.h"
@@ -34,7 +34,7 @@ void System::reset() {
     mCurrentBoard = nullptr;
     wantsTick = false;
 
-    mPlayer = new Creature(playerTypeId);
+    mPlayer = new Actor(playerTypeId);
     mPlayer->name = "player";
     mPlayer->isPlayer = true;
     mPlayer->talkFunc = 0;

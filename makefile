@@ -19,7 +19,7 @@ RES_FILE=src/game.res
 GAME_OBJS=src/game.o src/gameloop.o src/mode_fullmap.o src/board.o src/board_fov.o \
 	 src/gen_dungeon.o src/system.o src/gfx.o src/command.o src/dataload.o \
 	 src/vm.o src/gfx_font.o src/physfsrwops.o src/point.o src/gfx_menu.o \
-	 src/mode_mainmenu.o src/creature.o src/gfx_resource.o src/gfx_ui.o src/config.o src/textutil.o \
+	 src/mode_mainmenu.o src/actor.o src/gfx_resource.o src/gfx_ui.o src/config.o src/textutil.o \
 	 src/logger.o src/gen_enemies.o src/mode_charinfo.o $(RES_FILE)
 GAME=game
 

@@ -4,54 +4,54 @@
 
 #include "board.h"
 #include "config.h"
-#include "creature.h"
+#include "actor.h"
 #include "game.h"
 #include "random.h"
 #include "gfx.h"
 #include "point.h"
 #include "textutil.h"
 
-std::vector<CreatureType> CreatureType::types;
+std::vector<ActorType> ActorType::types;
 
 
-void CreatureType::add(const CreatureType &type) {
+void ActorType::add(const ActorType &type) {
     types.push_back(type);
 }
 
-const CreatureType& CreatureType::get(int ident) {
-    for (const CreatureType &type : types) {
+const ActorType& ActorType::get(int ident) {
+    for (const ActorType &type : types) {
         if (type.ident == ident) {
             return type;
         }
     }
-    throw GameError("no such CreatureType " + std::to_string(ident));
+    throw GameError("no such ActorType " + std::to_string(ident));
 }
 
-int CreatureType::typeCount() {
+int ActorType::typeCount() {
     return types.size();
 }
 
 
-Creature::Creature(int type)
+Actor::Actor(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
   talkFunc(0), talkArg(0),
   ai_lastDir(Dir::None), ai_lastTarget(-1, -1), ai_moveCount(0)
 {
     typeIdent = type;
-    typeInfo = &CreatureType::get(type);
+    typeInfo = &ActorType::get(type);
 }
 
-std::string Creature::getName() const {
+std::string Actor::getName() const {
     if (name.empty()) return typeInfo->name;
     return name + " (" + typeInfo->name + ")";
 }
 
-void Creature::reset() {
+void Actor::reset() {
     curHealth = typeInfo->maxHealth;
     curEnergy = typeInfo->maxEnergy;
 }
 
-int Creature::takeDamage(int amount) {
+int Actor::takeDamage(int amount) {
     if (amount > 0) {
         if (amount > curHealth) amount = curHealth;
     } else {
@@ -63,12 +63,12 @@ int Creature::takeDamage(int amount) {
     return amount;
 }
 
-bool Creature::isKOed() const {
+bool Actor::isKOed() const {
     return curHealth <= 0;
 }
 
-void Creature::ai(System &system) {
-    // creatures have a 1 in moveRate chance of taking a turn
+void Actor::ai(System &system) {
+    // actors have a 1 in moveRate chance of taking a turn
     if (typeInfo->moveRate > 1) {
         ++ai_moveCount;
         if (ai_moveCount < typeInfo->moveRate) return;
@@ -120,7 +120,7 @@ void Creature::ai(System &system) {
             if (canSeePlayer) {
                 ai_lastTarget = playerPos;
                 if (position.distanceTo(playerPos) < 2) {
-                    Creature *player = board->getPlayer();
+                    Actor *player = board->getPlayer();
                     // do attack
                     bool isHit = doAccuracyCheck(system, this, player, 2);
                     if (!isHit) {
@@ -170,7 +170,7 @@ void Creature::ai(System &system) {
     }
 }
 
-bool Creature::tryMove(Board *board, Dir direction) {
+bool Actor::tryMove(Board *board, Dir direction) {
     Point newPosition = position.shift(direction);
 
     if (!board->valid(newPosition)) return false;
@@ -180,7 +180,7 @@ bool Creature::tryMove(Board *board, Dir direction) {
         return false;
     }
 
-    Creature *inWay = board->actorAt(newPosition);
+    Actor *inWay = board->actorAt(newPosition);
     if (inWay != nullptr) {
         return false;
     }
@@ -189,7 +189,7 @@ bool Creature::tryMove(Board *board, Dir direction) {
     return true;
 }
 
-bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, int modifier) {
+bool doAccuracyCheck(System &system, Actor *attacker, Actor *target, int modifier) {
     int roll = -10000;
 
     roll = system.coreRNG.roll(1,10);

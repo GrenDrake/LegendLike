@@ -11,7 +11,7 @@
 #include "menu.h"
 #include "vm.h"
 #include "config.h"
-#include "creature.h"
+#include "actor.h"
 #include "random.h"
 #include "textutil.h"
 

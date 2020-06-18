@@ -1,5 +1,5 @@
-#ifndef BEAST_H
-#define BEAST_H
+#ifndef ACTOR_H
+#define ACTOR_H
 
 #include <array>
 #include <iosfwd>
@@ -31,10 +31,10 @@ const int lootTable         = 1;
 const int lootLocation      = 2;
 const int lootFunction      = 3;
 
-class CreatureType {
+class ActorType {
 public:
-    static void add(const CreatureType &type);
-    static const CreatureType& get(int ident);
+    static void add(const ActorType &type);
+    static const ActorType& get(int ident);
     static int typeCount();
 
     int ident;
@@ -47,12 +47,12 @@ public:
 
     SDL_Texture *art;
 private:
-    static std::vector<CreatureType> types;
+    static std::vector<ActorType> types;
 };
 
-class Creature {
+class Actor {
 public:
-    Creature(int type);
+    Actor(int type);
 
     std::string name;
     Point position;
@@ -63,7 +63,7 @@ public:
     int nextAction;
     bool isPlayer;
 
-    const CreatureType *typeInfo;
+    const ActorType *typeInfo;
     SDL_Texture *art;
 
     int talkFunc;
@@ -85,6 +85,6 @@ public:
 };
 
 
-bool doAccuracyCheck(System &state, Creature *attacker, Creature *target, int modifier);
+bool doAccuracyCheck(System &state, Actor *attacker, Actor *target, int modifier);
 
 #endif

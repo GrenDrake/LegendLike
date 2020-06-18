@@ -8,7 +8,7 @@
 #include <physfs.h>
 
 #include "board.h"
-#include "creature.h"
+#include "actor.h"
 #include "point.h"
 #include "random.h"
 #include "gfx.h"
@@ -61,28 +61,28 @@ Board::Board(const MapInfo &mapInfo)
 }
 Board::~Board() {
     delete[] tiles;
-    for (Creature *actor : creatures) {
+    for (Actor *actor : actors) {
         delete actor;
     }
 }
 
-Creature* Board::actorAt(const Point &where) {
-    for (Creature *creature : creatures) {
-        if (creature->position == where) {
-            return creature;
+Actor* Board::actorAt(const Point &where) {
+    for (Actor *actor : actors) {
+        if (actor->position == where) {
+            return actor;
         }
     }
     return nullptr;
 }
-void Board::addActor(Creature *creature, const Point &where) {
-    creature->position = where;
-    creatures.push_back(creature);
+void Board::addActor(Actor *actor, const Point &where) {
+    actor->position = where;
+    actors.push_back(actor);
 }
 
-void Board::removeActor(Creature *creature) {
-    for (auto iter = creatures.begin(); iter != creatures.end();) {
-        if (*iter == creature) {
-            iter = creatures.erase(iter);
+void Board::removeActor(Actor *actor) {
+    for (auto iter = actors.begin(); iter != actors.end();) {
+        if (*iter == actor) {
+            iter = actors.erase(iter);
         } else {
             ++iter;
         }
@@ -90,16 +90,16 @@ void Board::removeActor(Creature *creature) {
 }
 
 void Board::removeActor(const Point &p) {
-    for (auto iter = creatures.begin(); iter != creatures.end();) {
+    for (auto iter = actors.begin(); iter != actors.end();) {
         if ((*iter)->position == p) {
-            iter = creatures.erase(iter);
+            iter = actors.erase(iter);
         } else {
             ++iter;
         }
     }
 }
 
-void Board::doDamage(System &state, Creature *to, int amount, int type, const std::string &source) {
+void Board::doDamage(System &state, Actor *to, int amount, int type, const std::string &source) {
     if (!to) return;
     to->takeDamage(amount);
     state.addMessage(upperFirst(to->getName()) + " takes " + std::to_string(amount) + " damage from " + source + ". ");
@@ -113,7 +113,7 @@ void Board::doDamage(System &state, Creature *to, int amount, int type, const st
     }
 }
 
-void Board::makeLoot(System &state, const Creature *from) {
+void Board::makeLoot(System &state, const Actor *from) {
     if (!from) return;
     switch(from->typeInfo->lootType) {
         case lootNone:
@@ -144,8 +144,8 @@ void Board::makeLoot(System &state, const Creature *from) {
     }
 }
 
-Creature* Board::getPlayer() {
-    for (Creature *who : creatures) {
+Actor* Board::getPlayer() {
+    for (Actor *who : actors) {
         if (who->typeInfo->aiType == aiPlayer) {
             return who;
         }
@@ -423,14 +423,14 @@ void Board::tick(System &system) {
     // don't do any AI stuff in map edit mode
     if (system.mapEditMode) return;
 
-    for (Creature *who : creatures) {
+    for (Actor *who : actors) {
         who->ai(system);
     }
 
-    for (auto iter = creatures.begin(); iter != creatures.end(); ) {
-        Creature *who = *iter;
+    for (auto iter = actors.begin(); iter != actors.end(); ) {
+        Actor *who = *iter;
         if (who->curHealth <= 0) {
-            iter = creatures.erase(iter);
+            iter = actors.erase(iter);
             if (who->isPlayer) {
                 who->reset();
                 gfx_Alert(system, "You have died!", "");
@@ -444,7 +444,7 @@ void Board::tick(System &system) {
         }
     }
 
-    Creature *player = getPlayer();
+    Actor *player = getPlayer();
     if (player) calcFOV(player->position);
 }
 

@@ -3,7 +3,7 @@
 
 #include "physfs.h"
 
-#include "creature.h"
+#include "actor.h"
 #include "board.h"
 #include "gfx.h"
 #include "vm.h"
@@ -679,10 +679,10 @@ void VM::addActor(int npcAddr) {
     int y        = readShort(npcAddr + 14);
     int typeId   = readShort(npcAddr + 16);
     std::string name = nameAddr ? readString(nameAddr) : "";
-    Creature *creature = new Creature(typeId);
-    state->getBoard()->addActor(creature, Point(x, y));
-    creature->name = name;
-    creature->talkFunc = talkFunc;
-    creature->talkArg = special;
-    creature->reset();
+    Actor *actor = new Actor(typeId);
+    state->getBoard()->addActor(actor, Point(x, y));
+    actor->name = name;
+    actor->talkFunc = talkFunc;
+    actor->talkArg = special;
+    actor->reset();
 }

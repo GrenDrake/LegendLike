@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <sstream>
 
-#include "creature.h"
+#include "actor.h"
 #include "board.h"
 #include "game.h"
 #include "gfx.h"
@@ -48,8 +48,8 @@ void gfx_DrawMap(System &system) {
             SDL_RenderFillRect(system.renderer, &texturePosition);
 
             if (visible) {
-                Creature *creatureHere = board->actorAt(here);
-                if (creatureHere) {
+                Actor *actorHere = board->actorAt(here);
+                if (actorHere) {
                     SDL_Rect objectPosition = {
                         texturePosition.x + 1, texturePosition.y + 1,
                         texturePosition.w - 2, texturePosition.h - 2
@@ -58,7 +58,7 @@ void gfx_DrawMap(System &system) {
                         objectPosition = texturePosition;
                     }
 
-                    if (creatureHere->typeInfo->aiType == aiPlayer) {
+                    if (actorHere->typeInfo->aiType == aiPlayer) {
                         SDL_SetRenderDrawColor(system.renderer, 32, 192, 32, SDL_ALPHA_OPAQUE);
                     } else {
                         SDL_SetRenderDrawColor(system.renderer, 192, 32, 192, SDL_ALPHA_OPAQUE);

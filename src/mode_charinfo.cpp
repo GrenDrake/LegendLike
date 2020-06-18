@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "creature.h"
+#include "actor.h"
 #include "command.h"
 #include "gfx.h"
 #include "board.h"
@@ -34,7 +34,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     //  PLAYER INFO
     int yPos = 8;
     int xPos = 8;
-    Creature *player = state.getPlayer();
+    Actor *player = state.getPlayer();
     const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->typeInfo->maxHealth);
     const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->typeInfo->maxEnergy);
 

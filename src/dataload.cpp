@@ -9,7 +9,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "board.h"
-#include "creature.h"
+#include "actor.h"
 #include "vm.h"
 #include "physfs.h"
 #include "logger.h"
@@ -57,7 +57,7 @@ bool System::load() {
     try {
         if (!vm->loadFromFile("game.dat", true))    return false;
         if (!loadAudioTracks())                     return false;
-        if (!loadCreatureData())                    return false;
+        if (!loadActorData())                    return false;
         if (!loadLocationsData())                   return false;
         if (!loadLootTables())                      return false;
         if (!loadMapInfoData())                     return false;
@@ -183,7 +183,7 @@ bool System::loadMapInfoData() {
     return true;
 }
 
-bool System::loadCreatureData() {
+bool System::loadActorData() {
     Logger &log = Logger::getInstance();
     const unsigned npcTypeSize = 44;
     unsigned npcTypesAddr = vm->getExport("__npctypes");
@@ -194,7 +194,7 @@ bool System::loadCreatureData() {
     const unsigned npcTypesCount = vm->readWord(npcTypesAddr);
     npcTypesAddr += 4;
     for (unsigned counter = 0; counter < npcTypesCount; ++counter) {
-        CreatureType type;
+        ActorType type;
         int nameAddr = vm->readWord(npcTypesAddr + counter * npcTypeSize);
         type.ident = counter;
         if (nameAddr) type.name    = vm->readString(nameAddr);
@@ -210,9 +210,9 @@ bool System::loadCreatureData() {
         type.lootType  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 36);
         type.loot      = vm->readWord(npcTypesAddr + counter * npcTypeSize + 40);
         if (!type.artFile.empty()) type.art = getImage("actors/" + type.artFile + ".png");
-        CreatureType::add(type);
+        ActorType::add(type);
     }
-    log.info(std::string("Loaded ") + std::to_string(CreatureType::typeCount()) + " npc types.");
+    log.info(std::string("Loaded ") + std::to_string(ActorType::typeCount()) + " npc types.");
     return true;
 }
 

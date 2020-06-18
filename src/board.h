@@ -7,7 +7,7 @@
 #include "point.h"
 
 class System;
-class Creature;
+class Actor;
 class Random;
 struct SDL_Texture;
 
@@ -116,13 +116,13 @@ public:
         return mapInfo;
     }
 
-    Creature* actorAt(const Point &where);
-    void addActor(Creature *creature, const Point &where);
-    void removeActor(Creature *creature);
+    Actor* actorAt(const Point &where);
+    void addActor(Actor *actor, const Point &where);
+    void removeActor(Actor *actor);
     void removeActor(const Point &p);
-    void doDamage(System &state, Creature *to, int amount, int type, const std::string &source);
-    void makeLoot(System &state, const Creature *from);
-    Creature* getPlayer();
+    void doDamage(System &state, Actor *to, int amount, int type, const std::string &source);
+    void makeLoot(System &state, const Actor *from);
+    Actor* getPlayer();
 
     void clearTo(int tile);
     void setTile(const Point &where, int tile);
@@ -161,7 +161,7 @@ private:
     const MapInfo &mapInfo;
     int mWidth, mHeight;
     Tile *tiles;
-    std::vector<Creature*> creatures;
+    std::vector<Actor*> actors;
     std::vector<Event> events;
     bool dbgDisableFOV;
 };

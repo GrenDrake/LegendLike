@@ -9,7 +9,7 @@
 #include "point.h"
 
 class Board;
-class Creature;
+class Actor;
 class Random;
 class GameState;
 struct SDL_Renderer;
@@ -144,7 +144,7 @@ public:
     Board* getBoard() {
         return mCurrentBoard;
     }
-    Creature* getPlayer() {
+    Actor* getPlayer() {
         return mPlayer;
     }
     bool warpTo(int boardIndex, int x, int y);
@@ -172,7 +172,7 @@ public:
     int turnNumber;
     int depth;
     Board *mCurrentBoard;
-    Creature *mPlayer;
+    Actor *mPlayer;
     std::map<int, Board*> mBoards;
     QuickSlot quickSlots[quickSlotCount];
     Point cursor;
@@ -210,7 +210,7 @@ public:
     int  mapEditTile;
 
     bool loadAudioTracks();
-    bool loadCreatureData();
+    bool loadActorData();
     bool loadLocationsData();
     bool loadMapInfoData();
     bool loadMusicTracks();

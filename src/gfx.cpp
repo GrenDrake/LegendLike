@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "creature.h"
+#include "actor.h"
 #include "gfx.h"
 #include "board.h"
 #include "game.h"
@@ -76,13 +76,13 @@ void gfx_drawMap(System &state) {
                 }
 
                 if (visible) {
-                    Creature *creature = state.getBoard()->actorAt(here);
-                    if (creature) {
-                        SDL_Texture *tile = creature->typeInfo->art;
+                    Actor *actor = state.getBoard()->actorAt(here);
+                    if (actor) {
+                        SDL_Texture *tile = actor->typeInfo->art;
                         if (tile) {
                             SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
-                        double hpPercent = static_cast<double>(creature->curHealth) / creature->typeInfo->maxHealth;
+                        double hpPercent = static_cast<double>(actor->curHealth) / actor->typeInfo->maxHealth;
                         if (hpPercent < 1.0) {
                             SDL_Rect box = texturePosition;
                             box.h = tileScale;
@@ -186,7 +186,7 @@ void gfx_drawSidebar(System &state) {
     const int tinyLineHeight = state.tinyFont->getLineHeight();
     const int barHeight = lineHeight / 2;
     const int column2 = xPos + sidebarWidth / 2;
-    Creature *player = state.getPlayer();
+    Actor *player = state.getPlayer();
     const double healthPercent = static_cast<double>(player->curHealth) / static_cast<double>(player->typeInfo->maxHealth);
     const double energyPercent = static_cast<double>(player->curEnergy) / static_cast<double>(player->typeInfo->maxEnergy);
 
@@ -320,11 +320,11 @@ void gfx_drawSidebar(System &state) {
         int tileY = viewY + mapMouseY / (scaledTileHeight);
             Point here(tileX, tileY);
         int tileHere = state.getBoard()->getTile(here);
-        Creature *creature = state.getBoard()->actorAt(here);
+        Actor *actor = state.getBoard()->actorAt(here);
         if (tileHere != tileOutOfBounds && state.showInfo) {
             std::stringstream ss;
-            if (creature) {
-                ss << creature->getName() << "   ";
+            if (actor) {
+                ss << actor->getName() << "   ";
             }
             const TileInfo &tileInfo = TileInfo::get(tileHere);
             ss << tileInfo.name << " [" << tileHere << "]   " << tileX << ", " << tileY;
@@ -381,12 +381,12 @@ void gfx_doDrawToolTip(System &state) {
         int tileY = viewY + mapMouseY / (scaledTileHeight);
         Point here(tileX, tileY);
         int tileHere = state.getBoard()->getTile(here);
-        Creature *creature = state.getBoard()->actorAt(here);
+        Actor *actor = state.getBoard()->actorAt(here);
         if (tileHere != tileOutOfBounds) {
             if (state.getBoard()->isKnown(here)) { // show tooltip
                 std::stringstream ss;
-                if (creature && state.getBoard()->isVisible(here)) {
-                    ss << creature->getName() << "\n";
+                if (actor && state.getBoard()->isVisible(here)) {
+                    ss << actor->getName() << "\n";
                 }
                 const TileInfo &tileInfo = TileInfo::get(tileHere);
                 ss << tileInfo.name;

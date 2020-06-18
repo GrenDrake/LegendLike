@@ -1,5 +1,5 @@
 #include "board.h"
-#include "creature.h"
+#include "actor.h"
 #include "logger.h"
 #include "random.h"
 
@@ -26,7 +26,7 @@ void mapRandomEnemies(Board *board, Random &rng, const RandomFoeInfo &info) {
 
         int rowId = rng.next32() % info.typeList.size();
         int type = info.typeList[rowId];
-        Creature *actor = new Creature(type);
+        Actor *actor = new Actor(type);
         actor->reset();
         board->addActor(actor, here);
     }

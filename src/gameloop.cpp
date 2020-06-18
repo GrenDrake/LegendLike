@@ -8,7 +8,7 @@
 
 #include "command.h"
 #include "config.h"
-#include "creature.h"
+#include "actor.h"
 #include "board.h"
 #include "game.h"
 #include "point.h"
@@ -26,7 +26,7 @@ struct ProjectileInfo {
 
 bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
     Board *board = state.getBoard();
-    Creature *actor = nullptr;
+    Actor *actor = nullptr;
 
     Point work(state.getPlayer()->position);
     while (1) {
@@ -102,7 +102,7 @@ Point gfx_SelectTile(System &system, const std::string &prompt) {
         std::stringstream line;
         line << prompt << "; where? ";
         line << system.cursor << ' ';
-        Creature *actor = system.getBoard()->actorAt(system.cursor);
+        Actor *actor = system.getBoard()->actorAt(system.cursor);
         if (actor) line << actor->getName() << " standing at ";
         line << TileInfo::get(system.getBoard()->getTile(system.cursor)).name;
         system.replaceMessage(line.str());
@@ -138,7 +138,7 @@ Point gfx_SelectTile(System &system, const std::string &prompt) {
 }
 
 bool tryInteract(System &state, Dir d, const Point &target) {
-    Creature *actor = state.getBoard()->actorAt(target);
+    Actor *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
         if (actor->typeInfo->aiType == aiPushable) {
@@ -260,7 +260,7 @@ void gfx_handleInput(System &state) {
 
             case Command::Move: {
                 if (state.mapEditMode) {
-                    Creature *player = state.getPlayer();
+                    Actor *player = state.getPlayer();
                     player->position = player->position.shift(cmd.direction);
                     break;
                 }
@@ -413,7 +413,7 @@ void gfx_handleInput(System &state) {
                         basicProjectileAttack(state, ProjectileInfo{"ice bolt", 2, 6}, d);
                         break;
                     case SW_PICKAXE: {
-                        Creature *actor = state.getBoard()->actorAt(state.getPlayer()->position.shift(d));
+                        Actor *actor = state.getBoard()->actorAt(state.getPlayer()->position.shift(d));
                         if (actor) {
                             state.requestTick();
                             bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, -2);
