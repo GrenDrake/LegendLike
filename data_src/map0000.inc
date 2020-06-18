@@ -105,19 +105,21 @@ map0_talkSage:
     textbox
     ret
 
+map0_npclist:
 .npc npcProfessor      name="professor"    x=46 y=14 typeId=npcTypeSage  talkFunc=map0_talk_professor
 .npc npcArchdean       name="archdean"     x=51 y=21 typeId=npcTypeSage  talkFunc=map0_talk_archdean
 .npc npcStudent        name="student"      x=51 y=23 typeId=npcTypeGuard
-.npc npcCow1           name="cow"          x=19 y=11 typeId=npcTypeCow
-.npc npcCow2           name="cow"          x=24 y=14 typeId=npcTypeCow
-.npc npcCow3           name="cow"          x=30 y=15 typeId=npcTypeCow
-.npc npcCow4           name="cow"          x=33 y=13 typeId=npcTypeCow
+.npc npcCow1                               x=19 y=11 typeId=npcTypeCow
+.npc npcCow2                               x=24 y=14 typeId=npcTypeCow
+.npc npcChicken1                           x=30 y=15 typeId=npcTypeChicken
+.npc npcChicken2                           x=28 y=11 typeId=npcTypeChicken
+.npc npcRooster                            x=33 y=13 typeId=npcTypeRooster
 .npc npcStablemaster   name="stablemaster" x=27 y=18 typeId=npcTypeSage  talkFunc=map0_test_giveparty
 .npc npcDungeonGuard   name="guard"        x=29 y=25 typeId=npcTypeGuard talkFunc=map0_talk_gateguard
 .npc npcTownCivilian1  name="civilian"     x=28 y=21 typeId=npcTypeGuard talkFunc=map0_test_fight
 .npc npcTownCivilian2  name="sage"         x=37 y=25 typeId=npcTypeSage  talkFunc=map0_talkSage
 .npc townBoulder                           x=18 y=30 typeId=npcTypeBoulder
-
+.word -1
 
 map0_enter:
     ret
@@ -127,29 +129,14 @@ map0_enter:
 map0_build:
     @mf_fromfile    map0_name
     ; the lab
-    @mf_addactor    npcProfessor
+    @mf_addactors   map0_npclist
     ; the academy
     @mf_addevent    24 50 map0_downToAcademyCellar eventManual
-    @mf_addactor    npcArchdean
-    @mf_addactor    npcStudent
     @mf_addevent    25 47 map0_talk_academysign eventManual
-    ; beast pens
-    @mf_addactor    npcCow1
-    @mf_addactor    npcCow2
-    @mf_addactor    npcCow3
-    @mf_addactor    npcCow4
-    ; stablemaster
-    @mf_addactor    npcStablemaster
-    ; combat tester
-    @mf_addactor    npcTownCivilian1
     ; dungeon guard house
     @mf_addevent    29 28 map0_downToDungeon eventManual
-    @mf_addactor    npcDungeonGuard
     ; village green
     @mf_addevent    26 40 map0_talkwell eventManual
     @mf_addevent    28 36 map0_talkfire eventManual
-    @mf_addactor    npcTownCivilian2
-
-    @mf_addactor    townBoulder
 
     ret

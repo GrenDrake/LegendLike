@@ -550,21 +550,16 @@ bool VM::run(unsigned address) {
                 }
                 break; }
             case Opcode::mf_addactor: {
-                int npcAddr = pop();
-                int nameAddr = readWord (npcAddr);
-                int talkFunc = readWord (npcAddr + 4);
-                int special  = readWord (npcAddr + 8);
-                int x        = readShort(npcAddr + 12);
-                int y        = readShort(npcAddr + 14);
-                int typeId   = readShort(npcAddr + 16);
-                if (board) {
-                    std::string name = nameAddr ? readString(nameAddr) : "";
-                    Creature *creature = new Creature(typeId);
-                    board->addActor(creature, Point(x, y));
-                    creature->name = name;
-                    creature->talkFunc = talkFunc;
-                    creature->talkArg = special;
-                    creature->reset();
+                int address = pop();
+                addActor(address);
+                break; }
+            case Opcode::mf_addactors: {
+                const int npcSize = 18;
+                int baseAddr = pop();
+                while (1) {
+                    if (readWord(baseAddr) == -1) break;
+                    addActor(baseAddr);
+                    baseAddr += npcSize;
                 }
                 break; }
             case Opcode::mf_addevent: {
@@ -672,4 +667,22 @@ bool VM::run(unsigned address) {
     return true;
 
     return 1;
+}
+
+void VM::addActor(int npcAddr) {
+    if (!state || !state->getBoard()) return;
+
+    int nameAddr = readWord (npcAddr);
+    int talkFunc = readWord (npcAddr + 4);
+    int special  = readWord (npcAddr + 8);
+    int x        = readShort(npcAddr + 12);
+    int y        = readShort(npcAddr + 14);
+    int typeId   = readShort(npcAddr + 16);
+    std::string name = nameAddr ? readString(nameAddr) : "";
+    Creature *creature = new Creature(typeId);
+    state->getBoard()->addActor(creature, Point(x, y));
+    creature->name = name;
+    creature->talkFunc = talkFunc;
+    creature->talkArg = special;
+    creature->reset();
 }

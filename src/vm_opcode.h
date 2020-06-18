@@ -50,6 +50,7 @@ enum class Opcode {
     mf_horzline,
     mf_vertline,
     mf_addactor,
+    mf_addactors,
     mf_clear,
     mf_addevent,
     mf_fromfile,

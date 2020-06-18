@@ -73,6 +73,8 @@ private:
     void update(int position, int value);
     void minStack(int minimumSize) const;
 
+    void addActor(int npcAddr);
+
     System *state;
     char *mMemory;
     unsigned long long mMemorySize;

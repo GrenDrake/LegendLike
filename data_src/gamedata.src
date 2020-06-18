@@ -95,12 +95,14 @@
 .define itmCapArrow      13
 .define itmCapBomb       14
 
-.npctype npcTypePlayer       name="sage"    art="player" health=10 energy=10 aiType=aiPlayer
-.npctype npcTypeSage         name="sage"    art="sage" moveRate=2 aiType=aiPaceBox
+.npctype npcTypePlayer       name="player"  art="player" health=10 energy=10 aiType=aiPlayer
+.npctype npcTypeSage         name="sage"    art="sage" aiType=aiStill
+.npctype npcTypeGuard        name="guard"   art="guard" aiType=aiStill
+.npctype npcTypeMovingGuard  name="guard"   art="guard" aiType=aiStill
 .npctype npcTypeOctopus      name="octopus" art="octopus" moveRate=3 aiType=aiRandom
-.npctype npcTypeGuard        name="guard"   art="guard" moveRate=2 aiType=aiStill
-.npctype npcTypeMovingGuard  name="guard"   art="guard" moveRate=2 aiType=aiStill
 .npctype npcTypeCow          name="cow"     art="cow" moveRate=3 aiType=aiRandom
+.npctype npcTypeChicken      name="chicken" art="chicken" moveRate=2 aiType=aiRandom
+.npctype npcTypeRooster      name="rooster" art="rooster" moveRate=2 aiType=aiRandom
 
 .npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy
 .npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3 aiType=aiEnemy
