@@ -43,7 +43,7 @@ Creature::Creature(int type)
 
 std::string Creature::getName() const {
     if (name.empty()) return typeInfo->name;
-    return name;
+    return name + " (" + typeInfo->name + ")";
 }
 
 void Creature::reset() {

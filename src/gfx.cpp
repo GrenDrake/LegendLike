@@ -153,6 +153,31 @@ void gfx_drawMap(System &state) {
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
+
+    //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
+    //  TOOLTIP
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    if (state.showTooltip && mouseX < mapWidthPixels) {
+        int mapMouseX = mouseX + mapOffsetX;
+        int mapMouseY = mouseY + mapOffsetY;
+        int tileX = viewX + mapMouseX / (scaledTileWidth);
+        int tileY = viewY + mapMouseY / (scaledTileHeight);
+        Point here(tileX, tileY);
+        int tileHere = state.getBoard()->getTile(here);
+        Creature *creature = state.getBoard()->actorAt(here);
+        if (tileHere != tileOutOfBounds) {
+            if (state.getBoard()->isKnown(here)) { // show tooltip
+                std::stringstream ss;
+                if (creature && state.getBoard()->isVisible(here)) {
+                    ss << creature->getName() << "\n";
+                }
+                const TileInfo &tileInfo = TileInfo::get(tileHere);
+                ss << tileInfo.name;
+                gfx_DrawTooltip(state, mouseX, mouseY + 20, ss.str());
+            }
+        }
+    }
 }
 
 void gfx_drawSidebar(System &state) {
@@ -321,37 +346,28 @@ void gfx_drawSidebar(System &state) {
             Point here(tileX, tileY);
         int tileHere = state.getBoard()->getTile(here);
         Creature *creature = state.getBoard()->actorAt(here);
-        if (tileHere != tileOutOfBounds) {
-            if (state.showTooltip && state.getBoard()->isKnown(here)) { // show tooltip
-                std::stringstream ss;
-                if (creature && state.getBoard()->isVisible(here)) {
-                    ss << creature->name << "\n";
-                }
-                const TileInfo &tileInfo = TileInfo::get(tileHere);
-                ss << tileInfo.name;
-                gfx_DrawTooltip(state, mouseX, mouseY + 20, ss.str());
+        if (tileHere != tileOutOfBounds && state.showInfo) {
+            std::stringstream ss;
+            if (creature) {
+                ss << creature->getName() << "   ";
             }
-            if (state.showInfo) {
-                std::stringstream ss;
-                if (creature) {
-                    ss << creature->getName() << "   ";
-                }
-                const TileInfo &tileInfo = TileInfo::get(tileHere);
-                ss << tileInfo.name << " [" << tileHere << "]   " << tileX << ", " << tileY;
-                ss << " V:" << state.getBoard()->isVisible(here);
-                ss << " K:" << state.getBoard()->isKnown(here);
-                ss << " MAPID: " << state.depth;
-                ss << " Turn: " << state.turnNumber;
-                ss << " track: " << state.getTrackNumber();
-                state.smallFont->out(screenWidth - (ss.str().size() + 1) * state.smallFont->getCharWidth(), screenHeight - state.smallFont->getLineHeight() * 2, ss.str());
-                const TrackInfo &info = state.getTrackInfo();
-                if (info.number >= 0) {
-                    std::string line = info.name + " by " + info.artist;
-                    state.smallFont->out(screenWidth - (line.size() + 1) * state.smallFont->getCharWidth(), screenHeight - state.smallFont->getLineHeight(), line);
-                }
+            const TileInfo &tileInfo = TileInfo::get(tileHere);
+            ss << tileInfo.name << " [" << tileHere << "]   " << tileX << ", " << tileY;
+            ss << " V:" << state.getBoard()->isVisible(here);
+            ss << " K:" << state.getBoard()->isKnown(here);
+            ss << " MAPID: " << state.depth;
+            ss << " Turn: " << state.turnNumber;
+            ss << " track: " << state.getTrackNumber();
+            state.smallFont->out(screenWidth - (ss.str().size() + 1) * state.smallFont->getCharWidth(), screenHeight - state.smallFont->getLineHeight() * 2, ss.str());
+            const TrackInfo &info = state.getTrackInfo();
+            if (info.number >= 0) {
+                std::string line = info.name + " by " + info.artist;
+                state.smallFont->out(screenWidth - (line.size() + 1) * state.smallFont->getCharWidth(), screenHeight - state.smallFont->getLineHeight(), line);
             }
         }
     }
+
+    gfx_VLine(state, mapWidthPixels, 0, mapHeightPixels, uiColor);
     if (state.showFPS) {
         std::stringstream ss;
         ss << "  FPS: " << state.getFPS();
@@ -364,22 +380,13 @@ bool repaint(System &state, bool callPresent) {
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
 
-    const int sidebarWidth = 30 * state.smallFont->getCharWidth();
-    const int mapWidthPixels = screenWidth - sidebarWidth;
-    const int mapHeightPixels = screenHeight;
-
-    const Color uiColor{255, 255, 255};
-
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(state.renderer);
 
     Animation noAnimation{AnimType::None};
 
-    gfx_drawMap(state);
     gfx_drawSidebar(state);
-
-    gfx_HLine(state, 0, screenWidth, mapHeightPixels, uiColor);
-    gfx_VLine(state, mapWidthPixels, 0, mapHeightPixels, uiColor);
+    gfx_drawMap(state);
 
     state.advanceFrame();
     if (callPresent) SDL_RenderPresent(state.renderer);

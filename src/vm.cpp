@@ -558,7 +558,7 @@ bool VM::run(unsigned address) {
                 int y        = readShort(npcAddr + 14);
                 int typeId   = readShort(npcAddr + 16);
                 if (board) {
-                    std::string name = nameAddr ? readString(nameAddr) : "actor";
+                    std::string name = nameAddr ? readString(nameAddr) : "";
                     Creature *creature = new Creature(typeId);
                     board->addActor(creature, Point(x, y));
                     creature->name = name;
