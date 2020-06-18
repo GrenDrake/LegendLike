@@ -323,14 +323,8 @@ void gfx_handleInput(System &state) {
                 state.showTooltip = !state.showTooltip;
                 break;
 
-            case Command::CharacterInfo:
-                doCharInfo(state, charStats);
-                break;
             case Command::Inventory:
-                doCharInfo(state, charInventory);
-                break;
-            case Command::AbilityList:
-                doCharInfo(state, charAbilities);
+                doCharInfo(state);
                 break;
 
             case Command::Examine:

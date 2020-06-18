@@ -13,10 +13,9 @@
 #include "command.h"
 #include "textutil.h"
 
-static int mode = charStats;
 static int selection = 0;
 static std::vector<SDL_Rect> tabButtons;
-
+static SDL_Rect doneButton{ -1 };
 
 void gfx_drawCharInfo(System &state, bool callPresent) {
     int screenWidth = 0;
@@ -50,36 +49,26 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     state.smallFont->out(column2, yPos, "    Energy: " + std::to_string(player->curEnergy) + "/" + std::to_string(player->typeInfo->maxEnergy));
     yPos += lineHeight * 2;
 
-    if (mode == charInventory) {
-        state.smallFont->out(xPos, yPos, "CARRYING");
-        state.smallFont->out(column2, yPos, "EQUIPPED");
-    }
+    state.smallFont->out(xPos, yPos, "CARRYING");
+    state.smallFont->out(column2, yPos, "EQUIPPED");
 
 
     const int tabWidth = 200;
     const int tabHeight = lineHeight + 8;
     xPos = 0;
     yPos = screenHeight - tabHeight;
-    tabButtons.clear();
-    for (int i = 0; i <= charModeCount; ++i) {
-        SDL_Rect box = { xPos, yPos, tabWidth, tabHeight };
-        tabButtons.push_back(box);
-        if (i == mode)  SDL_SetRenderDrawColor(state.renderer, 63, 63, 63, SDL_ALPHA_OPAQUE);
-        else            SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderFillRect(state.renderer, &box);
-        SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawRect(state.renderer, &box);
-        std::string text;
-        switch(i) {
-            case charStats:     text = "Stats"; break;
-            case charAbilities: text = "Abilities"; break;
-            case charInventory: text = "Inventory"; break;
-            case charModeCount: text = "Done"; break;
-        }
-        const int offset = (tabWidth - text.size() * charWidth) / 2;
-        state.smallFont->out(xPos + 4 + offset, yPos + 4, text);
-        xPos += tabWidth;
-    }
+    if (doneButton.x < 0) {
+        doneButton.x = 0;
+        doneButton.y = screenHeight - tabHeight;
+        doneButton.w = tabWidth;
+        doneButton.h = tabHeight;
+    };
+    SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(state.renderer, &doneButton);
+    SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawRect(state.renderer, &doneButton);
+    const int offset = (tabWidth - 4 * charWidth) / 2;
+    state.smallFont->out(xPos + 4 + offset, yPos + 4, "Done");
 
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
@@ -94,9 +83,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     if (callPresent) SDL_RenderPresent(state.renderer);
 }
 
-void doCharInfo(System &system, int initialMode) {
-    if (initialMode < 0 || initialMode >= charModeCount) mode = charStats;
-    else mode = initialMode;
+void doCharInfo(System &system) {
     selection = 0;
 
     while (1) {
@@ -105,15 +92,8 @@ void doCharInfo(System &system, int initialMode) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int mx = event.button.x;
-                int my = event.button.y;
-                for (unsigned i = 0; i < tabButtons.size(); ++i) {
-                    const SDL_Rect &box = tabButtons[i];
-                    if (mx < box.x || my < box.y) continue;
-                    if (mx >= box.x + box.w || my >= box.y + box.h) continue;
-                    if (i == charModeCount) return;
-                    mode = i;
-                    break;
+                if (pointInBox(event.button.x, event.button.y, doneButton)) {
+                    return;
                 }
             } else {
                 const CommandDef &cmd = getCommand(system, event, characterCommands);
@@ -123,30 +103,6 @@ void doCharInfo(System &system, int initialMode) {
                         return;
                     case Command::Close:
                         return;
-                    case Command::NextMode:
-                        selection = 0;
-                        ++mode;
-                        if (mode >= charModeCount) {
-                            mode = 0;
-                        }
-                        break;
-                    case Command::PrevMode:
-                        selection = 0;
-                        --mode;
-                        if (mode < 0) {
-                            mode = charModeCount - 1;
-                        }
-                    break;
-
-                    case Command::Move:
-                        if (mode == charAbilities) {
-                            if (cmd.direction == Dir::North) {
-                                if (selection > 0) {
-                                    --selection;
-                                }
-                            }
-                        }
-                        break;
                     default:
                         /* we don't need to handle the other commands */
                         break;

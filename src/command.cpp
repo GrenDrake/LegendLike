@@ -91,9 +91,7 @@ CommandDef gameCommands[] = {
     { Command::SelectItem,  Dir::None,  SDLK_RETURN },
     { Command::SelectItem,  Dir::None,  SDLK_KP_ENTER },
     { Command::ShowMap,     Dir::None,  SDLK_m },
-    { Command::CharacterInfo,   Dir::None,  SDLK_c },
     { Command::Inventory,   Dir::None,  SDLK_i },
-    { Command::AbilityList, Dir::None,  SDLK_a },
     { Command::ShowTooltip, Dir::None,  SDLK_t },
     { Command::NextSubweapon,   Dir::None, SDLK_RIGHTBRACKET },
     { Command::PrevSubweapon,   Dir::None, SDLK_LEFTBRACKET },
@@ -120,6 +118,7 @@ CommandDef characterCommands[] = {
     { Command::Interact,    Dir::None,  SDLK_SPACE },
     { Command::Interact,    Dir::None,  SDLK_RETURN },
     { Command::Close,       Dir::None,  SDLK_ESCAPE },
+    { Command::Close,       Dir::None,  SDLK_z },
     { Command::Close,       Dir::None,  SDLK_z,         KMOD_LSHIFT },
     { Command::Rename,      Dir::None,  SDLK_r },
     { Command::PrevMode,    Dir::None,  SDLK_TAB,       KMOD_LSHIFT },
@@ -251,9 +250,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Wait:             out << "wait"; break;
         case Command::ShowMap:          out << "full map"; break;
         case Command::SystemMenu:       out << "system menu"; break;
-        case Command::CharacterInfo:    out << "character info"; break;
         case Command::Inventory:        out << "inventory"; break;
-        case Command::AbilityList:      out << "ability list"; break;
         case Command::Rename:           out << "rename"; break;
         case Command::ShowTooltip:      out << "show tooltip"; break;
 

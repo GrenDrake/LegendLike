@@ -21,6 +21,7 @@ class ResourceManager;
 struct Mix_Chunk;
 class Config;
 struct SDL_Keysym;
+struct SDL_Rect;
 
 const int quickSlotUnused = 0;
 const int quickSlotAbility = 1;
@@ -238,11 +239,12 @@ const int charModeCount = 3;
 bool repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);
 
-void doCharInfo(System &system, int initialMode);
+void doCharInfo(System &system);
 void doCredits(System &state);
 void doGameMenu(System &state);
 void doShowMap(System &system);
 
+bool pointInBox(int x, int y, const SDL_Rect &box);
 bool gfx_confirm(System &state, const std::string &title, const std::string &message, bool defaultResult = true);
 void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
 void gfx_DrawFrame(System &system, int x, int y, int w, int h);
