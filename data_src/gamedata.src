@@ -8,6 +8,7 @@
 .define aiAvoidPlayer     5
 .define aiFollowPlayer    6
 .define aiEnemy           7
+.define aiPushable        8
 
 .define eventAuto         0
 .define eventManual       1
@@ -101,6 +102,8 @@
 
 .npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5
 .npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3
+
+.npctype npcTypeBoulder   name="boulder"   art="boulder1"
 
 .mapdata mapTown            name="Town"             mapId=0 width=66 height=66 onBuild=map0_build onEnter=map0_enter musicTrack=1
 .mapdata mapTownUnderground name="Town Underground" mapId=1 width=66 height=66 onBuild=map1_build musicTrack=1

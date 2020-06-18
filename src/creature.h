@@ -24,6 +24,7 @@ const int aiPaceBox         = 4;
 const int aiAvoidPlayer     = 5;
 const int aiFollowPlayer    = 6;
 const int aiEnemy           = 7;
+const int aiPushable        = 8;
 
 
 class CreatureType {

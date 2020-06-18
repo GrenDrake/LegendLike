@@ -84,6 +84,7 @@ void Creature::ai(System &system) {
     switch(aiType) {
         case aiPlayer:
         case aiStill:
+        case aiPushable:
             return;
         case aiPaceHorz:
             if (ai_lastDir == Dir::None) ai_lastDir = Dir::East;

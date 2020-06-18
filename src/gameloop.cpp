@@ -141,11 +141,13 @@ Point gfx_SelectTile(System &system, const std::string &prompt) {
     }
 }
 
-bool tryInteract(System &state, const Point &target) {
+bool tryInteract(System &state, Dir d, const Point &target) {
     Creature *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
-        if (actor->talkFunc) {
+        if (actor->aiType == aiPushable) {
+            actor->tryMove(state.getBoard(), d);
+        } else if (actor->talkFunc) {
             // has talk function, is friendly
             state.vm->run(actor->talkFunc);
         } else if (state.swordLevel <= 0) {
@@ -278,7 +280,7 @@ void gfx_handleInput(System &state) {
                     }
                     state.requestTick();
                 } else {
-                    tryInteract(state, dest);
+                    tryInteract(state, cmd.direction, dest);
                 }
                 break; }
             case Command::Run: {
@@ -307,7 +309,7 @@ void gfx_handleInput(System &state) {
                     if (d == Dir::None) break;
                 }
                 Point target = state.getPlayer()->position.shift(d, 1);
-                if (!tryInteract(state, target)) {
+                if (!tryInteract(state, d, target)) {
                     state.addMessage("Nothing to do!");
                 }
                 break; }

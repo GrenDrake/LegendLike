@@ -96,6 +96,7 @@ map0_talkSage:
 .npc npcDungeonGuard   name="guard"        x=29 y=25 aiType=aiStill         typeId=npcTypeGuard talkFunc=map0_talk_gateguard
 .npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=npcTypeGuard talkFunc=map0_test_fight
 .npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talkSage
+.npc townBoulder                           x=18 y=30 aiType=aiPushable      typeId=npcTypeBoulder
 
 
 map0_enter:
@@ -128,5 +129,7 @@ map0_build:
     @mf_addevent    26 40 map0_talkwell eventManual
     @mf_addevent    28 36 map0_talkfire eventManual
     @mf_addactor    npcTownCivilian2
+
+    @mf_addactor    townBoulder
 
     ret
