@@ -40,12 +40,14 @@ const int menuAudioIndex = 1;
 const int menuTileIndex = 2;
 const int menuFontIndex = 3;
 const int menuFullscreenIndex = 4;
+const int menuShowDiceRolls = 5;
 MenuOption optionsMenu[] = {
     { "Music Volume",           0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
     { "Effects Volume",         0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
     { "Tile Scale",             0,                  MenuType::Value,    1,  1, 10 },
     { "Font Scale",             0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
     { "Fullscreen",             0,                  MenuType::Bool,     0,  0, 0  },
+    { "Show Dice Rolls",        0,                  MenuType::Bool,     0,  0, 0  },
     { "",                       0,                  MenuType::Disabled },
     { "Save Changes",           1,                  MenuType::Choice },
     { "Discard Changes",        menuDiscard,        MenuType::Choice },
@@ -132,6 +134,7 @@ void doGameMenu(System &state) {
                 optionsMenu[menuTileIndex].value = state.config->getInt("tile_scale", 1);
                 optionsMenu[menuFontIndex].value = initialFontScale;
                 optionsMenu[menuFullscreenIndex].value = state.config->getBool("fullscreen", false);
+                optionsMenu[menuShowDiceRolls].value = state.config->getBool("showrolls", false);
                 int result = runMenu(state, optionsMenu);
                 if (result >= 0) {
                     state.setMusicVolume(optionsMenu[menuMusicIndex].value);
@@ -144,6 +147,7 @@ void doGameMenu(System &state) {
                     state.config->set("tile_scale", std::to_string(optionsMenu[menuTileIndex].value));
                     state.config->set("font_scale", std::to_string(optionsMenu[menuFontIndex].value));
                     state.config->set("fullscreen", std::to_string(optionsMenu[menuFullscreenIndex].value ? 1 : 0));
+                    state.config->set("showrolls",  std::to_string(optionsMenu[menuShowDiceRolls].value ? 1 : 0));
                 } else {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);

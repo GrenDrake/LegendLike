@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "board.h"
+#include "config.h"
 #include "creature.h"
 #include "game.h"
 #include "random.h"
@@ -195,7 +196,7 @@ bool doAccuracyCheck(System &system, Creature *attacker, Creature *target, int m
     int roll = -10000;
 
     roll = system.coreRNG.roll(1,10);
-    if (system.showDieRolls) {
+    if (system.config->getBool("showrolls", false)) {
         std::stringstream msg;
         msg << "[to hit: 1d10+" << modifier << "=" << (roll+modifier) << " > 5]";
         system.addMessage(msg.str());

@@ -38,7 +38,6 @@ enum class Command {
     Debug_TestPathfinder,
     Debug_WriteMapBinary,
     Debug_Restore,
-    Debug_ShowChecks,
     Debug_MapEditMode,
 };
 

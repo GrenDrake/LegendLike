@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 
 #include "command.h"
+#include "config.h"
 #include "creature.h"
 #include "board.h"
 #include "game.h"
@@ -55,7 +56,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         int d = projectile.damageDice;
         if (d <= 0) d = state.subweaponLevel[SW_BOW];
         int damage = state.coreRNG.roll(d, projectile.damageSides);
-        if (state.showDieRolls) {
+        if (state.config->getBool("showrolls", false)) {
             std::stringstream msg;
             msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
             state.addMessage(msg.str());
@@ -155,7 +156,7 @@ bool tryInteract(System &state, const Point &target) {
                 state.addMessage("You miss " + actor->getName() + ".");
             } else {
                 int roll = state.coreRNG.roll(state.swordLevel, 4);
-                if (state.showDieRolls) {
+                if (state.config->getBool("showrolls", false)) {
                     std::stringstream msg2;
                     msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
                     state.addMessage(msg2.str());
@@ -426,7 +427,7 @@ void gfx_handleInput(System &state) {
                                 state.addMessage("You miss " + actor->getName() + ".");
                             } else {
                                 int roll = state.coreRNG.roll(3, 4);
-                                if (state.showDieRolls) {
+                                if (state.config->getBool("showrolls", false)) {
                                     std::stringstream msg2;
                                     msg2 << "[damage: 3d4" << '=' << roll << ']';
                                     state.addMessage(msg2.str());
@@ -456,9 +457,6 @@ void gfx_handleInput(System &state) {
                 state.getPlayer()->curEnergy = state.getPlayer()->typeInfo->maxEnergy;
                 state.bombCount = state.bombCapacity;
                 state.arrowCount = state.arrowCapacity;
-                break;
-            case Command::Debug_ShowChecks:
-                state.showDieRolls = !state.showDieRolls;
                 break;
             case Command::Debug_Reveal:
                 state.getBoard()->dbgRevealAll();
