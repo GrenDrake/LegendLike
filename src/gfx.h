@@ -93,6 +93,15 @@ struct Subweapon {
     bool directional;
 };
 
+struct LootRow {
+    int chance;
+    int itemId;
+};
+
+struct LootTable {
+    std::vector<LootRow> rows;
+};
+
 class System {
 public:
     System(SDL_Renderer *renderer, Random &rng);
@@ -180,6 +189,7 @@ public:
     std::map<std::string, Font*> mFonts;
     std::vector<ItemLocation> itemLocations;
     std::vector<Subweapon> subweapons;
+    std::vector<LootTable> lootTables;
     std::deque<Animation> animationQueue;
 
     // system modules
@@ -206,6 +216,7 @@ public:
     bool loadMusicTracks();
     bool loadStringData();
     bool loadTileData();
+    bool loadLootTables();
 
     int framecount, framerate, baseticks, lastticks, fps;
     int timerFrames, timerTime, actualFPS;

@@ -14,6 +14,7 @@
 #include "gfx.h"
 #include "logger.h"
 #include "vm.h"
+#include "textutil.h"
 
 
 std::vector<TileInfo> TileInfo::types;
@@ -94,6 +95,51 @@ void Board::removeActor(const Point &p) {
             iter = creatures.erase(iter);
         } else {
             ++iter;
+        }
+    }
+}
+
+void Board::doDamage(System &state, Creature *to, int amount, int type, const std::string &source) {
+    if (!to) return;
+    to->takeDamage(amount);
+    state.addMessage(upperFirst(to->getName()) + " takes " + std::to_string(amount) + " damage from " + source + ". ");
+    if (to->curHealth <= 0) {
+        if (to->typeInfo->aiType == aiPlayer) {
+            state.appendMessage("You die!");
+        } else {
+            state.appendMessage(upperFirst(to->getName()) + " is defeated! ");
+            makeLoot(state, to);
+        }
+    }
+}
+
+void Board::makeLoot(System &state, const Creature *from) {
+    if (!from) return;
+    switch(from->typeInfo->lootType) {
+        case lootNone:
+            // no loot to generate
+            break;
+        case lootTable: {
+            int tableNum = from->typeInfo->loot;
+            int roll = state.coreRNG.roll(1,100);
+            const LootTable &table = state.lootTables[tableNum];
+            unsigned i = 0;
+            for (; i < table.rows.size(); ++i) {
+                if (table.rows[i].chance >= roll) break;
+            }
+            if (i == 0 || i > table.rows.size()) break; // rolled off table
+            state.grantItem(table.rows[i - 1].itemId);
+            break; }
+        case lootLocation: {
+            int locationNum = from->typeInfo->loot;
+            ItemLocation &itemLoc = state.itemLocations[locationNum];
+            if (itemLoc.used) break; // already dropped from this location!
+            itemLoc.used = true;
+            state.grantItem(itemLoc.itemId);
+            break; }
+        case lootFunction: {
+            state.vm->run(from->typeInfo->loot);
+            break;
         }
     }
 }

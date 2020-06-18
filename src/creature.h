@@ -26,6 +26,10 @@ const int aiFollowPlayer    = 6;
 const int aiEnemy           = 7;
 const int aiPushable        = 8;
 
+const int lootNone          = 0;
+const int lootTable         = 1;
+const int lootLocation      = 2;
+const int lootFunction      = 3;
 
 class CreatureType {
 public:
@@ -39,6 +43,7 @@ public:
     int maxHealth, maxEnergy;
     int damage, accuracy, evasion, moveRate;
     int aiType;
+    int lootType, loot;
 
     SDL_Texture *art;
 private:

@@ -61,11 +61,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
             msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
             state.addInfo(msg.str());
         }
-        actor->takeDamage(damage);
-        state.addMessage(upperFirst(actor->getName()) + " takes " + std::to_string(damage) + " damage from your " + projectile.name + ". ");
-        if (actor->curHealth <= 0) {
-            state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
-        }
+        board->doDamage(state, actor, damage, 0, "your " + projectile.name);
         return true;
     }
     return false;
@@ -163,11 +159,7 @@ bool tryInteract(System &state, Dir d, const Point &target) {
                     msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
                     state.addInfo(msg2.str());
                 }
-                actor->takeDamage(roll);
-                state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
-                if (actor->curHealth <= 0) {
-                    state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
-                }
+                state.getBoard()->doDamage(state, actor, roll, 0, "your attack");
             }
         }
         state.requestTick();
@@ -434,11 +426,7 @@ void gfx_handleInput(System &state) {
                                     msg2 << "[damage: 3d4" << '=' << roll << ']';
                                     state.addInfo(msg2.str());
                                 }
-                                actor->takeDamage(roll);
-                                state.addMessage("You do " + std::to_string(roll) + " damage to " + actor->getName() + ". ");
-                                if (actor->curHealth <= 0) {
-                                    state.appendMessage(upperFirst(actor->getName()) + " is defeated! ");
-                                }
+                                state.getBoard()->doDamage(state, actor, roll, 0, "your pickaxe");
                             }
                         } else {
                             state.addMessage("Your pickaxe has no impact.");

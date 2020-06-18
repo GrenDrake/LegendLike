@@ -17,6 +17,16 @@ struct Mnemonic {
 
 
 struct Value {
+    Value()
+    : value(0)
+    { }
+    Value(int value)
+    : value(value)
+    { }
+    Value(const std::string &identifier)
+    : value(0x7FFFFFFF), identifier(identifier)
+    { }
+
     int value;
     std::string identifier;
 };
@@ -130,6 +140,8 @@ struct NpcType {
     Value accuracy;
     Value evasion;
     Value moveRate;
+    Value lootType;
+    Value loot;
 };
 
 struct MapData {
@@ -149,6 +161,17 @@ struct ItemLocation {
     Value itemId;
 };
 
+struct LootRow {
+    Value chance;
+    Value itemId;
+};
+
+struct LootTable {
+    Origin origin;
+    std::string identifier;
+    std::vector<LootRow> rows;
+};
+
 struct Program {
     Program();
     ErrorLog errorLog;
@@ -158,6 +181,7 @@ struct Program {
     std::vector<NpcType> npcTypes;
     std::vector<TileDef> tileDefs;
     std::vector<MapData> mapData;
+    std::vector<LootTable> lootTables;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

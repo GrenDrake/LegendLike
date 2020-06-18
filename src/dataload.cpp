@@ -59,6 +59,7 @@ bool System::load() {
         if (!loadAudioTracks())                     return false;
         if (!loadCreatureData())                    return false;
         if (!loadLocationsData())                   return false;
+        if (!loadLootTables())                      return false;
         if (!loadMapInfoData())                     return false;
         if (!loadMusicTracks())                     return false;
         if (!loadTileData())                        return false;
@@ -184,7 +185,7 @@ bool System::loadMapInfoData() {
 
 bool System::loadCreatureData() {
     Logger &log = Logger::getInstance();
-    const unsigned npcTypeSize = 36;
+    const unsigned npcTypeSize = 44;
     unsigned npcTypesAddr = vm->getExport("__npctypes");
     if (npcTypesAddr == static_cast<unsigned>(-1)) {
         log.error("NPC types data not found.");
@@ -206,6 +207,8 @@ bool System::loadCreatureData() {
         type.accuracy  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
         type.evasion   = vm->readWord(npcTypesAddr + counter * npcTypeSize + 28);
         type.moveRate  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 32);
+        type.lootType  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 36);
+        type.loot      = vm->readWord(npcTypesAddr + counter * npcTypeSize + 40);
         if (!type.artFile.empty()) type.art = getImage("actors/" + type.artFile + ".png");
         CreatureType::add(type);
     }
@@ -228,6 +231,31 @@ bool System::loadLocationsData() {
         itemLocations.push_back(ItemLocation{itemId});
     }
     log.info(std::string("Loaded ") + std::to_string(itemLocations.size()) + " item locations.");
+    return true;
+}
+
+bool System::loadLootTables() {
+    Logger &log = Logger::getInstance();
+    unsigned lootTablesAddr = vm->getExport("__loottables");
+    if (lootTablesAddr == static_cast<unsigned>(-1)) {
+        log.error("Loot table data not found.");
+        return false;
+    }
+    const unsigned lootTableCount = vm->readWord(lootTablesAddr);
+    lootTablesAddr += 4;
+    for (unsigned counter = 0; counter < lootTableCount; ++counter) {
+        int rowCount = vm->readWord(lootTablesAddr);
+        lootTablesAddr += 4;
+        LootTable table;
+        for (int i = 0; i < rowCount; ++i) {
+            int chance = vm->readWord(lootTablesAddr);
+            int itemId = vm->readWord(lootTablesAddr + 4);
+            lootTablesAddr += 8;
+            table.rows.push_back(LootRow{chance, itemId});
+        }
+        lootTables.push_back(table);
+    }
+    log.info(std::string("Loaded ") + std::to_string(lootTables.size()) + " loot tables.");
     return true;
 }
 

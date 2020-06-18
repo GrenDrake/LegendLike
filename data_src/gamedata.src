@@ -14,6 +14,10 @@
 .define eventAuto         0
 .define eventManual       1
 
+.define lootNone          0
+.define lootTable         1
+.define lootLocation      2
+.define lootFunction      3
 
 .tiledef tileGround         name="dirt"              art="dirt"            red=192 green=192 blue=192
 .tiledef tileWall           name="wall"              art="std_wall"        red=0   green=0   blue=0   solid opaque
@@ -95,6 +99,10 @@
 .define itmCapArrow      13
 .define itmCapBomb       14
 
+.location locBanditSword     item=itmSwordUpgrade
+
+.loottable lootTableA        20 itmAmmoArrow 60 itmAmmoBomb
+
 .npctype npcTypePlayer       name="player"  art="player" health=10 energy=10 aiType=aiPlayer
 .npctype npcTypeSage         name="sage"    art="sage" aiType=aiStill
 .npctype npcTypeGuard        name="guard"   art="guard" aiType=aiStill
@@ -104,8 +112,8 @@
 .npctype npcTypeChicken      name="chicken" art="chicken" moveRate=2 aiType=aiRandom
 .npctype npcTypeRooster      name="rooster" art="rooster" moveRate=2 aiType=aiRandom
 
-.npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy
-.npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3 aiType=aiEnemy
+.npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy lootType=lootTable loot=lootTableA
+.npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3 aiType=aiEnemy lootType=lootTable loot=lootTableA
 
 .npctype npcTypeBoulder   name="boulder"   art="boulder1" aiType=aiPushable
 

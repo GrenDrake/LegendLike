@@ -124,7 +124,7 @@ bool parseData(ParseState &state, int width) {
     AsmData *data = new AsmData(origin, width);
     while (state.here().type != TokenType::EOL) {
         if (state.here().type == TokenType::Identifier) {
-            data->data.push_back(Value{0x7FFFFFFF, state.here().text});
+            data->data.push_back(Value(state.here().text));
         } else if (state.require(TokenType::Integer)) {
             data->data.push_back(Value{state.here().i});
         }
@@ -184,6 +184,30 @@ bool parseLocation(ParseState &state) {
     return true;
 }
 
+
+bool parseLootTable(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .loottable
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    LootTable lootTable{ origin, identifier };
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Integer)) return false;
+        int chance = state.here().i;
+        state.advance();
+
+        Value ItemId = tokenToValue(state);
+        state.advance();
+        lootTable.rows.push_back(LootRow{Value{chance}, ItemId});
+    }
+
+    state.code.lootTables.push_back(lootTable);
+    return true;
+}
+
 bool parseNPC(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .npc
@@ -208,6 +232,7 @@ bool parseNPC(ParseState &state) {
         if (label == "name")          name = value;
         else if (label == "talkFunc") talkFunc = value;
         else if (label == "special")  specialValue = value;
+        else if (label == "typeId")   typeId = value;
         else if (label == "typeId")   typeId = value;
         else if (label == "x")        xPos = value;
         else if (label == "y")        yPos = value;
@@ -307,6 +332,8 @@ bool parseNpcType(ParseState &state) {
     Value damage{1};
     Value moveRate{1};
     Value aiType{0};
+    Value lootType(0);
+    Value loot(0);
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
         const std::string &label = state.here().text;
@@ -327,13 +354,15 @@ bool parseNpcType(ParseState &state) {
         else if (label == "evasion")  evasion = value;
         else if (label == "moveRate") moveRate = value;
         else if (label == "aiType")   aiType = value;
+        else if (label == "lootType") lootType = value;
+        else if (label == "loot")     loot = value;
         else {
             state.code.errorLog.add(origin, "Unknown npc type attribute " + label + ".");
             return false;
         }
     }
 
-    NpcType npcType{ origin, identifier, name, artIndex, aiType, health, energy, damage, accuracy, evasion, moveRate };
+    NpcType npcType{ origin, identifier, name, artIndex, aiType, health, energy, damage, accuracy, evasion, moveRate, lootType, loot };
     state.code.npcTypes.push_back(npcType);
     return true;
 }
@@ -564,6 +593,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseTileDef(state)) continue;
             } else if (state.here().text == ".version") {
                 if (!parseVersion(state)) continue;
+            } else if (state.here().text == ".loottable") {
+                if (!parseLootTable(state)) continue;
             } else if (state.here().text == ".export") {
                 state.advance();
                 while (state.here().type != TokenType::EOL) {
@@ -614,10 +645,10 @@ bool buildPush(ParseState &state, const Origin &origin, const Value &value) {
 
 Value tokenToValue(ParseState &state) {
     if (state.here().type == TokenType::Identifier) {
-        return Value{0x7FFFFFFF, state.here().text};
+        return Value(state.here().text);
     } else if (state.matches(TokenType::String)) {
         std::string label = anonymousString(state, state.here().origin, state.here().text);
-        return Value{0x7FFFFFFF, label};
+        return Value(label);
     } else if (state.require(TokenType::Integer)) {
         return Value{state.here().i};
     } else {

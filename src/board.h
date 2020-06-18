@@ -120,6 +120,8 @@ public:
     void addActor(Creature *creature, const Point &where);
     void removeActor(Creature *creature);
     void removeActor(const Point &p);
+    void doDamage(System &state, Creature *to, int amount, int type, const std::string &source);
+    void makeLoot(System &state, const Creature *from);
     Creature* getPlayer();
 
     void clearTo(int tile);

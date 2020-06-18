@@ -127,11 +127,7 @@ void Creature::ai(System &system) {
                         system.addMessage(upperFirst(getName()) + " misses you.");
                     } else {
                         int damage = typeInfo->damage;
-                        player->takeDamage(damage);
-                        std::stringstream msg;
-                        msg << upperFirst(getName()) << " attacks you for " << damage << " damage.";
-                        system.addMessage(msg.str());
-                        if (player->curHealth <= 0) system.appendMessage(" You die!");
+                        board->doDamage(system, player, damage, 0, getName());
                     }
                 } else {
                     // move towards player

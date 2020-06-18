@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     code.exports.push_back("__npctypes");
     code.exports.push_back("__tiledefs");
     code.exports.push_back("__mapdata");
+    code.exports.push_back("__loottables");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -120,7 +121,7 @@ bool buildHeader(Program &code) {
                 exportsData->data.push_back(wordValue);
                 counter += 4;
             }
-            exportsData->data.push_back(Value{0, name});
+            exportsData->data.push_back(Value(name));
         }
         std::cerr << "Header size: " << headerSize + exportsData->data.size() * exportsData->width << "\n";
     }
@@ -150,8 +151,7 @@ bool buildHeader(Program &code) {
         stringTable.push_back(locationsLabel);
         AsmData *locationsCountData = new AsmData(Origin(), 4);
         stringTable.push_back(locationsCountData);
-        Value locationCount;
-        locationCount.value = code.locations.size();
+        Value locationCount(code.locations.size());
         locationsCountData->data.push_back(locationCount);
         unsigned locationsSize = 4;
         int counter = 0;
@@ -164,6 +164,32 @@ bool buildHeader(Program &code) {
             ++counter;
         }
         std::cerr << "Locations size: " << locationsSize << " (" << counter << " items)\n";
+    }
+
+    {
+        // build the loot tables table
+        AsmLabel *lootTablesLabel = new AsmLabel(Origin(), "__loottables");
+        stringTable.push_back(lootTablesLabel);
+        AsmData *lootTablesCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(lootTablesCountData);
+        Value lootTablesCount(code.lootTables.size());
+        lootTablesCountData->data.push_back(lootTablesCount);
+        unsigned lootTablesSize = 4;
+        int counter = 0;
+        for (const LootTable &lootTable : code.lootTables) {
+            code.addSymbol(lootTable.identifier, SymbolDef{lootTable.origin, Value{counter}});
+            AsmData *data = new AsmData(lootTable.origin, 4);
+            data->data.push_back(Value(lootTable.rows.size()));
+            lootTablesSize += 4;
+            for (const LootRow &row : lootTable.rows) {
+                data->data.push_back(row.chance);
+                data->data.push_back(row.itemId);
+                lootTablesSize += 8;
+            }
+            stringTable.push_back(data);
+            ++counter;
+        }
+        std::cerr << "Loot tables size: " << lootTablesSize << " (" << counter << " items)\n";
     }
 
     {
@@ -265,6 +291,8 @@ bool buildHeader(Program &code) {
             data->data.push_back(npcType.accuracy);
             data->data.push_back(npcType.evasion);
             data->data.push_back(npcType.moveRate);
+            data->data.push_back(npcType.lootType);
+            data->data.push_back(npcType.loot);
             stringTable.push_back(data);
             npcTypesSize += data->data.size() * data->width;
             ++counter;
