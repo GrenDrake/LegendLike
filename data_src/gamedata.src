@@ -120,13 +120,19 @@
 .export start
 start:
     ; teleport the player to the starting location
-    @warpto     23 17 0
+    @warpto     23 14 0
     @saystr     strPrologText
     textbox
     @saystr     "---""
     textbox
     ret
 
+.export onDeath
+onDeath:
+    @saystr     "You can take no more and collapse! When you awaken, you find yourself returned to your home."
+    textbox
+    @warpto     23 14 0
+    ret
 
 dungeon_foe_info:
     .word   100     ; foes to add to map

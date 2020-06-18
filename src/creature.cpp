@@ -59,7 +59,7 @@ int Creature::takeDamage(int amount) {
         if (-amount > maxGain) amount = -maxGain;
     }
     curHealth -= amount;
-    if (curHealth <= 0) position = Point(-1, -1);
+    if (curHealth <= 0 && typeInfo->aiType != aiPlayer) position = Point(-1, -1);
     return amount;
 }
 
