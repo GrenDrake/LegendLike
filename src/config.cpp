@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
-#include "game.h"
+#include "gamestate.h"
 #include "config.h"
 #include "physfs.h"
 #include "logger.h"

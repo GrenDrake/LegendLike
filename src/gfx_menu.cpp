@@ -6,7 +6,7 @@
 #include "command.h"
 #include "config.h"
 #include "game.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "menu.h"
 
 

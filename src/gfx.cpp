@@ -7,7 +7,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "actor.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "board.h"
 #include "game.h"
 #include "point.h"

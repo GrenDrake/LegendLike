@@ -14,7 +14,7 @@
 #include "point.h"
 #include "vm.h"
 #include "random.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "textutil.h"
 
 void gfx_handleInput(System &state);

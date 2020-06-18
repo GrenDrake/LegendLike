@@ -7,7 +7,7 @@
 #include "actor.h"
 #include "game.h"
 #include "random.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "point.h"
 #include "textutil.h"
 

@@ -6,7 +6,7 @@
 
 #include "actor.h"
 #include "command.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "board.h"
 #include "game.h"
 #include "point.h"

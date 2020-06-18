@@ -4,7 +4,7 @@
 #include "actor.h"
 #include "board.h"
 #include "game.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "command.h"
 
 static SDL_Rect doneButton = { -1 };

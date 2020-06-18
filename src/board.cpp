@@ -11,7 +11,7 @@
 #include "actor.h"
 #include "point.h"
 #include "random.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "logger.h"
 #include "vm.h"
 #include "textutil.h"

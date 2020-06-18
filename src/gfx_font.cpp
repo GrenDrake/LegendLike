@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 
-#include "gfx.h"
+#include "gamestate.h"
 
 Font::Font(SDL_Renderer *renderer, SDL_Texture *texture)
 : mRenderer(renderer), mTexture(texture), mCharWidth(8), mCharHeight(8),

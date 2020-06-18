@@ -4,7 +4,7 @@
 
 #include "command.h"
 #include "config.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "point.h"
 
 CommandDef commandQuit = { Command::Quit };

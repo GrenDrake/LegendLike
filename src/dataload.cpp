@@ -14,7 +14,7 @@
 #include "physfs.h"
 #include "logger.h"
 #include "textutil.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "physfsrwops.h"
 
 

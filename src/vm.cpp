@@ -5,7 +5,7 @@
 
 #include "actor.h"
 #include "board.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "vm.h"
 #include "random.h"
 #include "textutil.h"

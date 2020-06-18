@@ -4,7 +4,7 @@
 
 #include <physfs.h>
 #include "physfsrwops.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "logger.h"
 
 

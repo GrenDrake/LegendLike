@@ -1,5 +1,5 @@
-#ifndef GFX_H
-#define GFX_H
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 
 #include <SDL2/SDL_mixer.h>
 
@@ -243,6 +243,8 @@ const int charStats = 0;
 const int charAbilities = 1;
 const int charInventory = 2;
 const int charModeCount = 3;
+
+char* slurpFile(const std::string &filename);
 
 bool repaint(System &state, bool callPresent = true);
 void gfx_frameDelay(System &state);

@@ -10,7 +10,7 @@
 #include "physfs.h"
 
 #include "game.h"
-#include "gfx.h"
+#include "gamestate.h"
 #include "vm.h"
 #include "random.h"
 #include "config.h"

@@ -4,7 +4,7 @@
 #include "logger.h"
 #include "board.h"
 #include "vm.h"
-#include "gfx.h"
+#include "gamestate.h"
 
 
 System::System(SDL_Renderer *renderer, Random &rng)
