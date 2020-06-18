@@ -371,6 +371,9 @@ const Board::Event* Board::eventAt(const Point &where) const {
 }
 
 void Board::tick(System &system) {
+    // don't do any AI stuff in map edit mode
+    if (system.mapEditMode) return;
+
     for (Creature *who : creatures) {
         who->ai(system);
     }

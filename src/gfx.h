@@ -193,6 +193,8 @@ public:
     bool showFPS;
     bool wantsTick;
     bool showDieRolls;
+    bool mapEditMode;
+    int  mapEditTile;
 
     bool loadAudioTracks();
     bool loadCreatureData();
@@ -205,6 +207,9 @@ public:
     int framecount, framerate, baseticks, lastticks, fps;
     int timerFrames, timerTime, actualFPS;
     double tickrate;
+
+    std::string gameName;
+    int gameId, majorVersion, minorVersion;
 };
 
 class Font {

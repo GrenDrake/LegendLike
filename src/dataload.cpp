@@ -63,6 +63,11 @@ bool System::load() {
         if (!loadMapInfoData())                     return false;
         if (!loadMusicTracks())                     return false;
         if (!loadTileData())                        return false;
+
+        gameName = vm->readString(vm->readWord(4));
+        gameId = vm->readWord(8);
+        majorVersion = vm->readWord(12);
+        minorVersion = vm->readWord(16);
     } catch (VMError &e) {
         log.error(e.what());
         return false;

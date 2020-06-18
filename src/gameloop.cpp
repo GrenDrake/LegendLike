@@ -264,6 +264,11 @@ void gfx_handleInput(System &state) {
                 break;
 
             case Command::Move: {
+                if (state.mapEditMode) {
+                    Creature *player = state.getPlayer();
+                    player->position = player->position.shift(cmd.direction);
+                    break;
+                }
                 Point dest = state.getPlayer()->position.shift(cmd.direction);
                 if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
                     const Board::Event *e = state.getBoard()->eventAt(dest);
@@ -276,6 +281,11 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
             case Command::Run: {
+                if (state.mapEditMode) {
+                    Point dest = state.getPlayer()->position.shift(cmd.direction);
+                    state.getBoard()->setTile(dest, state.mapEditTile);
+                    break;
+                }
                 Dir d = cmd.direction;
                 if (d == Dir::None) {
                     d = gfx_GetDirection(state, "Run");
@@ -285,6 +295,11 @@ void gfx_handleInput(System &state) {
                 break; }
 
             case Command::Interact: {
+                if (state.mapEditMode) {
+                    Point dest = state.getPlayer()->position.shift(cmd.direction);
+                    state.mapEditTile = state.getBoard()->getTile(dest);
+                    break;
+                }
                 Dir d = cmd.direction;
                 if (d == Dir::None) {
                     d = gfx_GetDirection(state, "Activate", true);
@@ -323,6 +338,10 @@ void gfx_handleInput(System &state) {
 
 
             case Command::NextSubweapon: {
+                if (state.mapEditMode) {
+                    ++state.mapEditTile;
+                    break;
+                }
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -340,6 +359,10 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
             case Command::PrevSubweapon: {
+                if (state.mapEditMode) {
+                    if (state.mapEditTile) --state.mapEditTile;
+                    break;
+                }
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -423,6 +446,11 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
 
+            case Command::Debug_MapEditMode:
+                state.mapEditMode = !state.mapEditMode;
+                if (state.mapEditMode)  state.addMessage("Entering map editing mode");
+                else                    state.addMessage("Exiting map editing mode");
+                break;
             case Command::Debug_Restore:
                 state.getPlayer()->curHealth = state.getPlayer()->typeInfo->maxHealth;
                 state.getPlayer()->curEnergy = state.getPlayer()->typeInfo->maxEnergy;

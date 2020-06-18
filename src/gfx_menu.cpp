@@ -1,3 +1,4 @@
+#include <sstream>
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -28,6 +29,15 @@ void showVersion(System &state) {
             screenWidth - state.smallFont->getCharWidth() * (text.size() + 1),
             screenHeight - state.smallFont->getLineHeight(),
             text);
+    std::stringstream gameVersionS;
+    gameVersionS << state.gameName << " [" << std::hex << state.gameId;
+    gameVersionS << "] " << std::dec << state.majorVersion << '.' << state.minorVersion;
+    std::string gameVersion = gameVersionS.str();
+
+    state.smallFont->out(
+            screenWidth - state.smallFont->getCharWidth() * (gameVersion.size() + 1),
+            screenHeight - state.smallFont->getLineHeight() * 2,
+            gameVersion);
 }
 
 int runMenu(System &state, MenuOption *menu, int defaultOption) {

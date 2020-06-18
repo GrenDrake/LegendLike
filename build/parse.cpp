@@ -478,6 +478,9 @@ bool parseTileDef(ParseState &state) {
 bool parseVersion(ParseState &state) {
     state.advance(); // skip .version
 
+    state.code.gameName = tokenToValue(state);
+    state.advance();
+
     state.code.gameId = tokenToValue(state);
     state.advance();
 

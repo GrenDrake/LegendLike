@@ -202,48 +202,59 @@ void gfx_drawSidebar(System &state) {
     yPos += tinyLineHeight;
     const int statTop = yPos;
 
-    SDL_Rect artPos{ xPos, yPos, 16, 16 };
-    SDL_Texture *swordArt = state.getImage("ui/sword.png");
-    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.swordLevel));
-    yPos += 20; artPos.y += 20;
-    swordArt = state.getImage("ui/armour.png");
-    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.armourLevel));
-    yPos += 40; artPos.y += 40;
-    swordArt = state.getImage("ui/arrow.png");
-    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.arrowCount) + "/" + std::to_string(state.arrowCapacity));
-    yPos += 20; artPos.y += 20;
-    swordArt = state.getImage("ui/bomb.png");
-    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.bombCount) + "/" + std::to_string(state.bombCapacity));
-    yPos += 20; artPos.y += 20;
-    swordArt = state.getImage("ui/coin.png");
-    SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-    state.tinyFont->out(xPos + 20, yPos, std::to_string(state.coinCount));
-    int firstYPos = yPos + 10;
+    if (state.mapEditMode) {
+        SDL_Rect artPos{ xPos, yPos, 32, 32 };
+        const TileInfo &info = TileInfo::get(state.mapEditTile);
+        SDL_RenderCopy(state.renderer, info.art, nullptr, &artPos);
+        state.tinyFont->out(xPos + 36, yPos, std::to_string(state.mapEditTile));
+        yPos += tinyLineHeight;
+        state.tinyFont->out(xPos + 36, yPos, info.name);
+        yPos += tinyLineHeight;
 
-    yPos = statTop;
-    int xPos2 = xPos + sidebarWidth / 2;
-    artPos.x = xPos2;
-    for (int i = 0; i < SW_COUNT; ++i) {
-        if (state.subweaponLevel[i] <= 0) continue;
-        SDL_Texture *swordArt = state.getImage(state.subweapons[i].artfile);
-        artPos.y = yPos;
+    } else {
+        SDL_Rect artPos{ xPos, yPos, 16, 16 };
+        SDL_Texture *swordArt = state.getImage("ui/sword.png");
         SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
-        if (i == SW_BOW) {
-            state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+        state.tinyFont->out(xPos + 20, yPos, std::to_string(state.swordLevel));
+        yPos += 20; artPos.y += 20;
+        swordArt = state.getImage("ui/armour.png");
+        SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+        state.tinyFont->out(xPos + 20, yPos, std::to_string(state.armourLevel));
+        yPos += 40; artPos.y += 40;
+        swordArt = state.getImage("ui/arrow.png");
+        SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+        state.tinyFont->out(xPos + 20, yPos, std::to_string(state.arrowCount) + "/" + std::to_string(state.arrowCapacity));
+        yPos += 20; artPos.y += 20;
+        swordArt = state.getImage("ui/bomb.png");
+        SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+        state.tinyFont->out(xPos + 20, yPos, std::to_string(state.bombCount) + "/" + std::to_string(state.bombCapacity));
+        yPos += 20; artPos.y += 20;
+        swordArt = state.getImage("ui/coin.png");
+        SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+        state.tinyFont->out(xPos + 20, yPos, std::to_string(state.coinCount));
+        int firstYPos = yPos + 10;
+
+        yPos = statTop;
+        int xPos2 = xPos + sidebarWidth / 2;
+        artPos.x = xPos2;
+        for (int i = 0; i < SW_COUNT; ++i) {
+            if (state.subweaponLevel[i] <= 0) continue;
+            SDL_Texture *swordArt = state.getImage(state.subweapons[i].artfile);
+            artPos.y = yPos;
+            SDL_RenderCopy(state.renderer, swordArt, nullptr, &artPos);
+            if (i == SW_BOW) {
+                state.tinyFont->out(xPos2 + 20, yPos, std::to_string(state.subweaponLevel[i]));
+            }
+            if (i == state.currentSubweapon) {
+                swordArt = state.getImage("ui/subweapon_cursor.png");
+                SDL_Rect cursorRect { xPos2 - 8, yPos, 8, 16 };
+                SDL_RenderCopy(state.renderer, swordArt, nullptr, &cursorRect);
+            }
+            yPos += 20;
         }
-        if (i == state.currentSubweapon) {
-            swordArt = state.getImage("ui/subweapon_cursor.png");
-            SDL_Rect cursorRect { xPos2 - 8, yPos, 8, 16 };
-            SDL_RenderCopy(state.renderer, swordArt, nullptr, &cursorRect);
-        }
-        yPos += 20;
+        yPos -= 10;
+        if (firstYPos > yPos) yPos = firstYPos;
     }
-    yPos -= 10;
-    if (firstYPos > yPos) yPos = firstYPos;
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     //  MAP AND TIMER INFO

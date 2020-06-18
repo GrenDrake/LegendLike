@@ -81,6 +81,7 @@ bool buildHeader(Program &code) {
         AsmData *headerData = new AsmData(Origin(), 4);
         stringTable.push_back(headerData);
         headerData->data.push_back(Value{0x004D5654});
+        headerData->data.push_back(code.gameName);
         headerData->data.push_back(code.gameId);
         headerData->data.push_back(code.gameMajorVersion);
         headerData->data.push_back(code.gameMinorVersion);

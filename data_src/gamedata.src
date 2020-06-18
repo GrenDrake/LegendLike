@@ -1,4 +1,4 @@
-.version 0 0 0
+.version "LegendLike Engine Demo" 0 0 1
 
 .define aiStill           0
 .define aiRandom          1

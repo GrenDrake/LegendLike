@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define GAME_NAME   "BeastDuel"
+#define GAME_NAME   "LegendLike Engine"
 #define GAME_MAJOR  0
 #define GAME_MINOR  2
 #define GAME_PATCH  0
