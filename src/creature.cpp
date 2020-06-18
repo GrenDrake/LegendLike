@@ -34,7 +34,7 @@ int CreatureType::typeCount() {
 
 Creature::Creature(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
-  aiType(aiStill), aiArg(0), talkFunc(0), talkArg(0),
+  talkFunc(0), talkArg(0),
   ai_lastDir(Dir::None), ai_lastTarget(-1, -1), ai_moveCount(0)
 {
     typeIdent = type;
@@ -81,7 +81,7 @@ void Creature::ai(System &system) {
 
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };
 
-    switch(aiType) {
+    switch(typeInfo->aiType) {
         case aiPlayer:
         case aiStill:
         case aiPushable:

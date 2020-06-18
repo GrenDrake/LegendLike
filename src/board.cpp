@@ -97,7 +97,7 @@ void Board::removeActor(const Point &p) {
 
 Creature* Board::getPlayer() {
     for (Creature *who : creatures) {
-        if (who->aiType == aiPlayer) {
+        if (who->typeInfo->aiType == aiPlayer) {
             return who;
         }
     }

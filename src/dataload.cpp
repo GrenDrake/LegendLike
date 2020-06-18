@@ -185,7 +185,7 @@ bool System::loadMapInfoData() {
 
 bool System::loadCreatureData() {
     Logger &log = Logger::getInstance();
-    const unsigned npcTypeSize = 32;
+    const unsigned npcTypeSize = 36;
     unsigned npcTypesAddr = vm->getExport("__npctypes");
     if (npcTypesAddr == static_cast<unsigned>(-1)) {
         log.error("NPC types data not found.");
@@ -200,12 +200,13 @@ bool System::loadCreatureData() {
         if (nameAddr) type.name    = vm->readString(nameAddr);
         int artAddr    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 4);
         if (artAddr)  type.artFile = vm->readString(artAddr);
-        type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
-        type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);
-        type.damage    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
-        type.accuracy  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
-        type.evasion   = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
-        type.moveRate  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 28);
+        type.aiType    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 8);
+        type.maxHealth = vm->readWord(npcTypesAddr + counter * npcTypeSize + 12);
+        type.maxEnergy = vm->readWord(npcTypesAddr + counter * npcTypeSize + 16);
+        type.damage    = vm->readWord(npcTypesAddr + counter * npcTypeSize + 20);
+        type.accuracy  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 24);
+        type.evasion   = vm->readWord(npcTypesAddr + counter * npcTypeSize + 28);
+        type.moveRate  = vm->readWord(npcTypesAddr + counter * npcTypeSize + 32);
         if (!type.artFile.empty()) type.art = getImage("actors/" + type.artFile + ".png");
         CreatureType::add(type);
     }

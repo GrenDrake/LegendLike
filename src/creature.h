@@ -38,6 +38,7 @@ public:
     std::string artFile;
     int maxHealth, maxEnergy;
     int damage, accuracy, evasion, moveRate;
+    int aiType;
 
     SDL_Texture *art;
 private:
@@ -60,8 +61,6 @@ public:
     const CreatureType *typeInfo;
     SDL_Texture *art;
 
-    int aiType;
-    int aiArg;
     int talkFunc;
     int talkArg;
 

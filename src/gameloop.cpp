@@ -41,7 +41,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         actor = board->actorAt(work);
         if (actor) {
             bool isHit = false;
-            if (actor->aiType == aiEnemy) {
+            if (actor->typeInfo->aiType == aiEnemy) {
                 isHit = doAccuracyCheck(state, state.getPlayer(), actor, 0);
             }
             if (!isHit) {
@@ -145,9 +145,9 @@ bool tryInteract(System &state, Dir d, const Point &target) {
     Creature *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
-        if (actor->aiType == aiPushable) {
+        if (actor->typeInfo->aiType == aiPushable) {
             actor->tryMove(state.getBoard(), d);
-        } else if (actor->aiType != aiEnemy) {
+        } else if (actor->typeInfo->aiType != aiEnemy) {
             if (actor->talkFunc) state.vm->run(actor->talkFunc);
             else                    state.addMessage(upperFirst(actor->getName()) + " has nothing to say.");
         } else if (state.swordLevel <= 0) {

@@ -241,6 +241,7 @@ bool buildHeader(Program &code) {
             AsmData *data = new AsmData(npcType.origin, 4);
             data->data.push_back(npcType.name);
             data->data.push_back(npcType.artIndex);
+            data->data.push_back(npcType.aiType);
             data->data.push_back(npcType.health);
             data->data.push_back(npcType.energy);
             data->data.push_back(npcType.damage);

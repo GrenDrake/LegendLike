@@ -557,15 +557,11 @@ bool VM::run(unsigned address) {
                 int x        = readShort(npcAddr + 12);
                 int y        = readShort(npcAddr + 14);
                 int typeId   = readShort(npcAddr + 16);
-                int aiType   = readByte (npcAddr + 18);
-                int aiArg    = readByte (npcAddr + 19);
                 if (board) {
                     std::string name = nameAddr ? readString(nameAddr) : "actor";
                     Creature *creature = new Creature(typeId);
                     board->addActor(creature, Point(x, y));
                     creature->name = name;
-                    creature->aiType = aiType;
-                    creature->aiArg = aiArg;
                     creature->talkFunc = talkFunc;
                     creature->talkArg = special;
                     creature->reset();

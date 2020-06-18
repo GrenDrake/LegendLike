@@ -123,6 +123,7 @@ struct NpcType {
     std::string identifier;
     Value name;
     Value artIndex;
+    Value aiType;
     Value health;
     Value energy;
     Value damage;

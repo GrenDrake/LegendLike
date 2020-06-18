@@ -206,8 +206,6 @@ bool parseNPC(ParseState &state) {
         state.advance();
 
         if (label == "name")          name = value;
-        else if (label == "aiType")   aiType = value;
-        else if (label == "aiArg")    aiArg = value;
         else if (label == "talkFunc") talkFunc = value;
         else if (label == "special")  specialValue = value;
         else if (label == "typeId")   typeId = value;
@@ -230,8 +228,6 @@ bool parseNPC(ParseState &state) {
     npcDataS->data.push_back(xPos);
     npcDataS->data.push_back(yPos);
     npcDataS->data.push_back(typeId);
-    npcDataB->data.push_back(aiType);
-    npcDataB->data.push_back(aiArg);
 
     state.code.add(npcLabel);
     state.code.add(npcDataW);
@@ -310,6 +306,7 @@ bool parseNpcType(ParseState &state) {
     Value evasion{0};
     Value damage{1};
     Value moveRate{1};
+    Value aiType{0};
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
         const std::string &label = state.here().text;
@@ -329,13 +326,14 @@ bool parseNpcType(ParseState &state) {
         else if (label == "accuracy") accuracy = value;
         else if (label == "evasion")  evasion = value;
         else if (label == "moveRate") moveRate = value;
+        else if (label == "aiType")   aiType = value;
         else {
             state.code.errorLog.add(origin, "Unknown npc type attribute " + label + ".");
             return false;
         }
     }
 
-    NpcType npcType{ origin, identifier, name, artIndex, health, energy, damage, accuracy, evasion, moveRate };
+    NpcType npcType{ origin, identifier, name, artIndex, aiType, health, energy, damage, accuracy, evasion, moveRate };
     state.code.npcTypes.push_back(npcType);
     return true;
 }

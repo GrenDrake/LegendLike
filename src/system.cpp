@@ -37,7 +37,6 @@ void System::reset() {
     mPlayer = new Creature(playerTypeId);
     mPlayer->name = "player";
     mPlayer->isPlayer = true;
-    mPlayer->aiType = aiPlayer;
     mPlayer->talkFunc = 0;
     mPlayer->reset();
 }

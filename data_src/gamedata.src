@@ -1,5 +1,6 @@
 .version "LegendLike Engine Demo" 0 0 1
 
+.define aiPlayer          99
 .define aiStill           0
 .define aiRandom          1
 .define aiPaceHorz        2
@@ -94,16 +95,17 @@
 .define itmCapArrow      13
 .define itmCapBomb       14
 
-.npctype npcTypePlayer    name="sage"    art="player" health=10 energy=10
-.npctype npcTypeSage      name="sage"    art="sage" moveRate=2
-.npctype npcTypeOctopus   name="octopus" art="octopus" moveRate=3
-.npctype npcTypeGuard     name="guard"   art="guard" moveRate=2
-.npctype npcTypeCow       name="cow"     art="cow" moveRate=3
+.npctype npcTypePlayer       name="sage"    art="player" health=10 energy=10 aiType=aiPlayer
+.npctype npcTypeSage         name="sage"    art="sage" moveRate=2 aiType=aiPaceBox
+.npctype npcTypeOctopus      name="octopus" art="octopus" moveRate=3 aiType=aiRandom
+.npctype npcTypeGuard        name="guard"   art="guard" moveRate=2 aiType=aiStill
+.npctype npcTypeMovingGuard  name="guard"   art="guard" moveRate=2 aiType=aiStill
+.npctype npcTypeCow          name="cow"     art="cow" moveRate=3 aiType=aiRandom
 
-.npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5
-.npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3
+.npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy
+.npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3 aiType=aiEnemy
 
-.npctype npcTypeBoulder   name="boulder"   art="boulder1"
+.npctype npcTypeBoulder   name="boulder"   art="boulder1" aiType=aiPushable
 
 .mapdata mapTown            name="Town"             mapId=0 width=66 height=66 onBuild=map0_build onEnter=map0_enter musicTrack=1
 .mapdata mapTownUnderground name="Town Underground" mapId=1 width=66 height=66 onBuild=map1_build musicTrack=1

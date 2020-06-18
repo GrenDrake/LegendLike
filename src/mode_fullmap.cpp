@@ -63,7 +63,7 @@ void gfx_DrawMap(System &system) {
                         objectPosition = texturePosition;
                     }
 
-                    if (creatureHere->aiType == aiPlayer) {
+                    if (creatureHere->typeInfo->aiType == aiPlayer) {
                         SDL_SetRenderDrawColor(system.renderer, 32, 192, 32, SDL_ALPHA_OPAQUE);
                     } else {
                         SDL_SetRenderDrawColor(system.renderer, 192, 32, 192, SDL_ALPHA_OPAQUE);

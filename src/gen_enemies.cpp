@@ -27,7 +27,6 @@ void mapRandomEnemies(Board *board, Random &rng, const RandomFoeInfo &info) {
         int rowId = rng.next32() % info.typeList.size();
         int type = info.typeList[rowId];
         Creature *actor = new Creature(type);
-        actor->aiType = aiEnemy;
         actor->reset();
         board->addActor(actor, here);
     }

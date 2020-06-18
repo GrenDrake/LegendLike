@@ -85,18 +85,18 @@ map0_talkSage:
     textbox
     ret
 
-.npc npcProfessor      name="professor"    x=46 y=14 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talk_professor
-.npc npcArchdean       name="archdean"     x=51 y=21 aiType=aiPaceBox       typeId=npcTypeSage  talkFunc=map0_talk_archdean
-.npc npcStudent        name="student"      x=51 y=23 aiType=aiAvoidPlayer   typeId=npcTypeGuard
-.npc npcCow1           name="cow"          x=19 y=11 aiType=aiRandom        typeId=npcTypeCow
-.npc npcCow2           name="cow"          x=24 y=14 aiType=aiPaceHorz      typeId=npcTypeCow
-.npc npcCow3           name="cow"          x=30 y=15 aiType=aiPaceVert      typeId=npcTypeCow
-.npc npcCow4           name="cow"          x=33 y=13 aiType=aiFollowPlayer  typeId=npcTypeCow
-.npc npcStablemaster   name="stablemaster" x=27 y=18 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_test_giveparty
-.npc npcDungeonGuard   name="guard"        x=29 y=25 aiType=aiStill         typeId=npcTypeGuard talkFunc=map0_talk_gateguard
-.npc npcTownCivilian1  name="civilian"     x=28 y=21 aiType=aiRandom        typeId=npcTypeGuard talkFunc=map0_test_fight
-.npc npcTownCivilian2  name="sage"         x=37 y=25 aiType=aiStill         typeId=npcTypeSage  talkFunc=map0_talkSage
-.npc townBoulder                           x=18 y=30 aiType=aiPushable      typeId=npcTypeBoulder
+.npc npcProfessor      name="professor"    x=46 y=14 typeId=npcTypeSage  talkFunc=map0_talk_professor
+.npc npcArchdean       name="archdean"     x=51 y=21 typeId=npcTypeSage  talkFunc=map0_talk_archdean
+.npc npcStudent        name="student"      x=51 y=23 typeId=npcTypeGuard
+.npc npcCow1           name="cow"          x=19 y=11 typeId=npcTypeCow
+.npc npcCow2           name="cow"          x=24 y=14 typeId=npcTypeCow
+.npc npcCow3           name="cow"          x=30 y=15 typeId=npcTypeCow
+.npc npcCow4           name="cow"          x=33 y=13 typeId=npcTypeCow
+.npc npcStablemaster   name="stablemaster" x=27 y=18 typeId=npcTypeSage  talkFunc=map0_test_giveparty
+.npc npcDungeonGuard   name="guard"        x=29 y=25 typeId=npcTypeGuard talkFunc=map0_talk_gateguard
+.npc npcTownCivilian1  name="civilian"     x=28 y=21 typeId=npcTypeGuard talkFunc=map0_test_fight
+.npc npcTownCivilian2  name="sage"         x=37 y=25 typeId=npcTypeSage  talkFunc=map0_talkSage
+.npc townBoulder                           x=18 y=30 typeId=npcTypeBoulder
 
 
 map0_enter:
