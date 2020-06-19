@@ -103,7 +103,7 @@
 .itemdef itemAmmoBomb     name="bombs"  art="bomb"   itemId=itemClassAmmoBomb
 .itemdef itemCoin         name="coins"  art="coins"  itemId=itemClassCoin
 
-.loottable lootTableA        20 itemAmmoArrow 60 itemAmmoBomb
+.loottable lootTableA        20 itemAmmoArrow 40 itemAmmoBomb 60 itemCoin
 
 .npctype npcTypePlayer       name="player"  art="player" health=10 energy=10 aiType=aiPlayer
 .npctype npcTypeSage         name="sage"    art="sage" aiType=aiStill
