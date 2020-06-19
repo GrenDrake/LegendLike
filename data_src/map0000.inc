@@ -106,7 +106,7 @@ map0_talkSage:
     ret
 
 map0_npclist:
-.npc npcProfessor      name="professor"    x=46 y=14 typeId=npcTypeSage  talkFunc=map0_talk_professor
+.npc npcProfessor      name="Jeffrey"      x=46 y=14 typeId=npcTypeSage  talkFunc=map0_talk_professor proper
 .npc npcArchdean       name="archdean"     x=51 y=21 typeId=npcTypeSage  talkFunc=map0_talk_archdean
 .npc npcStudent        name="student"      x=51 y=23 typeId=npcTypeGuard
 .npc npcCow1                               x=19 y=11 typeId=npcTypeCow

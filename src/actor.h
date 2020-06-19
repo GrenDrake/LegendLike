@@ -74,6 +74,7 @@ public:
     std::vector<Point> ai_lastPath;
     int ai_pathNext;
     int ai_moveCount;
+    bool hasProperName;
 
 
     void ai(System &system);

@@ -554,7 +554,7 @@ bool VM::run(unsigned address) {
                 addActor(address);
                 break; }
             case Opcode::mf_addactors: {
-                const int npcSize = 18;
+                const int npcSize = 22;
                 int baseAddr = pop();
                 while (1) {
                     if (readWord(baseAddr) == -1) break;
@@ -686,17 +686,20 @@ bool VM::run(unsigned address) {
 void VM::addActor(int npcAddr) {
     if (!state || !state->getBoard()) return;
 
-    int nameAddr = readWord (npcAddr);
-    int talkFunc = readWord (npcAddr + 4);
-    int special  = readWord (npcAddr + 8);
-    int x        = readShort(npcAddr + 12);
-    int y        = readShort(npcAddr + 14);
-    int typeId   = readShort(npcAddr + 16);
+    int nameAddr   = readWord (npcAddr);
+    int talkFunc   = readWord (npcAddr + 4);
+    int special    = readWord (npcAddr + 8);
+    unsigned flags = readWord (npcAddr + 12);
+    int x          = readShort(npcAddr + 16);
+    int y          = readShort(npcAddr + 18);
+    int typeId     = readShort(npcAddr + 20);
+
     std::string name = nameAddr ? readString(nameAddr) : "";
     Actor *actor = new Actor(typeId);
     state->getBoard()->addActor(actor, Point(x, y));
     actor->name = name;
     actor->talkFunc = talkFunc;
     actor->talkArg = special;
+    if (flags & 0x01) actor->hasProperName = true;
     actor->reset();
 }

@@ -106,17 +106,19 @@ void doGameMenu(System &state) {
             case menuQuit:
                 state.wantsToQuit = true;
                 break;
-            case 0:
+            case 0: {
                 gameInProgress = true;
                 mainMenu[4].type = MenuType::Choice;
                 defOpt = 4;
                 state.reset();
-                state.getPlayer()->name = getRandomName(state.coreRNG);
+                Actor *player = state.getPlayer();
+                player->name = getRandomName(state.coreRNG);
+                player->hasProperName = true;
                 gfx_EditText(state, "Name?", state.getPlayer()->name, 16);
                 state.vm->runFunction("start");
                 gameloop(state);
                 state.playMusic(0);
-                break;
+                break; }
             case 3:
             case menuClose:
                 if (gameInProgress) {

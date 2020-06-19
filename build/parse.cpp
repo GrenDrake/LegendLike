@@ -244,6 +244,7 @@ bool parseLootTable(ParseState &state) {
     return true;
 }
 
+const unsigned AF_PROPER = 0x01;
 bool parseNPC(ParseState &state) {
     const Origin &origin = state.here().origin;
     state.advance(); // skip .npc
@@ -254,27 +255,30 @@ bool parseNPC(ParseState &state) {
 
     Value name{0}, aiType{0}, aiArg{0}, talkFunc{0}, specialValue{0};
     Value typeId{0}, xPos{0}, yPos{0};
+    bool isProper = false;
     while (!state.matches(TokenType::EOL)) {
         if (!state.require(TokenType::Identifier)) return false;
         const std::string &label = state.here().text;
         state.advance();
 
-        if (!state.require(TokenType::Equals)) return false;
-        state.advance();
-
-        Value value = tokenToValue(state);
-        state.advance();
-
-        if (label == "name")          name = value;
-        else if (label == "talkFunc") talkFunc = value;
-        else if (label == "special")  specialValue = value;
-        else if (label == "typeId")   typeId = value;
-        else if (label == "typeId")   typeId = value;
-        else if (label == "x")        xPos = value;
-        else if (label == "y")        yPos = value;
+        if (label == "proper") isProper = true;
         else {
-            state.code.errorLog.add(origin, "Unknown NPC attribute " + label + ".");
-            return false;
+            if (!state.require(TokenType::Equals)) return false;
+            state.advance();
+
+            Value value = tokenToValue(state);
+            state.advance();
+
+            if (label == "name")          name = value;
+            else if (label == "talkFunc") talkFunc = value;
+            else if (label == "special")  specialValue = value;
+            else if (label == "typeId")   typeId = value;
+            else if (label == "x")        xPos = value;
+            else if (label == "y")        yPos = value;
+            else {
+                state.code.errorLog.add(origin, "Unknown NPC attribute " + label + ".");
+                return false;
+            }
         }
     }
 
@@ -286,6 +290,7 @@ bool parseNPC(ParseState &state) {
     npcDataW->data.push_back(name);
     npcDataW->data.push_back(talkFunc);
     npcDataW->data.push_back(specialValue);
+    npcDataW->data.push_back(Value(isProper ? AF_PROPER : 0));
     npcDataS->data.push_back(xPos);
     npcDataS->data.push_back(yPos);
     npcDataS->data.push_back(typeId);

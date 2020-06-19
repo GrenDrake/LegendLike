@@ -35,15 +35,18 @@ int ActorType::typeCount() {
 Actor::Actor(int type)
 : level(1), xp(0), curHealth(0), curEnergy(0), isPlayer(false),
   talkFunc(0), talkArg(0),
-  ai_lastDir(Dir::None), ai_lastTarget(-1, -1), ai_moveCount(0)
+  ai_lastDir(Dir::None), ai_lastTarget(-1, -1), ai_moveCount(0), hasProperName(false)
 {
     typeIdent = type;
     typeInfo = &ActorType::get(type);
 }
 
 std::string Actor::getName() const {
-    if (name.empty()) return typeInfo->name;
-    return name + " (" + typeInfo->name + ")";
+    std::stringstream result;
+    if (!hasProperName) result << "the ";
+    if (name.empty()) result << typeInfo->name;
+    else result << name + " (" + typeInfo->name + ")";
+    return result.str();
 }
 
 void Actor::reset() {
