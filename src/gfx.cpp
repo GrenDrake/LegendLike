@@ -63,16 +63,15 @@ void gfx_drawMap(System &state) {
 
                 if (tileHere != tileOutOfBounds) {
                     const TileInfo &tileInfo = TileInfo::get(tileHere);
-                    // SDL_Texture *tile = tileInfo.art;
-                    // if (tileInfo.animLength > 0) {
-                    //     tile = state.getTile(tileInfo.artIndex + ((state.framecount / 12) % (tileInfo.animLength + 1)));
-                    // } else {
-                    //     tile = state.getTile(tileInfo.artIndex);
-                    // }
-                    if (tileInfo.art) {
-                        if (visible) SDL_SetTextureColorMod(tileInfo.art, 255, 255, 255);
-                        else         SDL_SetTextureColorMod(tileInfo.art,  96,  96,  96);
-                        SDL_RenderCopy(state.renderer, tileInfo.art, nullptr, &texturePosition);
+                    SDL_Texture *tile = tileInfo.art;
+                    if (tileInfo.animLength > 1) {
+                        int frameNumber = (state.framecount / 12) % tileInfo.animLength;
+                        tile = tileInfo.frames[frameNumber];
+                    }
+                    if (tile) {
+                        if (visible) SDL_SetTextureColorMod(tile, 255, 255, 255);
+                        else         SDL_SetTextureColorMod(tile,  96,  96,  96);
+                        SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                     }
                 }
 

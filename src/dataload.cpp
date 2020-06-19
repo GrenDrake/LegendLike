@@ -285,6 +285,7 @@ bool System::loadLootTables() {
     return true;
 }
 
+#include <iostream>
 bool System::loadTileData() {
     Logger &log = Logger::getInstance();
     const unsigned tileDefSize = 36;
@@ -309,7 +310,15 @@ bool System::loadTileData() {
         tile.interactTo = vm->readWord(tileDefsAddr + counter * tileDefSize + 24);
         tile.animLength = vm->readWord(tileDefsAddr + counter * tileDefSize + 28);
         tile.flags      = vm->readWord(tileDefsAddr + counter * tileDefSize + 32);
-        if (!tile.artFile.empty()) tile.art = getImage("tiles/" + tile.artFile + ".png");
+        if (!tile.artFile.empty()) {
+            if (tile.animLength > 1) {
+                for (int i = 1; i <= tile.animLength; ++i) {
+                    tile.frames.push_back(getImage("tiles/" + tile.artFile + std::to_string(i) + ".png"));
+                }
+            } else {
+                tile.art = getImage("tiles/" + tile.artFile + ".png");
+            }
+        }
         TileInfo::add(tile);
     }
     log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " tiles.");

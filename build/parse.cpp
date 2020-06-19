@@ -502,7 +502,7 @@ bool parseTileDef(ParseState &state) {
     Value green{0};
     Value blue{0};
     Value interactTo{-1};
-    Value animLength{0};
+    Value animLength{1};
     Value group{0};
     bool isSolid = false, isOpaque = false, isDoor = false;
     while (!state.matches(TokenType::EOL)) {

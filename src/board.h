@@ -25,6 +25,7 @@ struct TileInfo {
     unsigned flags;
 
     SDL_Texture *art;
+    std::vector<SDL_Texture*> frames;
 
     bool is(unsigned flag) const;
     static void add(const TileInfo &type);

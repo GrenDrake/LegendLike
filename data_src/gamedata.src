@@ -82,7 +82,7 @@
 .tiledef tileTree3          name="tree"              art="tree3" red=80 green=95 blue=80 solid opaque
 .tiledef tileLabSignLeft    name="lab sign"          art="sign_lab_left" red=127 green=127 blue=127 solid opaque
 .tiledef tileLabSignRight   name="lab sign"          art="sign_lab_right" red=127 green=127 blue=127 solid opaque
-.tiledef tileWater          name="water"             art="water" red=127 green=127 blue=255 animLength=1
+.tiledef tileWater          name="water"             art="water" red=127 green=127 blue=255 animLength=2
 
 .define itemClassSwordUpgrade  0
 .define itemClassArmourUpgrade 1
