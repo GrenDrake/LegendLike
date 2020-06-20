@@ -263,7 +263,6 @@ const int charModeCount = 3;
 char* slurpFile(const std::string &filename);
 
 bool repaint(System &state, bool callPresent = true);
-void gfx_frameDelay(System &state);
 
 void doCharInfo(System &system);
 void doCredits(System &state);

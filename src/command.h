@@ -46,6 +46,7 @@ struct CommandDef {
 };
 
 const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList);
+bool passCommand(System &state);
 std::ostream& operator<<(std::ostream &out, const Command &cmd);
 
 extern CommandDef gameCommands[];

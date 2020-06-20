@@ -424,15 +424,3 @@ bool repaint(System &state, bool callPresent) {
     if (callPresent) SDL_RenderPresent(state.renderer);
     return false;
 }
-
-void gfx_frameDelay(System &state) {
-    repaint(state);
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        const CommandDef &cmd = getCommand(state, event, gameCommands);
-        if (cmd.command == Command::Quit) {
-            state.wantsToQuit = true;
-            return;
-        }
-    }
-}

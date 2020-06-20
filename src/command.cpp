@@ -205,6 +205,7 @@ const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef 
         }
     }
 
+    if (commandList == nullptr) return commandNone;
     if (event.type != SDL_KEYDOWN)  return commandNone;
     event.key.keysym.mod &= KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_GUI;
     // convert right modifier keys into left equivelents
@@ -229,6 +230,15 @@ const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef 
     }
 
     return commandNone;
+}
+
+bool passCommand(System &state) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        getCommand(state, event, nullptr);
+        if (event.type == SDL_KEYDOWN) return true;
+    }
+    return false;
 }
 
 std::ostream& operator<<(std::ostream &out, const Command &cmd) {

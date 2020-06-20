@@ -216,9 +216,10 @@ void gameloop(System &state) {
                 }
                 if (state.hasTick()) {
                     state.tick();
-                    gfx_frameDelay(state);
+                    repaint(state);
+                    if (passCommand(state)) hitWall = true;
                 }
-            } while (!hitWall);
+            } while (!hitWall && !state.wantsToQuit);
             state.runDirection = Dir::None;
             continue;
         }
