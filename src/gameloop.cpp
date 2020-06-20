@@ -21,20 +21,83 @@ void gfx_handleInput(System &state);
 
 struct ProjectileInfo {
     std::string name;
+    std::string filename;
     int damageDice, damageSides;
+    bool directional;
 };
+
+const int projArrow = 0;
+const int projFireBolt = 1;
+const int projIceBolt = 2;
+std::vector<ProjectileInfo> projectiles{
+    {   "arrow",        "arrow_",   0, 6, true  },
+    {   "fire bolt",    "firebolt", 2, 6, false },
+    {   "ice bolt",     "icebolt",  2, 6, false },
+};
+
+std::string dirToAbbrev(Dir d) {
+    switch(d) {
+        case Dir::North: return "n";
+        case Dir::East: return "e";
+        case Dir::South: return "s";
+        case Dir::West: return "w";
+        case Dir::Northeast: return "ne";
+        case Dir::Northwest: return "nw";
+        case Dir::Southeast: return "se";
+        case Dir::Southwest: return "sw";
+        default: return "";
+    }
+}
+
+const int last_skip = 0;
+const int last_splat = 1;
+void doProjectileAnimation(System &state, const Point &start, const Point &stop, int lastIs, const ProjectileInfo &projectile) {
+    const int animDelay = state.config->getInt("anim_delay", 100);
+    std::vector<Point> points;
+    Dir d = start.directionTo(stop);
+    SDL_Texture *texProj = nullptr;
+    if (projectile.directional) {
+        texProj = state.getImage("effects/" + projectile.filename + dirToAbbrev(d) + ".png");
+    } else {
+        texProj = state.getImage("effects/" + projectile.filename + ".png");
+    }
+    SDL_Texture *texSplat = state.getImage("effects/splat.png");
+    if (!texProj | !texSplat) return;
+
+    const int maxDistance = 30;
+    Point here = start;
+    int curDistance = 0;
+    while (here != stop && curDistance < maxDistance) {
+        here = here.shift(d);
+        points.push_back(here);
+        ++curDistance;
+    }
+    if (lastIs == last_skip) points.pop_back();
+
+    for (const Point &p : points) {
+        AnimFrame frame;
+        if (p == stop)  frame.data.insert(std::make_pair(p, texSplat));
+        else            frame.data.insert(std::make_pair(p, texProj));
+        repaint(state, &frame);
+        passCommand(state);
+        SDL_Delay(animDelay);
+    }
+
+}
 
 bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
     Board *board = state.getBoard();
     Actor *actor = nullptr;
 
-    Point work(state.getPlayer()->position);
+    Point initial = state.getPlayer()->position;
+    Point work(initial);
     while (1) {
         work = work.shift(d);
         if (!board->valid(work)) break;
         const TileInfo &tileInfo = TileInfo::get(board->getTile(work));
         if (tileInfo.flags & TF_SOLID) {
             state.addMessage("Your " + projectile.name + " hits the " + tileInfo.name + ".");
+            doProjectileAnimation(state, initial, work, last_skip, projectile);
             return false;
         }
 
@@ -61,9 +124,11 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
             msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
             state.addInfo(msg.str());
         }
+        doProjectileAnimation(state, initial, work, last_splat, projectile);
         board->doDamage(state, actor, damage, 0, "your " + projectile.name);
         return true;
     }
+    doProjectileAnimation(state, initial, work, last_skip, projectile);
     return false;
 }
 
@@ -399,7 +464,7 @@ void gfx_handleInput(System &state) {
                         }
                         --state.arrowCount;
                         state.requestTick();
-                        basicProjectileAttack(state, ProjectileInfo{"arrow", 0, 6}, d);
+                        basicProjectileAttack(state, projectiles[projArrow], d);
                         break;
                     case SW_FIREROD:
                         if (state.getPlayer()->curEnergy < 3) {
@@ -408,7 +473,7 @@ void gfx_handleInput(System &state) {
                         }
                         state.getPlayer()->curEnergy -= 3;
                         state.requestTick();
-                        basicProjectileAttack(state, ProjectileInfo{"fire bolt", 2, 6}, d);
+                        basicProjectileAttack(state, projectiles[projFireBolt], d);
                         break;
                     case SW_ICEROD:
                         if (state.getPlayer()->curEnergy < 3) {
@@ -417,7 +482,7 @@ void gfx_handleInput(System &state) {
                         }
                         state.getPlayer()->curEnergy -= 3;
                         state.requestTick();
-                        basicProjectileAttack(state, ProjectileInfo{"ice bolt", 2, 6}, d);
+                        basicProjectileAttack(state, projectiles[projIceBolt], d);
                         break;
                     case SW_PICKAXE: {
                         Actor *actor = state.getBoard()->actorAt(state.getPlayer()->position.shift(d));

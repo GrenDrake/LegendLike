@@ -39,7 +39,7 @@ bool gfx_Confirm(System &state, const std::string &line1, const std::string &lin
     while (1) {
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
-        repaint(state, false);
+        repaint(state, nullptr, false);
         int topOffset = 8 + gfx_DrawFrame(state, boxX, boxY, boxWidth, boxHeight, "Confirm");
         state.smallFont->out(titleX, topOffset, line1);
         state.smallFont->out(messageX, topOffset + state.smallFont->getCharHeight(), line2);
@@ -126,7 +126,7 @@ void gfx_Alert(System &state, const std::string &line1, const std::string &line2
     while (1) {
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
-        repaint(state, false);
+        repaint(state, nullptr, false);
         int topOffset = 8 + gfx_DrawFrame(state, boxX, boxY, boxWidth, boxHeight, "Alert");
         state.smallFont->out(titleX, topOffset, line1);
         state.smallFont->out(messageX, topOffset + state.smallFont->getCharHeight(), line2);

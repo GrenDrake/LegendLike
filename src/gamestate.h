@@ -62,6 +62,10 @@ struct Animation {
     std::deque<Point> points;
 };
 
+struct AnimFrame {
+    std::map<Point, SDL_Texture*> data;
+};
+
 struct TrackInfo {
     int number;
     std::string file;
@@ -262,7 +266,7 @@ const int charModeCount = 3;
 
 char* slurpFile(const std::string &filename);
 
-bool repaint(System &state, bool callPresent = true);
+bool repaint(System &state, const AnimFrame *frame = nullptr, bool callPresent = true);
 
 void doCharInfo(System &system);
 void doCredits(System &state);

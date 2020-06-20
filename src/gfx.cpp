@@ -16,7 +16,7 @@
 #include "textutil.h"
 #include "config.h"
 
-void gfx_drawMap(System &state) {
+void gfx_drawMap(System &state, const AnimFrame *frame) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -34,9 +34,6 @@ void gfx_drawMap(System &state) {
     const int mapWidthTiles = mapWidthPixels / scaledTileWidth + 2;
     const int mapHeightTiles = mapHeightPixels / scaledTileHeight + 2;
 
-    Animation noAnimation{AnimType::None};
-    Animation &curAnim = state.animationQueue.empty() ? noAnimation : state.animationQueue.front();
-
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////
     // DRAW MAP
     int viewX = state.getPlayer()->position.x() - (mapWidthTiles / 2);
@@ -44,7 +41,6 @@ void gfx_drawMap(System &state) {
 
     SDL_Rect clipRect = { 0, 0, mapWidthPixels, mapHeightPixels };
     SDL_RenderSetClipRect(state.renderer, &clipRect);
-    bool didAnimation = false;
     for (int y = 0; y < mapHeightTiles; ++y) {
         for (int x = 0; x < mapWidthTiles; ++x) {
             const Point here(viewX + x, viewY + y);
@@ -97,6 +93,13 @@ void gfx_drawMap(System &state) {
                             SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
                         }
                     }
+
+                    if (frame) {
+                        auto iter = frame->data.find(here);
+                        if (iter != frame->data.end()) {
+                            SDL_RenderCopy(state.renderer, iter->second, nullptr, &texturePosition);
+                        }
+                    }
                 }
             }
 
@@ -114,48 +117,6 @@ void gfx_drawMap(System &state) {
                 SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, 255);
                 SDL_RenderDrawRect(state.renderer, &texturePosition);
             }
-
-            if (!didAnimation) {
-                switch(curAnim.type) {
-                    case AnimType::None:
-                        // do nothing
-                        if (!state.animationQueue.empty()) {
-                            state.animationQueue.pop_front();
-                        }
-                        break;
-                    case AnimType::Travel:
-                        // draw first cell
-                        if (here == curAnim.points.front()) {
-                            didAnimation = true;
-                            curAnim.points.pop_front();
-                            if (visible) {
-                                // SDL_Texture *tile = state.getTile(curAnim.tileNum);
-                                // SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
-                            }
-                            if (curAnim.points.empty()) {
-                                state.animationQueue.pop_front();
-                            }
-                        }
-                        break;
-                    case AnimType::All:
-                        // draw all cells
-                        if (std::find(curAnim.points.begin(), curAnim.points.end(), here) != curAnim.points.end()) {
-                            didAnimation = true;
-                            // SDL_Texture *tile = state.getTile(curAnim.tileNum);
-                            // SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
-                        }
-                        break;
-                }
-            }
-        }
-    }
-    if (curAnim.type == AnimType::All) {
-        state.animationQueue.pop_front();
-    }
-    if (curAnim.type == AnimType::Travel && !didAnimation) {
-        curAnim.points.pop_front();
-        if (curAnim.points.empty()) {
-            state.animationQueue.pop_front();
         }
     }
     SDL_RenderSetClipRect(state.renderer, nullptr);
@@ -408,7 +369,7 @@ void gfx_doDrawToolTip(System &state) {
     }
 }
 
-bool repaint(System &state, bool callPresent) {
+bool repaint(System &state, const AnimFrame *frame, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -416,7 +377,7 @@ bool repaint(System &state, bool callPresent) {
     SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(state.renderer);
 
-    gfx_drawMap(state);
+    gfx_drawMap(state, frame);
     gfx_drawSidebar(state);
     if (callPresent) gfx_doDrawToolTip(state);
 

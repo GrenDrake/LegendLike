@@ -41,6 +41,7 @@ const int menuTileIndex = 2;
 const int menuFontIndex = 3;
 const int menuFullscreenIndex = 4;
 const int menuShowDiceRolls = 5;
+const int menuAnimDelay = 6;
 MenuOption optionsMenu[] = {
     { "Music Volume",           0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
     { "Effects Volume",         0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
@@ -48,6 +49,7 @@ MenuOption optionsMenu[] = {
     { "Font Scale",             0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
     { "Fullscreen",             0,                  MenuType::Bool,     0,  0, 0  },
     { "Show Dice Rolls",        0,                  MenuType::Bool,     0,  0, 0  },
+    { "Animation Delay (ms)",   0,                  MenuType::Value,    25,  50, 500 },
     { "",                       0,                  MenuType::Disabled },
     { "Save Changes",           1,                  MenuType::Choice },
     { "Discard Changes",        menuDiscard,        MenuType::Choice },
@@ -137,6 +139,7 @@ void doGameMenu(System &state) {
                 optionsMenu[menuFontIndex].value = initialFontScale;
                 optionsMenu[menuFullscreenIndex].value = state.config->getBool("fullscreen", false);
                 optionsMenu[menuShowDiceRolls].value = state.config->getBool("showrolls", false);
+                optionsMenu[menuAnimDelay].value = state.config->getInt("anim_delay", 100);
                 int result = runMenu(state, optionsMenu);
                 if (result >= 0) {
                     state.setMusicVolume(optionsMenu[menuMusicIndex].value);
@@ -150,6 +153,7 @@ void doGameMenu(System &state) {
                     state.config->set("font_scale", std::to_string(optionsMenu[menuFontIndex].value));
                     state.config->set("fullscreen", std::to_string(optionsMenu[menuFullscreenIndex].value ? 1 : 0));
                     state.config->set("showrolls",  std::to_string(optionsMenu[menuShowDiceRolls].value ? 1 : 0));
+                    state.config->set("anim_delay", std::to_string(optionsMenu[menuAnimDelay].value));
                 } else {
                     state.setAudioVolume(initialAudioVolume);
                     state.setMusicVolume(initialMusicVolume);
