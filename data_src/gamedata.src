@@ -58,7 +58,7 @@
 .tiledef tileInnSign        name="inn sign"          art="sign_inn"       red=63 green=64 blue=63 solid
 .tiledef tileSign           name="sign"              art="sign"           red=63 green=64 blue=63 solid
 .tiledef tileLockedDoor     name="locked door"       art="heavy_door_closed" red=160 green=160 blue=64 solid opaque
-.tiledef tileInteriorFloor  name="floor"             art="std_floor" red=192 green=192 blue=192
+.tiledef tileInteriorFloor  name="floor"             art="std_gd_floor" red=192 green=192 blue=192
 .tiledef tileTileNSRoad     name="road"              art="road_ns" red=127 green=127 blue=127 group=2
 .tiledef tileTileEWRoad     name="road"              art="road_ew" red=127 green=127 blue=127 group=2
 .tiledef tileTileSERoad     name="road"              art="road_es" red=127 green=127 blue=127 group=2
