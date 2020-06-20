@@ -9,6 +9,7 @@
 
 CommandDef commandQuit = { Command::Quit };
 CommandDef commandNone = { Command::None };
+CommandDef commandSpecial = { Command::None };
 
 CommandDef gameCommands[] = {
     { Command::Quit,        Dir::None,  SDLK_q,         KMOD_LSHIFT },
@@ -35,50 +36,6 @@ CommandDef gameCommands[] = {
     { Command::Move,        Dir::West,  SDLK_h },
     { Command::Move,        Dir::Northwest, SDLK_KP_7 },
     { Command::Move,        Dir::Northwest, SDLK_y },
-
-    { Command::Run,         Dir::None, SDLK_r },
-    { Command::Run,         Dir::North, SDLK_UP,        KMOD_LSHIFT },
-    { Command::Run,         Dir::North, SDLK_KP_8,      KMOD_LSHIFT },
-    { Command::Run,         Dir::North, SDLK_k,         KMOD_LSHIFT },
-    { Command::Run,         Dir::Northeast, SDLK_KP_9,  KMOD_LSHIFT },
-    { Command::Run,         Dir::Northeast, SDLK_u,     KMOD_LSHIFT },
-    { Command::Run,         Dir::East,  SDLK_RIGHT,     KMOD_LSHIFT },
-    { Command::Run,         Dir::East,  SDLK_KP_6,      KMOD_LSHIFT },
-    { Command::Run,         Dir::East,  SDLK_l,         KMOD_LSHIFT },
-    { Command::Run,         Dir::Southeast, SDLK_KP_3,  KMOD_LSHIFT },
-    { Command::Run,         Dir::Southeast, SDLK_n,     KMOD_LSHIFT },
-    { Command::Run,         Dir::South, SDLK_DOWN,      KMOD_LSHIFT },
-    { Command::Run,         Dir::South, SDLK_KP_2,      KMOD_LSHIFT },
-    { Command::Run,         Dir::South, SDLK_j,         KMOD_LSHIFT },
-    { Command::Run,         Dir::Southwest, SDLK_KP_1,  KMOD_LSHIFT },
-    { Command::Run,         Dir::Southwest, SDLK_b,     KMOD_LSHIFT },
-    { Command::Run,         Dir::West,  SDLK_LEFT,      KMOD_LSHIFT },
-    { Command::Run,         Dir::West,  SDLK_KP_4,      KMOD_LSHIFT },
-    { Command::Run,         Dir::West,  SDLK_h,         KMOD_LSHIFT },
-    { Command::Run,         Dir::Northwest, SDLK_KP_7,  KMOD_LSHIFT },
-    { Command::Run,         Dir::Northwest, SDLK_y,     KMOD_LSHIFT },
-
-    { Command::Interact,    Dir::None,  SDLK_a },
-    { Command::Interact,    Dir::North, SDLK_UP,        KMOD_LALT },
-    { Command::Interact,    Dir::North, SDLK_KP_8,      KMOD_LALT },
-    { Command::Interact,    Dir::North, SDLK_k,         KMOD_LALT },
-    { Command::Interact,    Dir::Northeast, SDLK_KP_9,  KMOD_LALT },
-    { Command::Interact,    Dir::Northeast, SDLK_u,     KMOD_LALT },
-    { Command::Interact,    Dir::East,  SDLK_RIGHT,     KMOD_LALT },
-    { Command::Interact,    Dir::East,  SDLK_KP_6,      KMOD_LALT },
-    { Command::Interact,    Dir::East,  SDLK_l,         KMOD_LALT },
-    { Command::Interact,    Dir::Southeast, SDLK_KP_3,  KMOD_LALT },
-    { Command::Interact,    Dir::Southeast, SDLK_n,     KMOD_LALT },
-    { Command::Interact,    Dir::South, SDLK_DOWN,      KMOD_LALT },
-    { Command::Interact,    Dir::South, SDLK_KP_2,      KMOD_LALT },
-    { Command::Interact,    Dir::South, SDLK_j,         KMOD_LALT },
-    { Command::Interact,    Dir::Southwest, SDLK_KP_1,  KMOD_LALT },
-    { Command::Interact,    Dir::Southwest, SDLK_b,     KMOD_LALT },
-    { Command::Interact,    Dir::West,  SDLK_LEFT,      KMOD_LALT },
-    { Command::Interact,    Dir::West,  SDLK_KP_4,      KMOD_LALT },
-    { Command::Interact,    Dir::West,  SDLK_h,         KMOD_LALT },
-    { Command::Interact,    Dir::Northwest, SDLK_KP_7,  KMOD_LALT },
-    { Command::Interact,    Dir::Northwest, SDLK_y,     KMOD_LALT },
 
     { Command::Interact,    Dir::Here,  SDLK_COMMA,     KMOD_LSHIFT },
     { Command::Interact,    Dir::Here,  SDLK_PERIOD,    KMOD_LSHIFT },
@@ -224,9 +181,23 @@ const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef 
 
     for (unsigned i = 0; commandList[i].command != Command::None; ++i) {
         if (commandList[i].key != event.key.keysym.sym) continue;
-        if (commandList[i].mod == 0 && event.key.keysym.mod) continue;
-        if ((commandList[i].mod & event.key.keysym.mod) != commandList[i].mod) continue;
-        return commandList[i];
+        if (commandList[i].command == Command::Move) {
+            if (event.key.keysym.mod == KMOD_LSHIFT) {
+                commandSpecial = commandList[i];
+                commandSpecial.command = Command::Run;
+                return commandSpecial;
+            } else if (event.key.keysym.mod == KMOD_LALT) {
+                commandSpecial = commandList[i];
+                commandSpecial.command = Command::Interact;
+                return commandSpecial;
+            } else if (event.key.keysym.mod == KMOD_NONE) {
+                return commandList[i];
+            }
+        } else {
+            if (commandList[i].mod == 0 && event.key.keysym.mod) continue;
+            if ((commandList[i].mod & event.key.keysym.mod) != commandList[i].mod) continue;
+            return commandList[i];
+        }
     }
 
     return commandNone;
