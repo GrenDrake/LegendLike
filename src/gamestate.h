@@ -172,7 +172,7 @@ public:
     bool warpTo(int boardIndex, int x, int y);
     bool down();
     bool up();
-    bool build(int forIndex);
+    bool switchBoard(int forIndex);
     bool grantItem(int itemId);
     bool hasItem(int itemId);
 

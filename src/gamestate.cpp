@@ -45,7 +45,19 @@ System::~System() {
 }
 
 void System::reset() {
+    Logger &logger = Logger::getInstance();
+    logger.info("Resetting game state");
     endGame();
+
+    unsigned count = 0;
+    for (const MapInfo &mapInfo : MapInfo::types) {
+        Board *newBoard = new Board(mapInfo);
+        mCurrentBoard = newBoard;
+        if (mapInfo.onBuild) vm->run(mapInfo.onBuild);
+        mBoards.insert(std::make_pair(mapInfo.index, newBoard));
+        ++count;
+    }
+    logger.info("Built " + std::to_string(count) + " maps.");
 
     turnNumber = 1;
     depth = 0;
@@ -150,12 +162,10 @@ bool System::warpTo(int boardIndex, int x, int y) {
         mCurrentBoard->addActor(mPlayer, Point(x, y));
     } else {
         int newDepth = boardIndex;
-        if (build(newDepth)) {
+        if (switchBoard(newDepth)) {
             mCurrentBoard->addActor(mPlayer, Point(x, y));
             mCurrentBoard->calcFOV(getPlayer()->position);
         } else {
-            Logger &log = Logger::getInstance();
-            log.error("Failed to access map ID " + std::to_string(boardIndex));
             return false;
         }
     }
@@ -164,7 +174,7 @@ bool System::warpTo(int boardIndex, int x, int y) {
 
 bool System::down() {
     int newDepth = depth + 1;
-    if (build(newDepth)) {
+    if (switchBoard(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileUp);
         mCurrentBoard->addActor(mPlayer, startPos);
     } else {
@@ -175,7 +185,7 @@ bool System::down() {
 
 bool System::up() {
     int newDepth = depth - 1;
-    if (build(newDepth)) {
+    if (switchBoard(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileDown);
         mCurrentBoard->addActor(mPlayer, startPos);
     } else {
@@ -184,7 +194,7 @@ bool System::up() {
     return true;
 }
 
-bool System::build(int forIndex) {
+bool System::switchBoard(int forIndex) {
     const MapInfo &info = MapInfo::get(forIndex);
     if (info.index < 0) return false;
 
@@ -193,16 +203,12 @@ bool System::build(int forIndex) {
     }
 
     auto oldBoard = mBoards.find(forIndex);
-    if (oldBoard != mBoards.end()) {
-        mCurrentBoard = oldBoard->second;
-    } else {
-        Board *newBoard = new Board(info);
-        mCurrentBoard = newBoard;
-        if (info.onBuild) {
-            vm->run(info.onBuild);
-        }
-        mBoards.insert(std::make_pair(forIndex, mCurrentBoard));
+    if (oldBoard == mBoards.end()) {
+        Logger &log = Logger::getInstance();
+        log.error("Failed to access map ID " + std::to_string(forIndex));
+        return false;
     }
+    mCurrentBoard = oldBoard->second;
     if (info.onEnter) vm->run(info.onEnter);
     depth = forIndex;
     if (info.musicTrack >= 0) {
