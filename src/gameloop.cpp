@@ -76,7 +76,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         actor = board->actorAt(work);
         if (actor) {
             bool isHit = false;
-            if (actor->typeInfo->aiType == aiEnemy) {
+            if (actor->typeInfo->aiType == aiEnemy || actor->typeInfo->aiType == aiBreakable) {
                 isHit = doAccuracyCheck(state, state.getPlayer(), actor, 0);
             }
             if (!isHit) {
@@ -178,32 +178,43 @@ Point gfx_SelectTile(System &system, const std::string &prompt) {
     }
 }
 
+void doMeleeAttack(System &state, Actor *actor) {
+    bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, 2);
+    if (!isHit) {
+        state.addMessage("You miss " + actor->getName() + ".");
+    } else {
+        int roll = 1;
+        if (state.swordLevel > 0) {
+            roll = state.coreRNG.roll(state.swordLevel, 4);
+            if (state.config->getBool("showrolls", false)) {
+                std::stringstream msg2;
+                msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
+                state.addInfo(msg2.str());
+            }
+        }
+        state.getBoard()->doDamage(state, actor, roll, 0, "your attack");
+        SDL_Texture *texSplat = state.getImage("effects/splat.png");
+        state.queueFrame(AnimFrame(actor->position, texSplat));
+    }
+}
+
 bool tryInteract(System &state, Dir d, const Point &target) {
     Actor *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
         if (actor->typeInfo->aiType == aiPushable) {
             actor->tryMove(state.getBoard(), d);
-        } else if (actor->typeInfo->aiType != aiEnemy) {
-            if (actor->talkFunc) state.vm->run(actor->talkFunc);
-            else                    state.addMessage(upperFirst(actor->getName()) + " has nothing to say.");
-        } else if (state.swordLevel <= 0) {
-            state.addMessage("You don't have a sword!");
-        } else {
-            bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, 2);
-            if (!isHit) {
-                state.addMessage("You miss " + actor->getName() + ".");
+        } else if (actor->typeInfo->aiType == aiEnemy) {
+            if (state.swordLevel > 0) {
+                doMeleeAttack(state, actor);
             } else {
-                int roll = state.coreRNG.roll(state.swordLevel, 4);
-                if (state.config->getBool("showrolls", false)) {
-                    std::stringstream msg2;
-                    msg2 << "[damage: " << state.swordLevel << 'd' << 4 << '=' << roll << ']';
-                    state.addInfo(msg2.str());
-                }
-                state.getBoard()->doDamage(state, actor, roll, 0, "your attack");
-                SDL_Texture *texSplat = state.getImage("effects/splat.png");
-                state.queueFrame(AnimFrame(target, texSplat));
+                state.addMessage("You don't have a sword!");
             }
+        } else if (actor->typeInfo->aiType == aiBreakable) {
+            doMeleeAttack(state, actor);
+        } else {
+            if (actor->talkFunc) state.vm->run(actor->talkFunc);
+            else                 state.addMessage(upperFirst(actor->getName()) + " has nothing to say.");
         }
         state.requestTick();
         return true;

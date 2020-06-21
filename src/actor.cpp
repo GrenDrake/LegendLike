@@ -194,6 +194,7 @@ bool Actor::tryMove(Board *board, Dir direction) {
 
 bool doAccuracyCheck(System &system, Actor *attacker, Actor *target, int modifier) {
     int roll = -10000;
+    if (target->typeInfo->aiType == aiBreakable) return true;
 
     roll = system.coreRNG.roll(1,10);
     if (system.config->getBool("showrolls", false)) {

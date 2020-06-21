@@ -119,6 +119,11 @@ map0_npclist:
 .npc npcTownCivilian1  name="civilian"     x=28 y=21 typeId=npcTypeGuard talkFunc=map0_test_fight
 .npc npcTownCivilian2  name="sage"         x=37 y=25 typeId=npcTypeSage  talkFunc=map0_talkSage
 .npc townBoulder                           x=18 y=30 typeId=npcTypeBoulder
+.npc townPot1                              x=20 y=23 typeId=npcTypePot
+.npc townPot2                              x=40 y=16 typeId=npcTypePot
+.npc townPot3                              x=48 y=16 typeId=npcTypePot
+.npc townDummy1                            x=24 y=28 typeId=npcTypeTargetDummy
+.npc townDummy2                            x=24 y=30 typeId=npcTypeTargetDummy
 .word -1
 
 map0_enter:

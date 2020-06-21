@@ -10,6 +10,7 @@
 .define aiFollowPlayer    6
 .define aiEnemy           7
 .define aiPushable        8
+.define aiBreakable       9
 
 .define eventAuto         0
 .define eventManual       1
@@ -45,7 +46,7 @@
 .tiledef tileUnused4
 .tiledef tileStool          name="stool"             art="stool"          red=63 green=64 blue=63 solid
 .tiledef tileBed            name="bed"               art="bed"            red=62 green=63 blue=62 solid
-.tiledef tilePot            name="pot"               art="pot"            red=63 green=64 blue=63 solid
+.tiledef tilePotBase        name="pot stand"         art="gd_pot_base"    red=63 green=64 blue=63
 .tiledef tileSkull          name="skull"             art="skull"          red=63 green=64 blue=63 solid
 .tiledef tileLargeSkull     name="large skull"       art="skull_large"    red=63 green=64 blue=63 solid
 .tiledef tileChair          name="chair"             art="chair_east"     red=63 green=64 blue=63 solid
@@ -104,6 +105,7 @@
 .itemdef itemCoin         name="coins"  art="coins"  itemId=itemClassCoin
 
 .loottable lootTableA        20 itemAmmoArrow 40 itemAmmoBomb 60 itemCoin
+.loottable lootTablePot      5 itemAmmoArrow 33 itemAmmoBomb 67 itemCoin
 
 .npctype npcTypePlayer       name="player"  art="player" health=10 energy=10 aiType=aiPlayer
 .npctype npcTypeSage         name="sage"    art="sage" aiType=aiStill
@@ -113,6 +115,9 @@
 .npctype npcTypeCow          name="cow"     art="cow" moveRate=3 aiType=aiRandom
 .npctype npcTypeChicken      name="chicken" art="chicken" moveRate=2 aiType=aiRandom
 .npctype npcTypeRooster      name="rooster" art="rooster" moveRate=2 aiType=aiRandom
+
+.npctype npcTypeTargetDummy  name="targey dummy" art="target_dummy" aiType=aiBreakable health=9999
+.npctype npcTypePot          name="pot"          art="pot" aiType=aiBreakable health=1 lootType=lootTable loot=lootTablePot
 
 .npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy lootType=lootTable loot=lootTableA
 .npctype npcTypeBandit    name="bandit"    art="bandit" damage=3 health=3 aiType=aiEnemy lootType=lootTable loot=lootTableA

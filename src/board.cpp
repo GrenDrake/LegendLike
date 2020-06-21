@@ -107,6 +107,9 @@ void Board::doDamage(System &state, Actor *to, int amount, int type, const std::
     if (to->curHealth <= 0) {
         if (to->typeInfo->aiType == aiPlayer) {
             state.appendMessage("You die!");
+        } else if (to->typeInfo->aiType == aiBreakable) {
+            state.appendMessage(upperFirst(to->getName()) + " is destroyed! ");
+            makeLoot(state, to, pos);
         } else {
             state.appendMessage(upperFirst(to->getName()) + " is defeated! ");
             makeLoot(state, to, pos);
