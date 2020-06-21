@@ -7,7 +7,7 @@
 #include "config.h"
 #include "game.h"
 #include "gamestate.h"
-#include "menu.h"
+#include "gfx_menu.h"
 
 
 static int checkPosInMenu(MenuOption *menu, int x, int y) {

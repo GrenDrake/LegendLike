@@ -8,7 +8,7 @@
 #include "command.h"
 #include "game.h"
 #include "gamestate.h"
-#include "menu.h"
+#include "gfx_menu.h"
 #include "vm.h"
 #include "config.h"
 #include "actor.h"
