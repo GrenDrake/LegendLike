@@ -49,46 +49,18 @@ std::string dirToAbbrev(Dir d) {
     }
 }
 
-const int last_skip = 0;
-const int last_splat = 1;
-void doProjectileAnimation(System &state, const Point &start, const Point &stop, int lastIs, const ProjectileInfo &projectile) {
-    const int animDelay = state.config->getInt("anim_delay", 100);
-    std::vector<Point> points;
-    Dir d = start.directionTo(stop);
+bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
+    Board *board = state.getBoard();
+    Actor *actor = nullptr;
+
     SDL_Texture *texProj = nullptr;
     if (projectile.directional) {
         texProj = state.getImage("effects/" + projectile.filename + dirToAbbrev(d) + ".png");
     } else {
         texProj = state.getImage("effects/" + projectile.filename + ".png");
     }
-    SDL_Texture *texSplat = state.getImage("effects/splat.png");
-    if (!texProj | !texSplat) return;
 
-    const int maxDistance = 30;
-    Point here = start;
-    int curDistance = 0;
-    while (here != stop && curDistance < maxDistance) {
-        here = here.shift(d);
-        points.push_back(here);
-        ++curDistance;
-    }
-    if (lastIs == last_skip) points.pop_back();
-
-    for (const Point &p : points) {
-        AnimFrame frame;
-        if (p == stop)  frame.data.insert(std::make_pair(p, texSplat));
-        else            frame.data.insert(std::make_pair(p, texProj));
-        repaint(state, &frame);
-        passCommand(state);
-        SDL_Delay(animDelay);
-    }
-
-}
-
-bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
-    Board *board = state.getBoard();
-    Actor *actor = nullptr;
-
+    std::vector<AnimFrame> frames;
     Point initial = state.getPlayer()->position;
     Point work(initial);
     while (1) {
@@ -96,8 +68,8 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         if (!board->valid(work)) break;
         const TileInfo &tileInfo = TileInfo::get(board->getTile(work));
         if (tileInfo.flags & TF_SOLID) {
-            state.addMessage("Your " + projectile.name + " hits the " + tileInfo.name + ".");
-            doProjectileAnimation(state, initial, work, last_skip, projectile);
+            frames.push_back(AnimFrame(animText, "Your " + projectile.name + " hits the " + tileInfo.name + "."));
+            state.queueFrames(frames);
             return false;
         }
 
@@ -108,11 +80,13 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
                 isHit = doAccuracyCheck(state, state.getPlayer(), actor, 0);
             }
             if (!isHit) {
-                state.addMessage("Your " + projectile.name + " misses " + actor->getName() + ".");
+                frames.push_back(AnimFrame(animText, "Your " + projectile.name + " misses " + actor->getName() + "."));
                 actor = nullptr;
             }
             else break;
         }
+
+        frames.push_back(AnimFrame(work, texProj));
     }
 
     if (actor) {
@@ -122,13 +96,15 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
         if (state.config->getBool("showrolls", false)) {
             std::stringstream msg;
             msg << "[damage: " << d << 'd' << projectile.damageSides << '=' << damage << ']';
-            state.addInfo(msg.str());
+            frames.push_back(AnimFrame(animRollText, msg.str()));
         }
-        doProjectileAnimation(state, initial, work, last_splat, projectile);
-        board->doDamage(state, actor, damage, 0, "your " + projectile.name);
+        SDL_Texture *texSplat = state.getImage("effects/splat.png");
+        frames.push_back(AnimFrame(work, texSplat));
+        frames.push_back(AnimFrame(actor, damage, 0, "your " + projectile.name));
+
+        state.queueFrames(frames);
         return true;
     }
-    doProjectileAnimation(state, initial, work, last_skip, projectile);
     return false;
 }
 
@@ -225,6 +201,8 @@ bool tryInteract(System &state, Dir d, const Point &target) {
                     state.addInfo(msg2.str());
                 }
                 state.getBoard()->doDamage(state, actor, roll, 0, "your attack");
+                SDL_Texture *texSplat = state.getImage("effects/splat.png");
+                state.queueFrame(AnimFrame(target, texSplat));
             }
         }
         state.requestTick();

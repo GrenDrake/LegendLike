@@ -7,6 +7,24 @@
 #include "gamestate.h"
 
 
+AnimFrame::AnimFrame(int type)
+: special(type)
+{ }
+
+AnimFrame::AnimFrame(const Point &point, SDL_Texture *texture)
+: special(animFrame)
+{
+    data.insert(std::make_pair(point, texture));
+}
+
+AnimFrame::AnimFrame(int type, const std::string &text)
+: special(type), text(text)
+{ }
+
+AnimFrame::AnimFrame(Actor *actor, int amount, int damageType, const std::string &source)
+: special(animDamage), actor(actor), damageAmount(amount), damageType(damageType), text(source)
+{ }
+
 System::System(SDL_Renderer *renderer, Random &rng)
 : runDirection(Dir::None),
   swordLevel(0), armourLevel(0),
@@ -57,16 +75,12 @@ void System::setFontScale(int scale) {
     }
 }
 
-void System::queueAnimation(const Animation &anim) {
-    switch(anim.type) {
-        case AnimType::None:
-            return;
-        case AnimType::Travel:
-        case AnimType::All:
-            if (anim.points.empty()) return;
-            break;
-    }
-    animationQueue.push_back(anim);
+void System::queueFrame(const AnimFrame &frame) {
+    animationQueue.push_back(frame);
+}
+
+void System::queueFrames(const std::vector<AnimFrame> &frame) {
+    animationQueue.insert(animationQueue.begin(), frame.begin(), frame.end());
 }
 
 void System::addMessage(const std::string &text) {

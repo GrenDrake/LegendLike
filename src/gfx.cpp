@@ -14,6 +14,7 @@
 #include "command.h"
 #include "textutil.h"
 #include "config.h"
+#include "logger.h"
 
 void gfx_drawMap(System &state, const AnimFrame *frame) {
     int screenWidth = 0;
@@ -372,15 +373,54 @@ bool repaint(System &state, const AnimFrame *frame, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+    const int animDelay = state.config->getInt("anim_delay", 100);
 
-    SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(state.renderer);
+    bool doNextFrame = false;
+    do {
+        bool didFrame = false;
+        SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(state.renderer);
+        do {
+            doNextFrame = false;
+            if (state.animationQueue.empty()) {
+                gfx_drawMap(state, nullptr);
+            } else {
+                AnimFrame *frame = &state.animationQueue.front();
+                switch(frame->special) {
+                    case animFrame:
+                        gfx_drawMap(state, frame);
+                        didFrame = true;
+                        break;
+                    case animText:
+                        doNextFrame = true;
+                        state.addMessage(frame->text);
+                        break;
+                    case animRollText:
+                        doNextFrame = true;
+                        state.addInfo(frame->text);
+                        break;
+                    case animDamage:
+                        state.getBoard()->doDamage(state, frame->actor, frame->damageAmount, frame->damageType, frame->text);
+                        break;
+                    default:
+                        doNextFrame = true;
+                        Logger &logger = Logger::getInstance();
+                        logger.error("Unknown animation frame type " + std::to_string(frame->special));
 
-    gfx_drawMap(state, frame);
-    gfx_drawSidebar(state);
-    if (callPresent) gfx_doDrawToolTip(state);
+                }
+                state.animationQueue.pop_front();
+            }
+        } while (doNextFrame);
+        gfx_drawSidebar(state);
+        if (callPresent) gfx_doDrawToolTip(state);
 
-    state.advanceFrame();
-    if (callPresent) SDL_RenderPresent(state.renderer);
+        state.advanceFrame();
+        if (callPresent) SDL_RenderPresent(state.renderer);
+        if (didFrame) {
+            passCommand(state);
+            SDL_Delay(animDelay);
+        }
+    } while (!state.animationQueue.empty());
+
     return false;
 }

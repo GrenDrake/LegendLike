@@ -52,18 +52,24 @@ struct Color {
     int r, g, b;
 };
 
-enum class AnimType {
-    None, Travel, All
-};
-
-struct Animation {
-    AnimType type;
-    int tileNum;
-    std::deque<Point> points;
-};
-
+const int animFrame = 0;
+const int animDamage = 1;
+const int animText = 2;
+const int animRollText = 3;
 struct AnimFrame {
+    AnimFrame(int type);
+    AnimFrame(const Point &point, SDL_Texture *texture);
+    AnimFrame(int type, const std::string &text);
+    AnimFrame(Actor *actor, int amount, int damageType, const std::string &source);
+
+    int special;
+    // for animation frames
     std::map<Point, SDL_Texture*> data;
+    // for damage frames
+    Actor *actor;
+    int damageAmount, damageType;
+    // for damage, message, and roll frames
+    std::string text;
 };
 
 struct TrackInfo {
@@ -135,7 +141,8 @@ public:
 
     void setFontScale(int scale);
 
-    void queueAnimation(const Animation &anim);
+    void queueFrame(const AnimFrame &frame);
+    void queueFrames(const std::vector<AnimFrame> &frame);
 
     void playMusic(int trackNumber);
     void setMusicVolume(int volume);
@@ -206,7 +213,7 @@ public:
     std::vector<Subweapon> subweapons;
     std::vector<LootTable> lootTables;
     std::vector<ItemDef> itemDefs;
-    std::deque<Animation> animationQueue;
+    std::deque<AnimFrame> animationQueue;
 
     // system modules
     SDL_Renderer *renderer;
