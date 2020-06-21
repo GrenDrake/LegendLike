@@ -1,4 +1,5 @@
 #include <chrono>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -23,6 +24,7 @@ void Logger::log(const std::string &text) {
 
 void Logger::error(const std::string &text) {
     log("ERROR:  " + text);
+    std::cerr << "ERROR:  " << text << "\n";
 }
 
 void Logger::warn(const std::string &text) {
