@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
     code.exports.push_back("__mapdata");
     code.exports.push_back("__loottables");
     code.exports.push_back("__itemdefs");
+    code.exports.push_back("__worlds");
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -324,6 +325,29 @@ bool buildHeader(Program &code) {
         std::cerr << "NPC Types size: " << npcTypesSize << " (" << counter << " items)\n";
     }
 
+    {
+        // build the worlds table
+        AsmLabel *worldsLabel = new AsmLabel(Origin(), "__worlds");
+        stringTable.push_back(worldsLabel);
+        AsmData *worldsCountData = new AsmData(Origin(), 4);
+        stringTable.push_back(worldsCountData);
+        Value itemDefCount(code.worlds.size());
+        worldsCountData->data.push_back(itemDefCount);
+        unsigned worldsSize = 4;
+        int counter = 0;
+        for (const World &world : code.worlds) {
+            code.addSymbol(world.identifier, SymbolDef{world.origin, Value{counter}});
+            AsmData *data = new AsmData(world.origin, 4);
+            data->data.push_back(world.name);
+            data->data.push_back(world.width);
+            data->data.push_back(world.height);
+            data->data.push_back(world.firstmap);
+            stringTable.push_back(data);
+            worldsSize += data->data.size() * data->width;
+            ++counter;
+        }
+        std::cerr << "Worlds size: " << worldsSize << " (" << counter << " items)\n";
+    }
     // insert into beginning of program code
     code.code.insert(code.code.begin(), stringTable.begin(), stringTable.end());
     return true;

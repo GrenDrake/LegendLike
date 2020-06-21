@@ -180,6 +180,15 @@ struct ItemDef {
     Value itemId;
 };
 
+struct World {
+    Origin origin;
+    std::string identifier;
+    Value name;
+    Value width;
+    Value height;
+    Value firstmap;
+};
+
 struct Program {
     Program();
     ErrorLog errorLog;
@@ -191,6 +200,7 @@ struct Program {
     std::vector<MapData> mapData;
     std::vector<LootTable> lootTables;
     std::vector<ItemDef> itemDefs;
+    std::vector<World> worlds;
 
     std::map<std::string, SymbolDef> symbolTable;
     std::map<std::string, StringData> strings;

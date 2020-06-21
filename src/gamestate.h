@@ -123,6 +123,13 @@ struct Item {
     int fromLocation;
 };
 
+struct World {
+    std::string name;
+    int index;
+    int firstMap, lastMap;
+    int width, height;
+};
+
 class System {
 public:
     System(SDL_Renderer *renderer, Random &rng);
@@ -173,6 +180,8 @@ public:
     bool down();
     bool up();
     bool switchBoard(int forIndex);
+    const World& getWorld() const;
+    Point getWorldPosition() const;
     bool grantItem(int itemId);
     bool hasItem(int itemId);
 
@@ -213,6 +222,7 @@ public:
     std::vector<Subweapon> subweapons;
     std::vector<LootTable> lootTables;
     std::vector<ItemDef> itemDefs;
+    std::vector<World> worlds;
     std::deque<AnimFrame> animationQueue;
 
     // system modules
@@ -242,6 +252,7 @@ public:
     bool loadStringData();
     bool loadTileData();
     bool loadLootTables();
+    bool loadWorldData();
 
     int framecount, framerate, baseticks, lastticks, fps;
     int timerFrames, timerTime, actualFPS;

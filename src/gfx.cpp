@@ -230,7 +230,13 @@ void gfx_drawSidebar(System &state) {
     const int mapInfoTop = yPos + tinyLineHeight;
     gfx_HLine(state, sidebarX, screenWidth, mapInfoTop - 1, uiColor);
     yPos += tinyLineHeight * 1.5;
-    state.tinyFont->out(xPos, yPos, state.getBoard()->getInfo().name);
+    std::stringstream mapName;
+    mapName << state.getBoard()->getInfo().name;
+    const World &world = state.getWorld();
+    if (world.index >= 0) {
+        mapName << " (" << world.name << ')';
+    }
+    state.tinyFont->out(xPos, yPos, mapName.str());
     yPos += tinyLineHeight / 2;
 
     //  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////  ////

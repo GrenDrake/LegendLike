@@ -2,10 +2,10 @@
 
 
 map1_upToAcademy:
-    @warpto         21 49 0
+    @warpto         21 49 mapTown
     ret
 map1_upToDungeonHouse:
-    @warpto         29 28 0
+    @warpto         29 28 mapTown
     ret
 
 .npc octopus1 name="octopus" x=37 y=25 typeId=npcTypeOctopus

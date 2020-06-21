@@ -220,6 +220,43 @@ bool parseLocation(ParseState &state) {
     return true;
 }
 
+bool parseWorld(ParseState &state) {
+    const Origin &origin = state.here().origin;
+    state.advance(); // skip .world
+
+    if (!state.require(TokenType::Identifier)) return false;
+    const std::string &identifier = state.here().text;
+    state.advance();
+
+    Value name{-1};
+    Value width{-1};
+    Value height{-1};
+    Value firstmap{-1};
+    while (!state.matches(TokenType::EOL)) {
+        if (!state.require(TokenType::Identifier)) return false;
+        const std::string &label = state.here().text;
+        state.advance();
+
+        if (!state.require(TokenType::Equals)) return false;
+        state.advance();
+
+        Value value = tokenToValue(state);
+        state.advance();
+
+        if (label == "name")            name = value;
+        else if (label == "width")      width = value;
+        else if (label == "height")     height = value;
+        else if (label == "firstmap")   firstmap = value;
+        else {
+            state.code.errorLog.add(origin, "Unknown world attribute " + label + ".");
+            return false;
+        }
+    }
+
+    World newWorld{ origin, identifier, name, width, height, firstmap };
+    state.code.worlds.push_back(newWorld);
+    return true;
+}
 
 bool parseLootTable(ParseState &state) {
     const Origin &origin = state.here().origin;
@@ -639,6 +676,8 @@ bool parseFile(const std::string &filename, ErrorLog &errorLog, Program &code) {
                 if (!parseLootTable(state)) continue;
             } else if (state.here().text == ".itemdef") {
                 if (!parseItemDef(state)) continue;
+            } else if (state.here().text == ".world") {
+                if (!parseWorld(state)) continue;
             } else if (state.here().text == ".export") {
                 state.advance();
                 while (state.here().type != TokenType::EOL) {

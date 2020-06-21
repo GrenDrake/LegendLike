@@ -218,6 +218,30 @@ bool System::switchBoard(int forIndex) {
     return true;
 }
 
+const World noWorld{ "", -1 };
+const World& System::getWorld() const {
+    const int boardId = mCurrentBoard->getInfo().index;
+    for (const World &world : worlds) {
+        if (boardId >= world.firstMap && boardId <= world.lastMap) {
+            return world;
+        }
+    }
+    return noWorld;
+}
+
+Point System::getWorldPosition() const {
+    const int boardId = mCurrentBoard->getInfo().index;
+    for (const World &world : worlds) {
+        if (boardId >= world.firstMap && boardId <= world.lastMap) {
+            int index = boardId - world.firstMap;
+            int y = index / world.width;
+            int x = index - y * world.width;
+            return Point(x, y);
+        }
+    }
+    return Point(-1, -1);
+}
+
 bool System::grantItem(int itemId) {
     switch(itemId) {
         case ITM_SWORD_UPGRADE:

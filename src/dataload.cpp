@@ -64,6 +64,7 @@ bool System::load() {
         if (!loadMapInfoData())                     return false;
         if (!loadMusicTracks())                     return false;
         if (!loadTileData())                        return false;
+        if (!loadWorldData())                       return false;
 
         gameName = vm->readString(vm->readWord(4));
         gameId = vm->readWord(8);
@@ -321,6 +322,31 @@ bool System::loadTileData() {
         TileInfo::add(tile);
     }
     log.info(std::string("Loaded ") + std::to_string(TileInfo::types.size()) + " tiles.");
+    return true;
+}
+
+bool System::loadWorldData() {
+    Logger &log = Logger::getInstance();
+    const unsigned worldSize = 16;
+    unsigned worldAddr = vm->getExport("__worlds");
+    if (worldAddr == static_cast<unsigned>(-1)) {
+        log.error("World data not found.");
+        return false;
+    }
+    const unsigned worldsCount = vm->readWord(worldAddr);
+    worldAddr += 4;
+    for (unsigned counter = 0; counter < worldsCount; ++counter) {
+        World world;
+        world.index = counter;
+        int nameAddr    = vm->readWord(worldAddr + counter * worldSize);
+        if (nameAddr) world.name = vm->readString(nameAddr);
+        world.width     = vm->readWord(worldAddr + counter * worldSize + 4);
+        world.height    = vm->readWord(worldAddr + counter * worldSize + 8);
+        world.firstMap  = vm->readWord(worldAddr + counter * worldSize + 12);
+        world.lastMap   = world.firstMap + world.height * world.width - 1;
+        worlds.push_back(world);
+    }
+    log.info(std::string("Loaded ") + std::to_string(worlds.size()) + " worlds.");
     return true;
 }
 

@@ -92,11 +92,11 @@ map0_test_fight_already_gave:
 
 
 map0_downToAcademyCellar:
-    @warpto         21 49 1
+    @warpto         21 49 mapTownUnderground
     ret
 
 map0_downToDungeon:
-    @warpto         29 28 1
+    @warpto         29 28 mapTownUnderground
     ret
 
 map0_talkSage:
