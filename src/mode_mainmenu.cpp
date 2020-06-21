@@ -17,44 +17,6 @@
 
 std::vector<std::string> creditsText;
 static void loadCredits();
-void adjustMusicVolume(System &system, int value);
-void adjustAudioVolume(System &system, int value);
-void adjustFontScale(System &system, int value);
-
-MenuOption mainMenu[] = {
-    { "Start Standard Game",    0,                  MenuType::Choice },
-    { "Start Custom Game",      1,                  MenuType::Disabled },
-    { "Load Saved Game",        4,                  MenuType::Disabled },
-    { "",                       0,                  MenuType::Disabled },
-    { "Resume Game",            3,                  MenuType::Disabled },
-    { "",                       0,                  MenuType::Disabled },
-    { "General Options",        5,                  MenuType::Choice },
-    { "",                       0,                  MenuType::Disabled },
-    { "Credits",                7,                  MenuType::Choice },
-    { "Quit",                   menuQuit,           MenuType::Choice },
-    { "",                       menuEnd,            MenuType::Choice }
-};
-
-const int menuMusicIndex = 0;
-const int menuAudioIndex = 1;
-const int menuTileIndex = 2;
-const int menuFontIndex = 3;
-const int menuFullscreenIndex = 4;
-const int menuShowDiceRolls = 5;
-const int menuAnimDelay = 6;
-MenuOption optionsMenu[] = {
-    { "Music Volume",           0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustMusicVolume },
-    { "Effects Volume",         0,                  MenuType::Value,    50, 0, MIX_MAX_VOLUME, adjustAudioVolume },
-    { "Tile Scale",             0,                  MenuType::Value,    1,  1, 10 },
-    { "Font Scale",             0,                  MenuType::Value,    1,  1, 10, adjustFontScale },
-    { "Fullscreen",             0,                  MenuType::Bool,     0,  0, 0  },
-    { "Show Dice Rolls",        0,                  MenuType::Bool,     0,  0, 0  },
-    { "Animation Delay (ms)",   0,                  MenuType::Value,    25,  50, 500 },
-    { "",                       0,                  MenuType::Disabled },
-    { "Save Changes",           1,                  MenuType::Choice },
-    { "Discard Changes",        menuDiscard,        MenuType::Choice },
-    { "",                       menuEnd,            MenuType::Choice }
-};
 
 static std::string getRandomName(Random &rng) {
     switch(rng.next32() % 21) {
@@ -83,35 +45,45 @@ static std::string getRandomName(Random &rng) {
     return "Fred";
 }
 
-void adjustMusicVolume(System &system, int value) {
-    Mix_VolumeMusic(value);
-}
+const int menuStartStandard  = 1;
+const int menuStartCustom    = 2;
+const int menuLoadSaved      = 3;
+const int menuResumeGame     = 4;
+const int menuGeneralOptions = 5;
+const int menuCredits        = 6;
 
-void adjustAudioVolume(System &system, int value) {
-    Mix_Volume(-1, value);
-    system.playEffect(0);
-}
-
-void adjustFontScale(System &system, int value) {
-    system.setFontScale(value);
-}
+void doOptionsMenu(System &state);
 
 void doGameMenu(System &state) {
-    int defOpt = 0;
-    bool gameInProgress = false;
-
+    static Menu mainMenu;
+    if (mainMenu.empty()) {
+        mainMenu.add(MenuOption(menuStartStandard,  "Start Standard Game",    MenuType::Choice));
+        mainMenu.add(MenuOption(menuStartCustom,    "Start Custom Game",      MenuType::Disabled));
+        mainMenu.add(MenuOption(menuLoadSaved,      "Load Saved Game",        MenuType::Disabled));
+        mainMenu.add(MenuOption(menuNone,           "",                       MenuType::Disabled));
+        mainMenu.add(MenuOption(menuResumeGame,     "Resume Game",            MenuType::Disabled));
+        mainMenu.add(MenuOption(menuNone,           "",                       MenuType::Disabled));
+        mainMenu.add(MenuOption(menuGeneralOptions, "General Options",        MenuType::Choice));
+        mainMenu.add(MenuOption(menuNone,           "",                       MenuType::Disabled));
+        mainMenu.add(MenuOption(menuCredits,        "Credits",                MenuType::Choice));
+        mainMenu.add(MenuOption(menuQuit,           "Quit",                   MenuType::Choice));
+    }
     state.playMusic(0);
 
     while (!state.wantsToQuit) {
-        int choice = runMenu(state, mainMenu, defOpt);
+        int choice = mainMenu.run(state);
         switch(choice) {
             case menuQuit:
                 state.wantsToQuit = true;
                 break;
-            case 0: {
-                gameInProgress = true;
-                mainMenu[4].type = MenuType::Choice;
-                defOpt = 4;
+            case menuStartStandard: {
+                if (state.gameInProgress) {
+                    if (!gfx_Confirm(state, "Start a new game?", "This will abandon your current game!", true)) {
+                        break;
+                    }
+                }
+                state.gameInProgress = true;
+                mainMenu.getOptionByCode(menuResumeGame).type = MenuType::Choice;
                 state.reset();
                 Actor *player = state.getPlayer();
                 player->name = getRandomName(state.coreRNG);
@@ -119,53 +91,29 @@ void doGameMenu(System &state) {
                 gfx_EditText(state, "Name?", state.getPlayer()->name, 16);
                 state.vm->runFunction("start");
                 gameloop(state);
+                mainMenu.setSelectedByCode(menuResumeGame);
                 state.playMusic(0);
                 break; }
-            case 3:
+            case menuResumeGame:
             case menuClose:
-                if (gameInProgress) {
+                if (state.gameInProgress) {
                     gameloop(state);
                     state.playMusic(0);
-                    defOpt = 4;
                 }
                 break;
-            case 5: {
-                int initialMusicVolume = Mix_VolumeMusic(-1);
-                int initialAudioVolume = Mix_Volume(-1, -1);
-                int initialFontScale = state.config->getInt("font_scale", 1);
-                optionsMenu[menuMusicIndex].value = initialMusicVolume;
-                optionsMenu[menuAudioIndex].value = initialAudioVolume;
-                optionsMenu[menuTileIndex].value = state.config->getInt("tile_scale", 1);
-                optionsMenu[menuFontIndex].value = initialFontScale;
-                optionsMenu[menuFullscreenIndex].value = state.config->getBool("fullscreen", false);
-                optionsMenu[menuShowDiceRolls].value = state.config->getBool("showrolls", false);
-                optionsMenu[menuAnimDelay].value = state.config->getInt("anim_delay", 100);
-                int result = runMenu(state, optionsMenu);
-                if (result >= 0) {
-                    state.setMusicVolume(optionsMenu[menuMusicIndex].value);
-                    state.setAudioVolume(optionsMenu[menuAudioIndex].value);
-                    state.setFontScale(optionsMenu[menuFontIndex].value);
-                    SDL_SetWindowFullscreen(state.window,
-                            optionsMenu[menuFullscreenIndex].value ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-                    state.config->set("music", optionsMenu[menuMusicIndex].value);
-                    state.config->set("audio", optionsMenu[menuAudioIndex].value);
-                    state.config->set("tile_scale", std::to_string(optionsMenu[menuTileIndex].value));
-                    state.config->set("font_scale", std::to_string(optionsMenu[menuFontIndex].value));
-                    state.config->set("fullscreen", std::to_string(optionsMenu[menuFullscreenIndex].value ? 1 : 0));
-                    state.config->set("showrolls",  std::to_string(optionsMenu[menuShowDiceRolls].value ? 1 : 0));
-                    state.config->set("anim_delay", std::to_string(optionsMenu[menuAnimDelay].value));
-                } else {
-                    state.setAudioVolume(initialAudioVolume);
-                    state.setMusicVolume(initialMusicVolume);
-                    state.setFontScale(initialFontScale);
-                }
-                if (result == menuQuit) state.wantsToQuit = true;
-                break; }
-            case 7:
+            case menuGeneralOptions:
+                doOptionsMenu(state);
+                break;
+            case menuCredits:
                 if (creditsText.empty()) loadCredits();
                 gfx_RunInfo(state, creditsText, true);
-                defOpt = 8;
                 break;
+        }
+
+        if (state.wantsToQuit && state.gameInProgress) {
+            if (!gfx_Confirm(state, "Quit?", "This will abandon your current game!", true)) {
+                state.wantsToQuit = false;;
+            }
         }
     }
 }

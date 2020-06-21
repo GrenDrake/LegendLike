@@ -217,6 +217,7 @@ public:
 
     // game configuration flags
     bool wantsToQuit;
+    bool gameInProgress;
     bool returnToMenu;
     bool showTooltip;
     bool showInfo;

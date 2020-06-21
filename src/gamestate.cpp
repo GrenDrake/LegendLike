@@ -16,7 +16,7 @@ System::System(SDL_Renderer *renderer, Random &rng)
   turnNumber(1), depth(0), mCurrentBoard(nullptr),  mPlayer(nullptr),
   quickSlots{ {0} }, cursor(-1,-1), smallFont(nullptr), tinyFont(nullptr), mCurrentTrack(-1),
   mCurrentMusic(nullptr),renderer(renderer), coreRNG(rng), vm(nullptr),
-  config(nullptr), wantsToQuit(false), returnToMenu(false), showTooltip(false),
+  config(nullptr), wantsToQuit(false), gameInProgress(false), returnToMenu(false), showTooltip(false),
   showInfo(false), showFPS(false), wantsTick(false),
   mapEditMode(false), mapEditTile(0), framecount(0), framerate(0), baseticks(0), lastticks(0), fps(0)
 {

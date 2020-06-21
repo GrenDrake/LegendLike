@@ -9,16 +9,69 @@
 #include "gamestate.h"
 #include "gfx_menu.h"
 
+MenuOption badOption{ -1, "BAD_OPTION", MenuType::Disabled };
 
-static int checkPosInMenu(MenuOption *menu, int x, int y) {
-    for (int i = 0; menu[i].code != menuEnd; ++i) {
-        if (x < menu[i].rect.x || y < menu[i].rect.y) continue;
-        if (x >= menu[i].rect.x + menu[i].rect.w) continue;
-        if (y >= menu[i].rect.y + menu[i].rect.h) continue;
-        return i;
-    }
-    return -1;
+MenuOption::MenuOption(int code, const std::string &text, MenuType type)
+: code(code), text(text), type(type)
+{ }
+
+MenuOption::MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(System&, int))
+: code(code), text(text), type(MenuType::Value),
+  value(value), step(step), min(min), max(max), callback(callback)
+{ }
+
+void Menu::add(const MenuOption &newOption) {
+    options.push_back(newOption);
 }
+
+bool Menu::empty() const {
+    return options.empty();
+}
+
+void Menu::setSelectedByCode(int code) {
+    for (unsigned i = 0; i < options.size(); ++i) {
+        if (options[i].code == code) {
+            selected = i;
+            return;
+        }
+    }
+}
+
+MenuOption& Menu::getOptionByCode(int code) {
+    for (MenuOption &option : options) {
+        if (option.code == code) return option;
+    }
+    return badOption;
+}
+
+MenuOption& Menu::getOptionByCoord(int x, int y) {
+    for (MenuOption &option : options) {
+        if (x <  option.rect.x || y < option.rect.y) continue;
+        if (x >= option.rect.x + option.rect.w) continue;
+        if (y >= option.rect.y + option.rect.h) continue;
+        return option;
+    }
+    return badOption;
+}
+
+MenuOption& Menu::getSelected() {
+    return options[selected];
+}
+
+void Menu::next() {
+    do {
+        ++selected;
+        if (selected >= options.size()) selected = 0;
+    } while (options[selected].type == MenuType::Disabled || options[selected].text.empty());
+}
+
+void Menu::previous() {
+    do {
+        if (selected == 0) selected = options.size() - 1;
+        else --selected;
+    } while (options[selected].type == MenuType::Disabled || options[selected].text.empty());
+}
+
 
 void showVersion(System &state) {
     int screenWidth = 0;
@@ -40,25 +93,21 @@ void showVersion(System &state) {
             gameVersion);
 }
 
-int runMenu(System &state, MenuOption *menu, int defaultOption) {
+int Menu::run(System &state) {
     bool showInfo = false;
     const std::string writeDir = state.config->getString("writeDir", "unknown");
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
 
-    int option = defaultOption;
-
     SDL_Texture *logoArt = state.getImage("logo.png");
 
     int logoWidth, logoHeight;
     SDL_QueryTexture(logoArt, nullptr, nullptr, &logoWidth, &logoHeight);
 
-    int menuSize = 0;
-    for (int i = 0; menu[i].code != menuEnd; ++i) {
-        ++menuSize;
-        menu[i].rect.w = menu[i].text.length() * state.smallFont->getCharWidth();
-        menu[i].rect.h = state.smallFont->getCharHeight();
+    for (MenuOption &row : options) {
+        row.rect.w = row.text.length() * state.smallFont->getCharWidth();
+        row.rect.h = state.smallFont->getCharHeight();
     }
 
     std::string current  = "\x1B\x02\x7F\xFF\x7F";
@@ -75,34 +124,35 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
         SDL_RenderCopy(state.renderer, logoArt, nullptr, &logoDest);
 
         const int optionsTop = logoHeight + 60 + 20;
-        for (int i = 0; menu[i].code != menuEnd; ++i) {
-            if (menu[i].text.empty()) {
+        for (unsigned i = 0; i < options.size(); ++i) {
+            MenuOption &row = options[i];
+            if (row.text.empty()) {
                 extraSpace += -(state.smallFont->getLineHeight() / 2);
             } else {
-                if (option == i) {
+                if (selected == i) {
                     colour = &current;
                     state.smallFont->out(100, optionsTop + i * state.smallFont->getLineHeight() + extraSpace, "-> ");
                 } else {
-                    if (menu[i].type == MenuType::Disabled) colour = &disabled;
+                    if (row.type == MenuType::Disabled) colour = &disabled;
                     else                                    colour = &other;
                 }
 
-                menu[i].rect.x = 100+threeCharWidth;
-                menu[i].rect.y = optionsTop + i * state.smallFont->getLineHeight() + extraSpace;
+                row.rect.x = 100+threeCharWidth;
+                row.rect.y = optionsTop + i * state.smallFont->getLineHeight() + extraSpace;
 
-                if (menu[i].type == MenuType::Bool) {
-                    std::string msg = menu[i].text + "  ";
-                    if (menu[i].value)  msg += "\x06";
+                if (row.type == MenuType::Bool) {
+                    std::string msg = row.text + "  ";
+                    if (row.value)  msg += "\x06";
                     else                msg += "\x05";
-                    menu[i].rect.w = msg.length() * state.smallFont->getCharWidth();
-                    state.smallFont->out(menu[i].rect.x, menu[i].rect.y, *colour + msg);
-                } else if (menu[i].type == MenuType::Value) {
-                    std::string msg = menu[i].text + " ";
-                    msg += "\x03 " + std::to_string(menu[i].value) + " \x04";
-                    menu[i].rect.w = msg.length() * state.smallFont->getCharWidth();
-                    state.smallFont->out(menu[i].rect.x, menu[i].rect.y, *colour + msg);
+                    row.rect.w = msg.length() * state.smallFont->getCharWidth();
+                    state.smallFont->out(row.rect.x, row.rect.y, *colour + msg);
+                } else if (row.type == MenuType::Value) {
+                    std::string msg = row.text + " ";
+                    msg += "\x03 " + std::to_string(row.value) + " \x04";
+                    row.rect.w = msg.length() * state.smallFont->getCharWidth();
+                    state.smallFont->out(row.rect.x, row.rect.y, *colour + msg);
                 } else {
-                    state.smallFont->out(menu[i].rect.x, menu[i].rect.y, *colour + menu[i].text);
+                    state.smallFont->out(row.rect.x, row.rect.y, *colour + row.text);
                 }
             }
         }
@@ -118,29 +168,27 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_MOUSEBUTTONUP) {
-                int choice = checkPosInMenu(menu, event.button.x, event.button.y);
-                if (choice >= 0) {
-                    if (menu[choice].type == MenuType::Choice) {
-                        return menu[choice].code;
-                    } else if (menu[choice].type == MenuType::Bool) {
-                        menu[choice].value = !menu[choice].value;
-                    }
-                    if (menu[choice].type != MenuType::Disabled && !menu[choice].text.empty()) {
-                        option = choice;
+                MenuOption &choice = getOptionByCoord(event.button.x, event.button.y);
+                if (choice.code >= 0) {
+                    if (choice.type == MenuType::Choice) {
+                        return choice.code;
+                    } else if (choice.type == MenuType::Bool) {
+                        choice.value = !choice.value;
                     }
                 }
                 continue;
             }
             const CommandDef &cmd = getCommand(state, event, menuCommands);
+            MenuOption &current = options[selected];
             switch(cmd.command) {
                 case Command::Quit:
                     state.wantsToQuit = true;
                     return menuQuit;
                 case Command::Interact:
-                    if (menu[option].type == MenuType::Choice) {
-                        return menu[option].code;
-                    } else if (menu[option].type == MenuType::Bool) {
-                        menu[option].value = !menu[option].value;
+                    if (current.type == MenuType::Choice) {
+                        return current.code;
+                    } else if (current.type == MenuType::Bool) {
+                        current.value = !current.value;
                     }
                     break;
                 case Command::Debug_ShowInfo:
@@ -152,43 +200,37 @@ int runMenu(System &state, MenuOption *menu, int defaultOption) {
                 case Command::Move:
                     switch(cmd.direction) {
                         case Dir::East:
-                            if (menu[option].type == MenuType::Bool) {
-                                menu[option].value = !menu[option].value;
-                            } else if (menu[option].type == MenuType::Value) {
-                                ++menu[option].value;
-                                if (menu[option].value > menu[option].max) {
-                                    menu[option].value = menu[option].min;
+                            if (current.type == MenuType::Bool) {
+                                current.value = !current.value;
+                            } else if (current.type == MenuType::Value) {
+                                current.value += current.step;
+                                if (current.value > current.max) {
+                                    current.value = current.min;
                                 }
-                                if (menu[option].callback) {
-                                    menu[option].callback(state, menu[option].value);
+                                if (current.callback) {
+                                    current.callback(state, current.value);
                                 }
                             }
                             break;
                         case Dir::West:
-                            if (menu[option].type == MenuType::Bool) {
-                                menu[option].value = !menu[option].value;
-                            } else if (menu[option].type == MenuType::Value) {
-                                --menu[option].value;
-                                if (menu[option].value < menu[option].min) {
-                                    menu[option].value = menu[option].max;
+                            if (current.type == MenuType::Bool) {
+                                current.value = !current.value;
+                            } else if (current.type == MenuType::Value) {
+                                current.value -= current.step;
+                                if (current.value < current.min) {
+                                    current.value = current.max;
                                 }
-                                if (menu[option].callback) {
-                                    menu[option].callback(state, menu[option].value);
+                                if (current.callback) {
+                                    current.callback(state, current.value);
                                 }
                             }
                             break;
                         case Dir::North:
-                            do {
-                                --option;
-                                if (option < 0) option = menuSize - 1;
-                            } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
+                            previous();
                             state.playEffect(0);
                             break;
                         case Dir::South:
-                            do {
-                                ++option;
-                                if (option >= menuSize) option = 0;
-                            } while (menu[option].type == MenuType::Disabled || menu[option].text.empty());
+                            next();
                             state.playEffect(0);
                             break;
                         default:

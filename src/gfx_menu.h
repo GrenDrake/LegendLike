@@ -6,10 +6,9 @@
 
 class System;
 
-const int menuQuit = -1;
-const int menuEnd = -2;
-const int menuDiscard = -3;
-const int menuClose = -6;
+const int menuNone = -1;
+const int menuQuit = 10000;
+const int menuClose = 10001;
 
 enum class MenuType {
     Choice,
@@ -23,17 +22,36 @@ struct MenuRect {
 };
 
 struct MenuOption {
-    std::string text;
+    MenuOption(int code, const std::string &text, MenuType type);
+    MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(System&, int) = nullptr);
+
     int code;
+    std::string text;
     MenuType type;
     int value;
-    int min, max;
+    int step, min, max;
     void (*callback)(System&, int);
 
     MenuRect rect;
 };
 
-int runMenu(System &state, MenuOption *menu, int defaultOption = 0);
+class Menu {
+public:
+    int run(System &state);
+    void add(const MenuOption &newOption);
+    bool empty() const;
+    void setSelectedByCode(int code);
+    MenuOption& getOptionByCode(int code);
+    MenuOption& getOptionByCoord(int x, int y);
+    MenuOption& getSelected();
+    void next();
+    void previous();
+
+private:
+    std::vector<MenuOption> options;
+    unsigned selected;
+};
+
 void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autoscroll);
 void showVersion(System &state);
 
