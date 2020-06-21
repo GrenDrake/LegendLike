@@ -62,6 +62,7 @@ CommandDef gameCommands[] = {
     { Command::Debug_TestPathfinder, Dir::None, SDLK_F9 },
     { Command::Debug_WriteMapBinary, Dir::None, SDLK_F10 },
     { Command::Debug_MapEditMode, Dir::None, SDLK_F12 },
+    { Command::Debug_SelectTile, Dir::None, SDLK_F11 },
 
     { Command::None }
 };
@@ -245,6 +246,7 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Debug_WriteMapBinary: out << "write map to file (debug)"; break;
         case Command::Debug_TestPathfinder: out << "test pathfinder (debug)"; break;
         case Command::Debug_MapEditMode:    out << "map editor mode (debug)"; break;
+        case Command::Debug_SelectTile:     out << "map editor mode (debug)"; break;
     }
     return out;
 }

@@ -18,6 +18,7 @@
 #include "textutil.h"
 
 void gfx_handleInput(System &state);
+int dbg_tilePicker(System &state);
 
 struct ProjectileInfo {
     std::string name;
@@ -390,10 +391,6 @@ void gfx_handleInput(System &state) {
 
 
             case Command::NextSubweapon: {
-                if (state.mapEditMode) {
-                    ++state.mapEditTile;
-                    break;
-                }
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -411,10 +408,6 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
             case Command::PrevSubweapon: {
-                if (state.mapEditMode) {
-                    if (state.mapEditTile) --state.mapEditTile;
-                    break;
-                }
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -523,6 +516,10 @@ void gfx_handleInput(System &state) {
             case Command::Debug_ShowFPS:
                 state.showFPS = !state.showFPS;
                 break;
+            case Command::Debug_SelectTile: {
+                int tile = dbg_tilePicker(state);
+                if (tile >= 0) state.mapEditTile = tile;
+                break; }
             case Command::Debug_WriteMapBinary: {
                 if (state.getBoard()->writeToFile("binary.map")) {
                     state.addError("Wrote map to disk as binary.map.");
@@ -554,4 +551,82 @@ void gfx_handleInput(System &state) {
                 break;
         }
     }
+}
+
+int dbg_tilePicker(System &state) {
+    int screenWidth = 0;
+    int screenHeight = 0;
+    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
+    int tilesHigh = screenHeight / (tileWidth * 2);
+    int tilesWide = screenHeight / (tileHeight * 2);
+    Point cursor;
+
+    while (1) {
+        SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(state.renderer);
+        for (int y = 0; y < tilesHigh; ++y) {
+            for (int x = 0; x < tilesWide; ++x) {
+                unsigned tileHere = x + y * tilesWide;
+                if (tileHere >= TileInfo::types.size()) continue;
+                const TileInfo &info = TileInfo::get(tileHere);
+
+                SDL_Rect texturePosition = {
+                    x * tileWidth * 2,
+                    y * tileHeight * 2,
+                    tileWidth * 2, tileHeight * 2
+                };
+
+                SDL_Texture *tile = info.art;
+                if (info.animLength > 1) {
+                    tile = info.frames[0];
+                }
+                if (tile) {
+                    SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
+                }
+
+                if (cursor.x() == x && cursor.y() == y) {
+                    SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+                    SDL_RenderDrawRect(state.renderer, &texturePosition);
+                }
+
+            }
+        }
+        std::stringstream msg;
+        msg << "Cursor:" << cursor.x() << ',' << cursor.y() << "   tile:";
+        unsigned tileId = cursor.x() + cursor.y() * tilesWide;
+        msg << tileId << ": ";
+        if (tileId < TileInfo::types.size()) {
+            const TileInfo &info = TileInfo::get(tileId);
+            msg << info.name;
+        }
+        state.smallFont->out(0, screenHeight - state.smallFont->getCharHeight(), msg.str());
+
+        SDL_RenderPresent(state.renderer);
+
+        SDL_Event event;
+        if (SDL_PollEvent(&event)) {
+            const CommandDef &command = getCommand(state, event, gameCommands);
+            switch(command.command) {
+                case Command::Move: {
+                    cursor = cursor.shift(command.direction);
+                    if (cursor.x() < 0) cursor = Point(0, cursor.y());
+                    if (cursor.y() < 0) cursor = Point(cursor.x(), 0);
+                    break; }
+                case Command::Interact: {
+                    unsigned tileId = cursor.x() + cursor.y() * tilesWide;
+                    if (tileId < TileInfo::types.size()) {
+                        return tileId;
+                    }
+                    return -1; }
+                case Command::Cancel:
+                    return -1;
+                default:
+                    // we don't need to handle most of the commands
+                    break;
+            }
+        }
+
+    }
+
+
 }

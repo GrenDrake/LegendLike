@@ -37,6 +37,7 @@ enum class Command {
     Debug_WriteMapBinary,
     Debug_Restore,
     Debug_MapEditMode,
+    Debug_SelectTile,
 };
 
 struct CommandDef {
