@@ -280,6 +280,8 @@ void gameloop(System &state) {
         if (state.wantsToQuit) {
             if (!gfx_Confirm(state, "Are you sure you want to quit?", "Your progress will NOT be saved.")) {
                 state.wantsToQuit = false;
+            } else {
+                state.gameInProgress = false;
             }
         }
     }
