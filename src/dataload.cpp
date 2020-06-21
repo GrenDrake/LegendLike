@@ -285,7 +285,6 @@ bool System::loadLootTables() {
     return true;
 }
 
-#include <iostream>
 bool System::loadTileData() {
     Logger &log = Logger::getInstance();
     const unsigned tileDefSize = 36;
