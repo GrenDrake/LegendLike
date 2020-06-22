@@ -17,15 +17,24 @@
 #include "gamestate.h"
 #include "textutil.h"
 
-void gfx_handleInput(System &state);
-int dbg_tilePicker(System &state);
-
 struct ProjectileInfo {
     std::string name;
     std::string filename;
     int damageDice, damageSides;
     bool directional;
 };
+
+std::string dirToAbbrev(Dir d);
+Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false);
+Point gfx_SelectTile(System &system, const std::string &prompt);
+void gfx_handleInput(System &state);
+int dbg_tilePicker(System &state);
+
+bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d);
+void doPlayerMove(System &state, Dir dir, bool forRun);
+void doMeleeAttack(System &state, Actor *actor);
+bool tryInteract(System &state, Dir d, const Point &target);
+
 
 const int projArrow = 0;
 const int projFireBolt = 1;
@@ -109,7 +118,29 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
     return false;
 }
 
-Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false) {
+#include <iostream>
+void doPlayerMove(System &state, Dir dir, bool forRun) {
+    Point dest = state.getPlayer()->position.shift(dir);
+    if (!state.getBoard()->valid(dest)) {
+        state.screenTransition(dir);
+    } else if (state.getPlayer()->tryMove(state.getBoard(), dir)) {
+        Item *item = state.getBoard()->itemAt(dest);
+        if (item) {
+            state.grantItem(item->typeInfo->itemId);
+            state.addMessage("Claimed: " + item->typeInfo->name + ".");
+            state.getBoard()->removeAndDeleteItem(item);
+        }
+        const Board::Event *e = state.getBoard()->eventAt(dest);
+        if (e && e->type == eventTypeAuto) {
+            state.vm->run(e->funcAddr);
+        }
+        state.requestTick();
+    } else {
+        tryInteract(state, dir, dest);
+    }
+}
+
+Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere) {
     system.addMessage(prompt + "; which way?");
     while (1) {
         repaint(system);
@@ -300,6 +331,7 @@ void gameloop(System &state) {
 
 }
 
+
 void gfx_handleInput(System &state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -322,22 +354,7 @@ void gfx_handleInput(System &state) {
                     player->position = player->position.shift(cmd.direction);
                     break;
                 }
-                Point dest = state.getPlayer()->position.shift(cmd.direction);
-                if (state.getPlayer()->tryMove(state.getBoard(), cmd.direction)) {
-                    Item *item = state.getBoard()->itemAt(dest);
-                    if (item) {
-                        state.grantItem(item->typeInfo->itemId);
-                        state.addMessage("Claimed: " + item->typeInfo->name + ".");
-                        state.getBoard()->removeAndDeleteItem(item);
-                    }
-                    const Board::Event *e = state.getBoard()->eventAt(dest);
-                    if (e && e->type == eventTypeAuto) {
-                        state.vm->run(e->funcAddr);
-                    }
-                    state.requestTick();
-                } else {
-                    tryInteract(state, cmd.direction, dest);
-                }
+                doPlayerMove(state, cmd.direction, false);
                 break; }
             case Command::Run: {
                 if (state.mapEditMode) {
@@ -498,6 +515,16 @@ void gfx_handleInput(System &state) {
                 if (state.mapEditMode)  state.addError("Entering map editing mode");
                 else                    state.addError("Exiting map editing mode");
                 break;
+            case Command::Debug_WarpMap: {
+                std::string mapIdStr;
+                if (gfx_EditText(state, "Map Number", mapIdStr, 10)) {
+                    int mapId = strToInt(mapIdStr);
+                    if (mapId >= 0) {
+                        Point position = state.getPlayer()->position;
+                        state.warpTo(mapId, position.x(), position.y());
+                    }
+                }
+                break; }
             case Command::Debug_Restore:
                 state.getPlayer()->curHealth = state.getPlayer()->typeInfo->maxHealth;
                 state.getPlayer()->curEnergy = state.getPlayer()->typeInfo->maxEnergy;

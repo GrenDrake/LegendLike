@@ -128,6 +128,17 @@ struct World {
     int index;
     int firstMap, lastMap;
     int width, height;
+
+    bool valid(const Point &where) const {
+        if (where.x() < 0 || where.y() < 0) return false;
+        if (where.x() >= width || where.y() >= height) return false;
+        return true;
+    }
+    int mapForPosition(const Point &where) const {
+        if (!valid(where)) return -1;
+        int offset = where.x() + where.y() * width;
+        return firstMap + offset;
+    }
 };
 
 class System {
@@ -179,6 +190,7 @@ public:
     bool warpTo(int boardIndex, int x, int y);
     bool down();
     bool up();
+    void screenTransition(Dir dir);
     bool switchBoard(int forIndex);
     const World& getWorld() const;
     Point getWorldPosition() const;

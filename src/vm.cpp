@@ -1,4 +1,5 @@
 #include <limits>
+#include <iomanip>
 #include <sstream>
 
 #include "physfs.h"
@@ -586,10 +587,10 @@ bool VM::run(unsigned address) {
                 }
                 break; }
             case Opcode::mf_fromfile: {
-                unsigned fileStrAddr = pop();
-                std::string fromFile = readString(fileStrAddr);
-                if (!state->getBoard()->readFromFile("maps/" + fromFile)) {
-                    state->addError("Failed to load map file " + fromFile + ".");
+                std::stringstream filename;
+                filename << "maps/" << std::setw(4) << std::setfill('0') << board->getInfo().index;
+                if (!state->getBoard()->readFromFile(filename.str())) {
+                    state->addError("Failed to load map file " + filename.str() + ".");
                 }
                 break; }
             case Opcode::mf_makemaze: {

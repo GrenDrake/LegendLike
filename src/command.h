@@ -38,6 +38,7 @@ enum class Command {
     Debug_Restore,
     Debug_MapEditMode,
     Debug_SelectTile,
+    Debug_WarpMap,
 };
 
 struct CommandDef {

@@ -124,7 +124,10 @@
 
 .npctype npcTypeBoulder   name="boulder"   art="boulder1" aiType=aiPushable
 
-.mapdata mapTown            name="Town"             mapId=103  width=66 height=66 onBuild=map0_build onEnter=map0_enter musicTrack=1
+.mapdata mapFoothills       name="Foothills"        mapId=101  width=66 height=66 onBuild=map101_build
+.mapdata mapTown            name="Town"             mapId=103  width=66 height=66 onBuild=map103_build onEnter=map0_enter musicTrack=1
+.mapdata mapField           name="Fields"           mapId=104  width=66 height=66 onBuild=map104_build
+
 .mapdata mapTownUnderground name="Town Underground" mapId=1001 width=66 height=66 onBuild=map1_build musicTrack=1
 .mapdata mapTownDungeon1    name="Dungeon Level 1"  mapId=1002 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
 .mapdata mapTownDungeon2    name="Dungeon Level 2"  mapId=1003 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
@@ -132,6 +135,16 @@
 
 
 .world worldOverworld       name="Overworld" width=3 height=3 firstmap=100
+
+map104_build:
+    mf_fromfile
+    @mf_additem     2 2 itemCoin
+    ret
+
+map101_build:
+    mf_fromfile
+    @mf_additem     2 22 itemCoin
+    ret
 
 .string strPrologText   "After years of training in the ways of battling with demon beasts, you have completed your apprenticeship and are at long last ready to take on your mastery quest.\nBut first, you must attend the academy one final time to claim your pre-graduation present: your own demon-beast companion."
 .export start

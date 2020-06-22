@@ -194,6 +194,34 @@ bool System::up() {
     return true;
 }
 
+void System::screenTransition(Dir dir) {
+    const World &world = getWorld();
+    if (world.index < 0) return;
+    Point work = getWorldPosition();
+    work = work.shift(dir);
+    int mapId = world.mapForPosition(work);
+    if (mapId < 0) return;
+    Point playerPos = getPlayer()->position;
+    switch(dir) {
+        case Dir::North:
+            playerPos = Point(playerPos.x(), mCurrentBoard->height() - 1);
+            break;
+        case Dir::South:
+            playerPos = Point(playerPos.x(), 0);
+            break;
+        case Dir::West:
+            playerPos = Point(mCurrentBoard->width() - 1, playerPos.y());
+            break;
+        case Dir::East:
+            playerPos = Point(0, playerPos.y());
+            break;
+        default:
+            // we don't care about the other directions
+            break;
+    }
+    warpTo(mapId, playerPos.x(), playerPos.y());
+}
+
 bool System::switchBoard(int forIndex) {
     const MapInfo &info = MapInfo::get(forIndex);
     if (info.index < 0) return false;

@@ -112,7 +112,9 @@ public:
         return mHeight;
     }
     bool valid(const Point &where) const {
-        return coord(where) >= 0;
+        if (where.x() < 0 || where.y() < 0) return false;
+        if (where.x() >= mWidth || where.y() >= mHeight) return false;
+        return true;
     }
     const MapInfo& getInfo() const {
         return mapInfo;

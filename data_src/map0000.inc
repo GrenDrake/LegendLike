@@ -131,8 +131,8 @@ map0_enter:
 
 
 .string map0_name "0000.map"
-map0_build:
-    @mf_fromfile    map0_name
+map103_build:
+    mf_fromfile
     ; the lab
     @mf_addactors   map0_npclist
     ; the academy
