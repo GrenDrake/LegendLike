@@ -64,6 +64,8 @@ CommandDef gameCommands[] = {
     { Command::Debug_MapEditMode, Dir::None, SDLK_F12 },
     { Command::Debug_WarpMap,       Dir::None, SDLK_F12, KMOD_LSHIFT },
     { Command::Debug_SelectTile, Dir::None, SDLK_F11 },
+    { Command::Debug_SetCursor,     Dir::None, SDLK_0 },
+    { Command::Debug_Fill,     Dir::None, SDLK_9 },
 
     { Command::None }
 };

@@ -408,6 +408,10 @@ void gfx_handleInput(System &state) {
 
 
             case Command::NextSubweapon: {
+                if (state.mapEditMode) {
+                    ++state.mapEditTile;
+                }
+
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -425,6 +429,10 @@ void gfx_handleInput(System &state) {
                 }
                 break; }
             case Command::PrevSubweapon: {
+                if (state.mapEditMode) {
+                    --state.mapEditTile;
+                }
+
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -587,6 +595,35 @@ void gfx_handleInput(System &state) {
                     state.addError("Path has " + std::to_string(points.size()) + " tiles.");
                     for (const Point &p : points) {
                         board->at(p).mark = true;
+                    }
+                }
+                break; }
+            case Command::Debug_SetCursor: {
+                if (!state.mapEditMode) break;
+                state.cursor = state.getPlayer()->position;
+                break; }
+            case Command::Debug_Fill: {
+                if (!state.mapEditMode) break;
+                Point topLeft = state.cursor;
+                Point playerPos = state.getPlayer()->position;
+                if (playerPos.y() < topLeft.y()) {
+                    int tmp = playerPos.y();
+                    playerPos = Point(playerPos.x(), topLeft.y());
+                    topLeft = Point(topLeft.x(), tmp);
+                }
+                if (playerPos.x() < topLeft.x()) {
+                    int tmp = playerPos.x();
+                    playerPos = Point(topLeft.x(), playerPos.y());
+                    topLeft = Point(tmp, topLeft.y());
+                }
+                std::vector<int> grassList{ 8, 55, 56 };
+                std::vector<int> treeList{ 59, 58, 60, 57, 8, 55, 56, 8, 55, 56 };
+                for (int y = topLeft.y(); y <= playerPos.y(); ++y) {
+                    for (int x = topLeft.x(); x <= playerPos.x(); ++x) {
+                        int tile = state.mapEditTile;
+                        if (tile == -1) tile = grassList[state.coreRNG.next32() % grassList.size()];
+                        else if (tile == -2) tile = treeList[state.coreRNG.next32() % treeList.size()];
+                        state.getBoard()->setTile(Point(x, y), tile);
                     }
                 }
                 break; }
