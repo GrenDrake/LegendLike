@@ -11,6 +11,7 @@
 .define aiEnemy           7
 .define aiPushable        8
 .define aiBreakable       9
+.define aiBomb            10
 
 .define eventAuto         0
 .define eventManual       1
@@ -108,6 +109,7 @@
 .loottable lootTablePot      5 itemAmmoArrow 33 itemAmmoBomb 67 itemCoin
 
 .npctype npcTypePlayer       name="player"  art="player" health=10 energy=10 aiType=aiPlayer
+.npctype npcTypeBomb         name="bomb"    art="bomb" aiType=aiBomb
 .npctype npcTypeSage         name="sage"    art="sage" aiType=aiStill
 .npctype npcTypeGuard        name="guard"   art="guard" aiType=aiStill
 .npctype npcTypeMovingGuard  name="guard"   art="guard" aiType=aiStill

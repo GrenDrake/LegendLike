@@ -26,6 +26,7 @@ const int aiFollowPlayer    = 6;
 const int aiEnemy           = 7;
 const int aiPushable        = 8;
 const int aiBreakable       = 9;
+const int aiBomb            = 10;
 
 const int lootNone          = 0;
 const int lootTable         = 1;

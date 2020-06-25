@@ -234,7 +234,7 @@ bool tryInteract(System &state, Dir d, const Point &target) {
     Actor *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
-        if (actor->typeInfo->aiType == aiPushable) {
+        if (actor->typeInfo->aiType == aiPushable || actor->typeInfo->aiType == aiBomb) {
             actor->tryMove(state.getBoard(), d);
         } else if (actor->typeInfo->aiType == aiEnemy) {
             if (state.swordLevel > 0) {
@@ -503,6 +503,24 @@ void gfx_handleInput(System &state) {
                             }
                         } else {
                             state.addMessage("Your pickaxe has no impact.");
+                        }
+                        break; }
+                    case SW_BOMB: {
+                        if (state.bombCount <= 0) {
+                            state.addMessage("You don't have any bombs.");
+                            break;
+                        }
+                        Point dest = state.getPlayer()->position.shift(d);
+                        const TileInfo &tileInfo = TileInfo::get(state.getBoard()->getTile(dest));
+                        Actor *existing = state.getBoard()->actorAt(dest);
+                        if (tileInfo.flags & TF_SOLID || existing) {
+                            state.addMessage("There's no space.");
+                        } else {
+                            --state.bombCount;
+                            Actor *bomb = new Actor(1);
+                            bomb->reset();
+                            bomb->ai_pathNext = 5;
+                            state.getBoard()->addActor(bomb, dest);
                         }
                         break; }
                     default:

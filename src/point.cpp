@@ -81,6 +81,20 @@ Dir rotateDirection(Dir original) {
     }
 }
 
+Dir rotateDirection45(Dir original) {
+    switch(original) {
+        case Dir::North:        return Dir::Northeast;
+        case Dir::East:         return Dir::Southeast;
+        case Dir::South:        return Dir::Southwest;
+        case Dir::West:         return Dir::Northwest;
+        case Dir::Northeast:    return Dir::East;
+        case Dir::Southeast:    return Dir::South;
+        case Dir::Southwest:    return Dir::West;
+        case Dir::Northwest:    return Dir::North;
+        default:                return Dir::North;
+    }
+}
+
 Dir randomDirection(Random &rng) {
     switch(rng.next32() % 4) {
         case 0: return Dir::North;

@@ -85,6 +85,30 @@ void Actor::ai(System &system) {
     const Dir dirs[4] = { Dir::West, Dir::North, Dir::East, Dir::South };
 
     switch(typeInfo->aiType) {
+        case aiBomb:
+            --ai_pathNext;
+            if (ai_pathNext <= 0) {
+                system.addMessage("A bomb explodes!");
+                Dir d = Dir::North;
+                AnimFrame frame(animFrame);
+                SDL_Texture *boom = system.getImage("effects/boom.png");
+                do {
+                    Point work = position.shift(d);
+                    frame.data.insert(std::make_pair(work, boom));
+                    Actor *who = board->actorAt(work);
+                    if (who && (who->typeInfo->aiType == aiPlayer ||
+                                who->typeInfo->aiType == aiBreakable ||
+                                who->typeInfo->aiType == aiEnemy)) {
+                        int damage = system.coreRNG.roll(4, 4);
+                        board->doDamage(system, who, damage, 0, "bomb");
+                    }
+                    d = rotateDirection45(d);
+                } while (d != Dir::North);
+                system.queueFrame(frame);
+                curHealth = 0;
+                position = Point(-1, -1);
+            }
+            return;
         case aiPlayer:
         case aiStill:
         case aiPushable:
