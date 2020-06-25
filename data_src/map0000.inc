@@ -126,15 +126,10 @@ map0_npclist:
 .npc townDummy2                            x=24 y=30 typeId=npcTypeTargetDummy
 .word -1
 
-map0_enter:
-    ret
-
 
 .string map0_name "0000.map"
 map103_build:
     mf_fromfile
-    ; the lab
-    @mf_addactors   map0_npclist
     ; the academy
     @mf_addevent    24 50 map0_downToAcademyCellar eventManual
     @mf_addevent    25 47 map0_talk_academysign eventManual
@@ -143,6 +138,11 @@ map103_build:
     ; village green
     @mf_addevent    26 40 map0_talkwell eventManual
     @mf_addevent    28 36 map0_talkfire eventManual
+    ret
+
+map103_reset:
+    ; the lab
+    @mf_addactors   map0_npclist
 
     @mf_additem     28 28 itemCoin
 

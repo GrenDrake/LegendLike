@@ -11,7 +11,7 @@ map1_upToDungeonHouse:
 .npc octopus1 name="octopus" x=37 y=25 typeId=npcTypeOctopus
 .npc octopus2 name="octopus" x=41 y=27 typeId=npcTypeOctopus
 
-map1_build:
+map1001_build:
     ; create town frame
     .push_count     tileGrass tileGrass2 tileGrass3 tileGrass tileGrass2 tileGrass3 tileRocks tileTree1 tileTree2 tileTree3
     @mf_clear       tileWall
@@ -43,7 +43,10 @@ map1_build:
     @mf_vertline    30 25 33 tileWindow
     .push_count     tileWater
     @mf_fillrand    30 43 23 34
+
+    ret
+
+map1001_reset:
     @mf_addactor    octopus1
     @mf_addactor    octopus2
-
     ret

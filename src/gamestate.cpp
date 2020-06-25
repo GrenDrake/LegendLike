@@ -157,12 +157,13 @@ void System::tick() {
 
 bool System::warpTo(int boardIndex, int x, int y) {
     if (boardIndex < 0) {
+        // warp within current board
         if (!mCurrentBoard) return false;
         mCurrentBoard->removeActor(mPlayer);
         mCurrentBoard->addActor(mPlayer, Point(x, y));
     } else {
-        int newDepth = boardIndex;
-        if (switchBoard(newDepth)) {
+        // warp to new board
+        if (switchBoard(boardIndex)) {
             mCurrentBoard->addActor(mPlayer, Point(x, y));
             mCurrentBoard->calcFOV(getPlayer()->position);
         } else {
@@ -237,7 +238,7 @@ bool System::switchBoard(int forIndex) {
         return false;
     }
     mCurrentBoard = oldBoard->second;
-    if (info.onEnter) vm->run(info.onEnter);
+    mCurrentBoard->reset(*this);
     depth = forIndex;
     if (info.musicTrack >= 0) {
 

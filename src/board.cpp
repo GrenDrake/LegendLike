@@ -66,6 +66,20 @@ Board::~Board() {
     }
 }
 
+void Board::reset(System &state) {
+    for (Actor *actor : actors) {
+        delete actor;
+    }
+    actors.clear();
+    for (Item *item : items) {
+        delete item;
+    }
+    items.clear();
+    if (mapInfo.onReset) {
+        state.vm->run(mapInfo.onReset);
+    }
+}
+
 Actor* Board::actorAt(const Point &where) {
     for (Actor *actor : actors) {
         if (actor->position == where) {

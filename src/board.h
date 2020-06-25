@@ -120,6 +120,7 @@ public:
         return mapInfo;
     }
 
+    void reset(System &state);
     Actor* actorAt(const Point &where);
     void addActor(Actor *actor, const Point &where);
     void removeActor(Actor *actor);

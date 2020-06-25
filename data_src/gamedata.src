@@ -125,13 +125,13 @@
 .npctype npcTypeBoulder   name="boulder"   art="boulder1" aiType=aiPushable
 
 .mapdata mapFoothills       name="Foothills"        mapId=101  width=66 height=66 onBuild=map101_build
-.mapdata mapTown            name="Town"             mapId=103  width=66 height=66 onBuild=map103_build onEnter=map0_enter musicTrack=1
+.mapdata mapTown            name="Town"             mapId=103  width=66 height=66 onBuild=map103_build onReset=map103_reset musicTrack=1
 .mapdata mapField           name="Fields"           mapId=104  width=66 height=66 onBuild=map104_build
 
-.mapdata mapTownUnderground name="Town Underground" mapId=1001 width=66 height=66 onBuild=map1_build musicTrack=1
-.mapdata mapTownDungeon1    name="Dungeon Level 1"  mapId=1002 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
-.mapdata mapTownDungeon2    name="Dungeon Level 2"  mapId=1003 width=95 height=95 onBuild=map_build_dungeon musicTrack=2 addUpStairs addDownStairs
-.mapdata mapTownDungeon3    name="Dungeon Level 3"  mapId=1004 width=95 height=95 onBuild=map_build_dungeon_bottom musicTrack=2 addUpStairs
+.mapdata mapTownUnderground name="Town Underground" mapId=1001 width=66 height=66 onBuild=map1001_build onReset=map1001_reset musicTrack=1
+.mapdata mapTownDungeon1    name="Dungeon Level 1"  mapId=1002 width=95 height=95 onBuild=map_build_dungeon onReset=map_populate_dungeon musicTrack=2 addUpStairs addDownStairs
+.mapdata mapTownDungeon2    name="Dungeon Level 2"  mapId=1003 width=95 height=95 onBuild=map_build_dungeon onReset=map_populate_dungeon musicTrack=2 addUpStairs addDownStairs
+.mapdata mapTownDungeon3    name="Dungeon Level 3"  mapId=1004 width=95 height=95 onBuild=map_build_dungeon_bottom onReset=map_populate_dungeon musicTrack=2 addUpStairs
 
 
 .world worldOverworld       name="Overworld" width=3 height=3 firstmap=100
@@ -161,7 +161,7 @@ start:
 onDeath:
     @saystr     "You can take no more and collapse! When you awaken, you find yourself returned to your home."
     textbox
-    @warpto     23 14 0
+    @warpto     23 14 103
     ret
 
 dungeon_foe_info:
@@ -172,6 +172,9 @@ dungeon_foe_info:
 
 map_build_dungeon:
     @mf_makemaze    3
+    ret
+
+map_populate_dungeon:
     @mf_makefoes    dungeon_foe_info
     ret
 
