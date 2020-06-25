@@ -20,11 +20,6 @@ class VM;
 class Config;
 struct SDL_Rect;
 
-const int quickSlotUnused = 0;
-const int quickSlotAbility = 1;
-const int quickSlotItem = 2;
-const int quickSlotCount = 4;
-
 const int SW_BOW = 0;
 const int SW_HOOKSHOT = 1;
 const int SW_BOMB = 2;
@@ -77,11 +72,6 @@ struct TrackInfo {
     std::string file;
     std::string name;
     std::string artist;
-};
-
-struct QuickSlot {
-    int type;
-    int action;
 };
 
 struct Message {
@@ -217,7 +207,6 @@ public:
     Board *mCurrentBoard;
     Actor *mPlayer;
     std::map<int, Board*> mBoards;
-    QuickSlot quickSlots[quickSlotCount];
     Point cursor;
 
     // game resources
