@@ -77,7 +77,7 @@
 .tiledef tileTileERoad      name="road"              art="road_e" red=127 green=127 blue=127 group=2
 .tiledef tileTileNRoad      name="road"              art="road_n" red=127 green=127 blue=127 group=2
 .tiledef tileGrass2         name="grass"             art="grass2" red=129 green=192 blue=159
-.tiledef tileGrass3         name="grass"             art="grass2" red=129 green=192 blue=159
+.tiledef tileGrass3         name="grass"             art="grass3" red=129 green=192 blue=159
 .tiledef tileRocks          name="rocks"             art="rocks" red=127 green=127 blue=127 solid
 .tiledef tileTree1          name="tree"              art="tree1" red=80 green=95 blue=80 solid opaque
 .tiledef tileTree2          name="tree"              art="tree2" red=80 green=95 blue=80 solid opaque
