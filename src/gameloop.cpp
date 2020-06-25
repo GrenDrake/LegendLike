@@ -525,6 +525,7 @@ void gfx_handleInput(System &state) {
                             state.addMessage("There's no space.");
                         } else {
                             --state.bombCount;
+                            if (state.bombCount <= 0) state.subweaponLevel[SW_BOMB] = 0;
                             Actor *bomb = new Actor(1);
                             bomb->reset();
                             bomb->ai_pathNext = 5;
