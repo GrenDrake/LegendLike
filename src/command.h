@@ -39,6 +39,7 @@ enum class Command {
     Debug_MapEditMode,
     Debug_SelectTile,
     Debug_WarpMap,
+    Debug_Teleport,
     Debug_SetCursor,
     Debug_Fill,
 };

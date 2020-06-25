@@ -551,6 +551,19 @@ void gfx_handleInput(System &state) {
                     }
                 }
                 break; }
+            case Command::Debug_Teleport: {
+                std::string xPos = std::to_string(state.getPlayer()->position.x());
+                std::string yPos = std::to_string(state.getPlayer()->position.y());
+                if (!gfx_EditText(state, "X Coord", xPos, 10)) break;
+                if (!gfx_EditText(state, "Y Coord", yPos, 10)) break;
+                int x = strToInt(xPos);
+                int y = strToInt(yPos);
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                if (x > state.getBoard()->width())  x = state.getBoard()->width() - 1;
+                if (y > state.getBoard()->height()) y = state.getBoard()->height() - 1;
+                state.warpTo(-1, x, y);
+                break; }
             case Command::Debug_Restore:
                 state.getPlayer()->curHealth = state.getPlayer()->typeInfo->maxHealth;
                 state.getPlayer()->curEnergy = state.getPlayer()->typeInfo->maxEnergy;

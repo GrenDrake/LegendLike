@@ -66,6 +66,7 @@ CommandDef gameCommands[] = {
     { Command::Debug_SelectTile, Dir::None, SDLK_F11 },
     { Command::Debug_SetCursor,     Dir::None, SDLK_0 },
     { Command::Debug_Fill,     Dir::None, SDLK_9 },
+    { Command::Debug_Teleport, Dir::None, SDLK_6 },
 
     { Command::None }
 };
@@ -251,6 +252,9 @@ std::ostream& operator<<(std::ostream &out, const Command &cmd) {
         case Command::Debug_TestPathfinder: out << "test pathfinder (debug)"; break;
         case Command::Debug_MapEditMode:    out << "map editor mode (debug)"; break;
         case Command::Debug_SelectTile:     out << "map editor mode (debug)"; break;
+        case Command::Debug_Teleport:       out << "teleport (debug)"; break;
+        case Command::Debug_SetCursor:      out << "set cursor (debug)"; break;
+        case Command::Debug_Fill:           out << "fill region (debug)"; break;
     }
     return out;
 }
