@@ -108,6 +108,10 @@ struct ItemDef {
 };
 
 struct Item {
+    explicit Item(const ItemDef *typeInfo, int fromLocation = -1)
+    : typeInfo(typeInfo), fromLocation(fromLocation)
+    { }
+
     const ItemDef *typeInfo;
     Point position;
     int fromLocation;

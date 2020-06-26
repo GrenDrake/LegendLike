@@ -146,8 +146,7 @@ void Board::makeLoot(GameState &state, const Actor *from, const Point &where) {
                 if (table.rows[i].chance >= roll) break;
             }
             if (i == 0 || i > table.rows.size()) break; // rolled off table
-            Item *item = new Item;
-            item->typeInfo = &state.itemDefs[table.rows[i - 1].itemId];
+            Item *item = new Item(&state.itemDefs[table.rows[i - 1].itemId]);
             addItem(item, where);
             break; }
         case lootLocation: {
