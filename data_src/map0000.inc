@@ -1,20 +1,20 @@
 ; data for map of the starting town
 
-.location locSwordUpgrade1  item=itemClassSwordUpgrade
-.location locSwordUpgrade2  item=itemClassSwordUpgrade
-.location locArmourUpgrade1 item=itemClassArmourUpgrade
-.location locHealthUpgrade1 item=itemClassHealthUpgrade
-.location locEnergyUpgrade1 item=itemClassEnergyUpgrade
-.location locBow            item=itemClassBow
-.location locHookshot       item=itemClassHookshot
-.location locIceRod         item=itemClassIceRod
-.location locFireRod        item=itemClassFireRod
-.location locPickaxe        item=itemClassPickaxe
-.location locAmmoArrow1     item=itemClassAmmoArrow
-.location locAmmoBomb1      item=itemClassAmmoBomb
-.location locCoin1          item=itemClassCoin
-.location locCapArrow1      item=itemClassCapArrow
-.location locCapBomb1       item=itemClassCapBomb
+.location locSwordUpgrade1  item=itemSword
+.location locSwordUpgrade2  item=itemSword
+.location locArmourUpgrade1 item=itemArmour
+.location locHealthUpgrade1 item=itemHealth
+.location locEnergyUpgrade1 item=itemEnergy
+.location locBow            item=itemBow
+.location locHookshot       item=itemHookshot
+.location locIceRod         item=itemIceRod
+.location locFireRod        item=itemFireRod
+.location locPickaxe        item=itemPickaxe
+.location locAmmoArrow1     item=itemAmmoArrow
+.location locAmmoBomb1      item=itemAmmoBomb
+.location locCoin1          item=itemCoin
+.location locCapArrow1      item=itemCapArrow
+.location locCapBomb1       item=itemCapBomb
 
 
 map0_talk_professor:
@@ -100,7 +100,7 @@ map0_downToDungeon:
     ret
 
 map0_talkSage:
-    @p_giveitem_imm itemClassAmmoArrow
+    @p_giveitem_imm itemAmmoArrow
     @saystr     "Sage: Hello! It is a pleasant morning, is it not?"
     textbox
     ret

@@ -640,7 +640,8 @@ bool VM::run(unsigned address) {
                     break;
                 }
                 locationDef.used = true;
-                state->grantItem(locationDef.itemId);
+                const ItemDef &itemDef = state->itemDefs[locationDef.itemId];
+                state->grantItem(itemDef.itemId);
                 break; }
             case Opcode::p_claimed: {
                 int locationNumber = pop();
@@ -655,7 +656,8 @@ bool VM::run(unsigned address) {
                 break; }
             case Opcode::p_giveitem_imm: {
                 int itemId = pop();
-                state->grantItem(itemId);
+                const ItemDef &itemDef = state->itemDefs[itemId];
+                state->grantItem(itemDef.itemId);
                 break; }
             case Opcode::p_hasitem: {
                 int itemId = pop();

@@ -105,6 +105,18 @@
 .itemdef itemAmmoBomb     name="bombs"  art="bomb"   itemId=itemClassAmmoBomb
 .itemdef itemCoin         name="coins"  art="coins"  itemId=itemClassCoin
 
+.itemdef itemSword        name="sword"           art="sword"      itemId=itemClassSwordUpgrade
+.itemdef itemArmour       name="armour"          art="armour"     itemId=itemClassArmourUpgrade
+.itemdef itemHealth       name="health"          art="health"     itemId=itemClassHealthUpgrade
+.itemdef itemEnergy       name="energy"          art="energy"     itemId=itemClassEnergyUpgrade
+.itemdef itemBow          name="bow"             art="bow"        itemId=itemClassBow
+.itemdef itemHookshot     name="hookshot"        art="hookshot"   itemId=itemClassHookshot
+.itemdef itemIceRod       name="icerod"          art="icerod"     itemId=itemClassIceRod
+.itemdef itemFireRod      name="firerod"         art="firerod"    itemId=itemClassFireRod
+.itemdef itemPickaxe      name="pickaxe"         art="pickaxe"    itemId=itemClassPickaxe
+.itemdef itemCapArrow     name="arrow capacity"  art="arrow_cap"  itemId=itemClassCapArrow
+.itemdef itemCapBomb      name="bomb capacity"   art="bomb_cap"   itemId=itemClassCapBomb
+
 .loottable lootTableA        20 itemAmmoArrow 40 itemAmmoBomb 60 itemCoin
 .loottable lootTablePot      5 itemAmmoArrow 33 itemAmmoBomb 67 itemCoin
 
