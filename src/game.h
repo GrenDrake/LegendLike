@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-class System;
+class GameState;
 class VM;
 
 class GameError : public std::runtime_error {
@@ -24,8 +24,8 @@ const int tileWidth = 32;
 const int tileHeight = 32;
 
 std::string versionString();
-void gameloop(System &renderState);
+void gameloop(GameState &gameState);
 char* slurpFile(const std::string &filename);
-bool loaddata(System &system);
+bool loaddata(GameState &system);
 
 #endif

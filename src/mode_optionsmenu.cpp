@@ -10,9 +10,9 @@
 #include "gfx_menu.h"
 #include "config.h"
 
-void adjustMusicVolume(System &system, int value);
-void adjustAudioVolume(System &system, int value);
-void adjustFontScale(System &system, int value);
+void adjustMusicVolume(GameState &system, int value);
+void adjustAudioVolume(GameState &system, int value);
+void adjustFontScale(GameState &system, int value);
 
 
 const int menuMusic         = 0;
@@ -26,20 +26,20 @@ const int menuSaveChanges   = 7;
 const int menuDiscard       = 8;
 
 
-void adjustMusicVolume(System &system, int value) {
+void adjustMusicVolume(GameState &system, int value) {
     Mix_VolumeMusic(value);
 }
 
-void adjustAudioVolume(System &system, int value) {
+void adjustAudioVolume(GameState &system, int value) {
     Mix_Volume(-1, value);
     system.playEffect(0);
 }
 
-void adjustFontScale(System &system, int value) {
+void adjustFontScale(GameState &system, int value) {
     system.setFontScale(value);
 }
 
-void doOptionsMenu(System &state) {
+void doOptionsMenu(GameState &state) {
     static Menu optionsMenu;
     if (optionsMenu.empty()) {
         optionsMenu.add(MenuOption(menuMusic,          "Music Volume",         50, 1, 0, MIX_MAX_VOLUME, adjustMusicVolume));

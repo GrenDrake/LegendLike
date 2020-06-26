@@ -9,7 +9,7 @@
 
 static SDL_Rect doneButton = { -1 };
 
-void gfx_DrawMap(System &system) {
+void gfx_DrawMap(GameState &system) {
     int dispWidth, dispHeight;
     SDL_GetRendererOutputSize(system.renderer, &dispWidth, &dispHeight);
     Board *board = system.getBoard();
@@ -87,7 +87,7 @@ void gfx_DrawMap(System &system) {
     SDL_RenderPresent(system.renderer);
 }
 
-void doShowMap(System &system) {
+void doShowMap(GameState &system) {
     while (1) {
         gfx_DrawMap(system);
 

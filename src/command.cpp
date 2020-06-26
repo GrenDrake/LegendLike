@@ -148,7 +148,7 @@ CommandDef confirmCommands[] = {
     { Command::None }
 };
 
-const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList) {
+const CommandDef& getCommand(GameState &system, SDL_Event &event, const CommandDef *commandList) {
     if (event.type == SDL_USEREVENT) {
         system.fps = system.timerFrames;
         system.timerFrames = 0;
@@ -208,7 +208,7 @@ const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef 
     return commandNone;
 }
 
-bool passCommand(System &state) {
+bool passCommand(GameState &state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         getCommand(state, event, nullptr);

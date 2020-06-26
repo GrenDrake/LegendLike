@@ -6,7 +6,7 @@
 #include <vector>
 #include "point.h"
 
-class System;
+class GameState;
 class Actor;
 struct Item;
 class Random;
@@ -120,13 +120,13 @@ public:
         return mapInfo;
     }
 
-    void reset(System &state);
+    void reset(GameState &state);
     Actor* actorAt(const Point &where);
     void addActor(Actor *actor, const Point &where);
     void removeActor(Actor *actor);
     void removeActor(const Point &p);
-    void doDamage(System &state, Actor *to, int amount, int type, const std::string &source);
-    void makeLoot(System &state, const Actor *from, const Point &where);
+    void doDamage(GameState &state, Actor *to, int amount, int type, const std::string &source);
+    void makeLoot(GameState &state, const Actor *from, const Point &where);
     Actor* getPlayer();
 
     Item* itemAt(const Point &where);
@@ -156,7 +156,7 @@ public:
     void addEvent(const Point &where, int funcAddr, int type);
     const Event* eventAt(const Point &where) const;
 
-    void tick(System &system);
+    void tick(GameState &system);
 
     void dbgShiftMap(Dir d);
     void dbgRevealAll();

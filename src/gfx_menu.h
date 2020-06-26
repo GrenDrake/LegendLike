@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class System;
+class GameState;
 
 const int menuNone = -1;
 const int menuQuit = 10000;
@@ -23,21 +23,21 @@ struct MenuRect {
 
 struct MenuOption {
     MenuOption(int code, const std::string &text, MenuType type);
-    MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(System&, int) = nullptr);
+    MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(GameState&, int) = nullptr);
 
     int code;
     std::string text;
     MenuType type;
     int value;
     int step, min, max;
-    void (*callback)(System&, int);
+    void (*callback)(GameState&, int);
 
     MenuRect rect;
 };
 
 class Menu {
 public:
-    int run(System &state);
+    int run(GameState &state);
     void add(const MenuOption &newOption);
     bool empty() const;
     void setSelectedByCode(int code);
@@ -52,7 +52,7 @@ private:
     unsigned selected;
 };
 
-void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autoscroll);
-void showVersion(System &state);
+void gfx_RunInfo(GameState &state, const std::vector<std::string> &text, bool autoscroll);
+void showVersion(GameState &state);
 
 #endif

@@ -66,7 +66,7 @@ Board::~Board() {
     }
 }
 
-void Board::reset(System &state) {
+void Board::reset(GameState &state) {
     for (Actor *actor : actors) {
         delete actor;
     }
@@ -113,7 +113,7 @@ void Board::removeActor(const Point &p) {
     }
 }
 
-void Board::doDamage(System &state, Actor *to, int amount, int type, const std::string &source) {
+void Board::doDamage(GameState &state, Actor *to, int amount, int type, const std::string &source) {
     if (!to) return;
     Point pos = to->position;
     to->takeDamage(amount);
@@ -131,7 +131,7 @@ void Board::doDamage(System &state, Actor *to, int amount, int type, const std::
     }
 }
 
-void Board::makeLoot(System &state, const Actor *from, const Point &where) {
+void Board::makeLoot(GameState &state, const Actor *from, const Point &where) {
     if (!from) return;
     switch(from->typeInfo->lootType) {
         case lootNone:
@@ -476,7 +476,7 @@ const Board::Event* Board::eventAt(const Point &where) const {
     return nullptr;
 }
 
-void Board::tick(System &system) {
+void Board::tick(GameState &system) {
     // don't do any AI stuff in map edit mode
     if (system.mapEditMode) return;
 

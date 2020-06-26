@@ -70,7 +70,7 @@ bool Actor::isKOed() const {
     return curHealth <= 0;
 }
 
-void Actor::ai(System &system) {
+void Actor::ai(GameState &system) {
     // actors have a 1 in moveRate chance of taking a turn
     if (typeInfo->moveRate > 1) {
         ++ai_moveCount;
@@ -216,7 +216,7 @@ bool Actor::tryMove(Board *board, Dir direction) {
     return true;
 }
 
-bool doAccuracyCheck(System &system, Actor *attacker, Actor *target, int modifier) {
+bool doAccuracyCheck(GameState &system, Actor *attacker, Actor *target, int modifier) {
     int roll = -10000;
     if (target->typeInfo->aiType == aiBreakable) return true;
 

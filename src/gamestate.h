@@ -131,10 +131,10 @@ struct World {
     }
 };
 
-class System {
+class GameState {
 public:
-    System(SDL_Renderer *renderer, Random &rng);
-    ~System();
+    GameState(SDL_Renderer *renderer, Random &rng);
+    ~GameState();
 
     bool load();
     void unloadAll();
@@ -286,23 +286,23 @@ const int charModeCount = 3;
 
 char* slurpFile(const std::string &filename);
 
-bool repaint(System &state, const AnimFrame *frame = nullptr, bool callPresent = true);
+bool repaint(GameState &state, const AnimFrame *frame = nullptr, bool callPresent = true);
 
-void doCharInfo(System &system);
-void doCredits(System &state);
-void doGameMenu(System &state);
-void doShowMap(System &system);
+void doCharInfo(GameState &system);
+void doCredits(GameState &state);
+void doGameMenu(GameState &state);
+void doShowMap(GameState &system);
 
-bool gfx_Confirm(System &state, const std::string &line1, const std::string &line2, bool defaultResult = true);
-void gfx_Alert(System &state, const std::string &line1, const std::string &line2);
-bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength);
-void gfx_DrawTooltip(System &system, int x, int y, const std::string &text);
+bool gfx_Confirm(GameState &state, const std::string &line1, const std::string &line2, bool defaultResult = true);
+void gfx_Alert(GameState &state, const std::string &line1, const std::string &line2);
+bool gfx_EditText(GameState &system, const std::string &prompt, std::string &text, int maxLength);
+void gfx_DrawTooltip(GameState &system, int x, int y, const std::string &text);
 
 bool pointInBox(int x, int y, const SDL_Rect &box);
-int gfx_DrawFrame(System &system, int x, int y, int w, int h, const std::string &title);
-void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor);
-void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const std::string &text);
-void gfx_HLine(System &system, int x, int y, int y2, const Color &color);
-void gfx_VLine(System &system, int x, int x2, int y, const Color &color);
+int gfx_DrawFrame(GameState &system, int x, int y, int w, int h, const std::string &title);
+void gfx_DrawBar(GameState &system, int x, int y, int length, int height, double percent, const Color &baseColor);
+void gfx_DrawButton(GameState &system, const SDL_Rect &box, bool selected, const std::string &text);
+void gfx_HLine(GameState &system, int x, int y, int y2, const Color &color);
+void gfx_VLine(GameState &system, int x, int x2, int y, const Color &color);
 
 #endif

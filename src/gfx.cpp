@@ -16,7 +16,7 @@
 #include "config.h"
 #include "logger.h"
 
-void gfx_drawMap(System &state, const AnimFrame *frame) {
+void gfx_drawMap(GameState &state, const AnimFrame *frame) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -122,7 +122,7 @@ void gfx_drawMap(System &state, const AnimFrame *frame) {
     SDL_RenderSetClipRect(state.renderer, nullptr);
 }
 
-void gfx_drawSidebar(System &state) {
+void gfx_drawSidebar(GameState &state) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -323,7 +323,7 @@ void gfx_drawSidebar(System &state) {
     }
 }
 
-void gfx_doDrawToolTip(System &state) {
+void gfx_doDrawToolTip(GameState &state) {
     if (!state.showTooltip) return;
 
     int screenWidth = 0;
@@ -375,7 +375,7 @@ void gfx_doDrawToolTip(System &state) {
     }
 }
 
-bool repaint(System &state, const AnimFrame *frame, bool callPresent) {
+bool repaint(GameState &state, const AnimFrame *frame, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);

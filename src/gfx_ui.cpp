@@ -8,7 +8,7 @@
 #include "textutil.h"
 
 
-bool gfx_Confirm(System &state, const std::string &line1, const std::string &line2, bool defaultResult) {
+bool gfx_Confirm(GameState &state, const std::string &line1, const std::string &line2, bool defaultResult) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -97,7 +97,7 @@ bool gfx_Confirm(System &state, const std::string &line1, const std::string &lin
     }
 }
 
-void gfx_Alert(System &state, const std::string &line1, const std::string &line2) {
+void gfx_Alert(GameState &state, const std::string &line1, const std::string &line2) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -167,7 +167,7 @@ void gfx_Alert(System &state, const std::string &line1, const std::string &line2
     }
 }
 
-bool gfx_EditText(System &system, const std::string &prompt, std::string &text, int maxLength) {
+bool gfx_EditText(GameState &system, const std::string &prompt, std::string &text, int maxLength) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(system.renderer, &screenWidth, &screenHeight);
@@ -228,7 +228,7 @@ bool gfx_EditText(System &system, const std::string &prompt, std::string &text, 
     }
 }
 
-void gfx_DrawTooltip(System &system, int x, int y, const std::string &text) {
+void gfx_DrawTooltip(GameState &system, int x, int y, const std::string &text) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(system.renderer, &screenWidth, &screenHeight);
@@ -260,7 +260,7 @@ bool pointInBox(int x, int y, const SDL_Rect &box) {
     return true;
 }
 
-int gfx_DrawFrame(System &system, int x, int y, int w, int h, const std::string &title) {
+int gfx_DrawFrame(GameState &system, int x, int y, int w, int h, const std::string &title) {
     SDL_Rect background = { x, y, w, h };
     SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(system.renderer, &background);
@@ -278,7 +278,7 @@ int gfx_DrawFrame(System &system, int x, int y, int w, int h, const std::string 
     return lineY + 1;
 }
 
-void gfx_DrawBar(System &system, int x, int y, int length, int height, double percent, const Color &baseColor) {
+void gfx_DrawBar(GameState &system, int x, int y, int length, int height, double percent, const Color &baseColor) {
     SDL_Rect dest = { x, y, length, height };
     SDL_SetRenderDrawColor(system.renderer, baseColor.r/2, baseColor.g/2, baseColor.b/2, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(system.renderer, &dest);
@@ -293,7 +293,7 @@ void gfx_DrawBar(System &system, int x, int y, int length, int height, double pe
     SDL_RenderFillRect(system.renderer, &dest);
 }
 
-void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const std::string &text) {
+void gfx_DrawButton(GameState &system, const SDL_Rect &box, bool selected, const std::string &text) {
     const int charWidth = system.smallFont->getCharWidth();
     if (selected)   SDL_SetRenderDrawColor(system.renderer, 63, 63, 63, SDL_ALPHA_OPAQUE);
     else            SDL_SetRenderDrawColor(system.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -304,13 +304,13 @@ void gfx_DrawButton(System &system, const SDL_Rect &box, bool selected, const st
     system.smallFont->out(box.x + offset, box.y + 4, text);
 }
 
-void gfx_HLine(System &system, int x, int x2, int y, const Color &color) {
+void gfx_HLine(GameState &system, int x, int x2, int y, const Color &color) {
     SDL_Rect box = {x, y, x2 - x, 1 };
     SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(system.renderer, &box);
 }
 
-void gfx_VLine(System &system, int x, int y, int y2, const Color &color) {
+void gfx_VLine(GameState &system, int x, int y, int y2, const Color &color) {
     SDL_Rect box = {x, y, 1, y2 - y };
     SDL_SetRenderDrawColor(system.renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
     SDL_RenderFillRect(system.renderer, &box);

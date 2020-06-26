@@ -25,7 +25,7 @@ AnimFrame::AnimFrame(Actor *actor, int amount, int damageType, const std::string
 : special(animDamage), actor(actor), damageAmount(amount), damageType(damageType), text(source)
 { }
 
-System::System(SDL_Renderer *renderer, Random &rng)
+GameState::GameState(SDL_Renderer *renderer, Random &rng)
 : runDirection(Dir::None),
   swordLevel(0), armourLevel(0),
   subweaponLevel{0},
@@ -40,11 +40,11 @@ System::System(SDL_Renderer *renderer, Random &rng)
 {
 }
 
-System::~System() {
+GameState::~GameState() {
     endGame();
 }
 
-void System::reset() {
+void GameState::reset() {
     Logger &logger = Logger::getInstance();
     logger.info("Resetting game state");
     endGame();
@@ -71,7 +71,7 @@ void System::reset() {
     mPlayer->reset();
 }
 
-void System::endGame() {
+void GameState::endGame() {
     messages.clear();
     if (mCurrentBoard) mCurrentBoard = nullptr;
     if (mPlayer) mPlayer = nullptr;
@@ -81,42 +81,42 @@ void System::endGame() {
     mBoards.clear();
 }
 
-void System::setFontScale(int scale) {
+void GameState::setFontScale(int scale) {
     for (auto iter : mFonts) {
         iter.second->setScale(scale);
     }
 }
 
-void System::queueFrame(const AnimFrame &frame) {
+void GameState::queueFrame(const AnimFrame &frame) {
     animationQueue.push_back(frame);
 }
 
-void System::queueFrames(const std::vector<AnimFrame> &frame) {
+void GameState::queueFrames(const std::vector<AnimFrame> &frame) {
     animationQueue.insert(animationQueue.begin(), frame.begin(), frame.end());
 }
 
-void System::addMessage(const std::string &text) {
+void GameState::addMessage(const std::string &text) {
     messages.push_back(Message{
         turnNumber,
         text
     });
 }
 
-void System::addInfo(const std::string &text) {
+void GameState::addInfo(const std::string &text) {
     messages.push_back(Message{
         turnNumber,
         "\x1B\x02\x7F\x7F\xFF" + text
     });
 }
 
-void System::addError(const std::string &text) {
+void GameState::addError(const std::string &text) {
     messages.push_back(Message{
         turnNumber,
         "\x1B\x02\xFF\x7F\x7F" + text
     });
 }
 
-void System::appendMessage(const std::string &newText) {
+void GameState::appendMessage(const std::string &newText) {
     if (messages.empty()) {
         addMessage(newText);
     } else {
@@ -124,7 +124,7 @@ void System::appendMessage(const std::string &newText) {
     }
 }
 
-void System::replaceMessage(const std::string &newText) {
+void GameState::replaceMessage(const std::string &newText) {
     if (messages.empty()) {
         addMessage(newText);
     } else {
@@ -132,21 +132,21 @@ void System::replaceMessage(const std::string &newText) {
     }
 }
 
-void System::removeMessage() {
+void GameState::removeMessage() {
     if (!messages.empty()) {
         messages.pop_back();
     }
 }
 
-void System::requestTick() {
+void GameState::requestTick() {
     wantsTick = true;
 }
 
-bool System::hasTick() const {
+bool GameState::hasTick() const {
     return wantsTick;
 }
 
-void System::tick() {
+void GameState::tick() {
     wantsTick = false;
     if (mCurrentBoard) {
         mCurrentBoard->tick(*this);
@@ -155,7 +155,7 @@ void System::tick() {
 }
 
 
-bool System::warpTo(int boardIndex, int x, int y) {
+bool GameState::warpTo(int boardIndex, int x, int y) {
     if (boardIndex < 0) {
         // warp within current board
         if (!mCurrentBoard) return false;
@@ -173,7 +173,7 @@ bool System::warpTo(int boardIndex, int x, int y) {
     return true;
 }
 
-bool System::down() {
+bool GameState::down() {
     int newDepth = depth + 1;
     if (switchBoard(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileUp);
@@ -184,7 +184,7 @@ bool System::down() {
     return true;
 }
 
-bool System::up() {
+bool GameState::up() {
     int newDepth = depth - 1;
     if (switchBoard(newDepth)) {
         Point startPos = mCurrentBoard->findTile(tileDown);
@@ -195,7 +195,7 @@ bool System::up() {
     return true;
 }
 
-void System::screenTransition(Dir dir) {
+void GameState::screenTransition(Dir dir) {
     const World &world = getWorld();
     if (world.index < 0) return;
     Point work = getWorldPosition();
@@ -223,7 +223,7 @@ void System::screenTransition(Dir dir) {
     warpTo(mapId, playerPos.x(), playerPos.y());
 }
 
-bool System::switchBoard(int forIndex) {
+bool GameState::switchBoard(int forIndex) {
     const MapInfo &info = MapInfo::get(forIndex);
     if (info.index < 0) return false;
 
@@ -248,7 +248,7 @@ bool System::switchBoard(int forIndex) {
 }
 
 const World noWorld{ "", -1 };
-const World& System::getWorld() const {
+const World& GameState::getWorld() const {
     const int boardId = mCurrentBoard->getInfo().index;
     for (const World &world : worlds) {
         if (boardId >= world.firstMap && boardId <= world.lastMap) {
@@ -258,7 +258,7 @@ const World& System::getWorld() const {
     return noWorld;
 }
 
-Point System::getWorldPosition() const {
+Point GameState::getWorldPosition() const {
     const int boardId = mCurrentBoard->getInfo().index;
     for (const World &world : worlds) {
         if (boardId >= world.firstMap && boardId <= world.lastMap) {
@@ -271,7 +271,7 @@ Point System::getWorldPosition() const {
     return Point(-1, -1);
 }
 
-bool System::grantItem(int itemId) {
+bool GameState::grantItem(int itemId) {
     switch(itemId) {
         case ITM_SWORD_UPGRADE:
             ++swordLevel;
@@ -331,7 +331,7 @@ bool System::grantItem(int itemId) {
     return true;
 }
 
-bool System::hasItem(int itemId) {
+bool GameState::hasItem(int itemId) {
     switch(itemId) {
         case ITM_SWORD_UPGRADE:     return swordLevel > 0;
         case ITM_ARMOUR_UPGRADE:    return armourLevel > 0;
@@ -358,7 +358,7 @@ bool System::hasItem(int itemId) {
     return false;
 }
 
-void System::advanceFrame() {
+void GameState::advanceFrame() {
     ++framecount;
     ++timerFrames;
     unsigned newTime = SDL_GetTicks();
@@ -368,6 +368,6 @@ void System::advanceFrame() {
     lastticks = SDL_GetTicks();
 }
 
-unsigned System::getFPS() const {
+unsigned GameState::getFPS() const {
     return fps;
 }

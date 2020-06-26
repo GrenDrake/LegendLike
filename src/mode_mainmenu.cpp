@@ -52,9 +52,9 @@ const int menuResumeGame     = 4;
 const int menuGeneralOptions = 5;
 const int menuCredits        = 6;
 
-void doOptionsMenu(System &state);
+void doOptionsMenu(GameState &state);
 
-void doGameMenu(System &state) {
+void doGameMenu(GameState &state) {
     static Menu mainMenu;
     if (mainMenu.empty()) {
         mainMenu.add(MenuOption(menuStartStandard,  "Start Standard Game",    MenuType::Choice));

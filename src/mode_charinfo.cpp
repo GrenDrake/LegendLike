@@ -17,7 +17,7 @@ static int selection = 0;
 static std::vector<SDL_Rect> tabButtons;
 static SDL_Rect doneButton{ -1 };
 
-void gfx_drawCharInfo(System &state, bool callPresent) {
+void gfx_drawCharInfo(GameState &state, bool callPresent) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -78,7 +78,7 @@ void gfx_drawCharInfo(System &state, bool callPresent) {
     if (callPresent) SDL_RenderPresent(state.renderer);
 }
 
-void doCharInfo(System &system) {
+void doCharInfo(GameState &system) {
     selection = 0;
 
     while (1) {

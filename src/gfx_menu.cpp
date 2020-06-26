@@ -15,7 +15,7 @@ MenuOption::MenuOption(int code, const std::string &text, MenuType type)
 : code(code), text(text), type(type)
 { }
 
-MenuOption::MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(System&, int))
+MenuOption::MenuOption(int code, const std::string &text, int value, int step, int min, int max, void (*callback)(GameState&, int))
 : code(code), text(text), type(MenuType::Value),
   value(value), step(step), min(min), max(max), callback(callback)
 { }
@@ -73,7 +73,7 @@ void Menu::previous() {
 }
 
 
-void showVersion(System &state) {
+void showVersion(GameState &state) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
@@ -93,7 +93,7 @@ void showVersion(System &state) {
             gameVersion);
 }
 
-int Menu::run(System &state) {
+int Menu::run(GameState &state) {
     bool showInfo = false;
     const std::string writeDir = state.config->getString("writeDir", "unknown");
     int screenWidth = 0;
@@ -245,7 +245,7 @@ int Menu::run(System &state) {
     }
 }
 
-void gfx_RunInfo(System &state, const std::vector<std::string> &text, bool autoscroll) {
+void gfx_RunInfo(GameState &state, const std::vector<std::string> &text, bool autoscroll) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);

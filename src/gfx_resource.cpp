@@ -11,7 +11,7 @@
 const TrackInfo noTrack{-1, "", "no track playing", ""};
 
 
-SDL_Texture* System::getImageCore(const std::string &name) {
+SDL_Texture* GameState::getImageCore(const std::string &name) {
     Logger &log = Logger::getInstance();
     auto previous = mImages.find(name);
     if (previous != mImages.end()) return previous->second;
@@ -40,14 +40,14 @@ SDL_Texture* System::getImageCore(const std::string &name) {
     return tex;
 }
 
-SDL_Texture* System::getImage(const std::string &name) {
+SDL_Texture* GameState::getImage(const std::string &name) {
     std::string fullName("/gfx/");
     fullName += name;
     SDL_Texture *tex = getImageCore(fullName);
     return tex;
 }
 
-Mix_Music* System::getMusic(const std::string &name) {
+Mix_Music* GameState::getMusic(const std::string &name) {
     Logger &log = Logger::getInstance();
 
     std::string fullName("/music/");
@@ -65,7 +65,7 @@ Mix_Music* System::getMusic(const std::string &name) {
     return music;
 }
 
-Mix_Chunk* System::getAudio(const std::string &name) {
+Mix_Chunk* GameState::getAudio(const std::string &name) {
     Logger &log = Logger::getInstance();
 
     std::string fullName("/audio/");
@@ -86,7 +86,7 @@ Mix_Chunk* System::getAudio(const std::string &name) {
     return surf;
 }
 
-Font* System::getFont(const std::string &name) {
+Font* GameState::getFont(const std::string &name) {
     auto previous = mFonts.find(name);
     if (previous != mFonts.end()) return previous->second;
 
@@ -97,7 +97,7 @@ Font* System::getFont(const std::string &name) {
     return font;
 }
 
-void System::playMusic(int trackNumber) {
+void GameState::playMusic(int trackNumber) {
     if (mCurrentTrack == trackNumber) return;
 
     if (mCurrentMusic) {
@@ -124,27 +124,27 @@ void System::playMusic(int trackNumber) {
     }
 }
 
-void System::setMusicVolume(int volume) {
+void GameState::setMusicVolume(int volume) {
     Mix_VolumeMusic(volume);
 }
 
-int System::getTrackNumber() const {
+int GameState::getTrackNumber() const {
     return mCurrentTrack;
 }
 
-const TrackInfo& System::getTrackInfo() {
+const TrackInfo& GameState::getTrackInfo() {
     auto iter = mTracks.find(mCurrentTrack);
     if (iter != mTracks.end()) return iter->second;
     return noTrack;
 }
 
-void System::playEffect(int effectNumber) {
+void GameState::playEffect(int effectNumber) {
     auto iter = mAudio.find(effectNumber);
     if (iter != mAudio.end()) {
         Mix_PlayChannel(-1, iter->second, 0);
     }
 }
 
-void System::setAudioVolume(int volume) {
+void GameState::setAudioVolume(int volume) {
     Mix_Volume(-1, volume);
 }

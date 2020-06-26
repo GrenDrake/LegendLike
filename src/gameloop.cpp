@@ -25,15 +25,15 @@ struct ProjectileInfo {
 };
 
 std::string dirToAbbrev(Dir d);
-Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere = false);
-Point gfx_SelectTile(System &system, const std::string &prompt);
-void gfx_handleInput(System &state);
-int dbg_tilePicker(System &state);
+Dir gfx_GetDirection(GameState &system, const std::string &prompt, bool allowHere = false);
+Point gfx_SelectTile(GameState &system, const std::string &prompt);
+void gfx_handleInput(GameState &state);
+int dbg_tilePicker(GameState &state);
 
-bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d);
-void doPlayerMove(System &state, Dir dir, bool forRun);
-void doMeleeAttack(System &state, Actor *actor);
-bool tryInteract(System &state, Dir d, const Point &target);
+bool basicProjectileAttack(GameState &state, const ProjectileInfo &projectile, Dir d);
+void doPlayerMove(GameState &state, Dir dir, bool forRun);
+void doMeleeAttack(GameState &state, Actor *actor);
+bool tryInteract(GameState &state, Dir d, const Point &target);
 
 
 const int projArrow = 0;
@@ -59,7 +59,7 @@ std::string dirToAbbrev(Dir d) {
     }
 }
 
-bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir d) {
+bool basicProjectileAttack(GameState &state, const ProjectileInfo &projectile, Dir d) {
     Board *board = state.getBoard();
     Actor *actor = nullptr;
 
@@ -119,7 +119,7 @@ bool basicProjectileAttack(System &state, const ProjectileInfo &projectile, Dir 
 }
 
 #include <iostream>
-void doPlayerMove(System &state, Dir dir, bool forRun) {
+void doPlayerMove(GameState &state, Dir dir, bool forRun) {
     Point dest = state.getPlayer()->position.shift(dir);
     if (!state.getBoard()->valid(dest)) {
         state.screenTransition(dir);
@@ -140,7 +140,7 @@ void doPlayerMove(System &state, Dir dir, bool forRun) {
     }
 }
 
-Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere) {
+Dir gfx_GetDirection(GameState &system, const std::string &prompt, bool allowHere) {
     system.addMessage(prompt + "; which way?");
     while (1) {
         repaint(system);
@@ -168,7 +168,7 @@ Dir gfx_GetDirection(System &system, const std::string &prompt, bool allowHere) 
     }
 }
 
-Point gfx_SelectTile(System &system, const std::string &prompt) {
+Point gfx_SelectTile(GameState &system, const std::string &prompt) {
     system.cursor = system.getPlayer()->position;
     system.addMessage("Where?");
     while (1) {
@@ -210,7 +210,7 @@ Point gfx_SelectTile(System &system, const std::string &prompt) {
     }
 }
 
-void doMeleeAttack(System &state, Actor *actor) {
+void doMeleeAttack(GameState &state, Actor *actor) {
     bool isHit = doAccuracyCheck(state, state.getPlayer(), actor, 2);
     if (!isHit) {
         state.addMessage("You miss " + actor->getName() + ".");
@@ -230,7 +230,7 @@ void doMeleeAttack(System &state, Actor *actor) {
     }
 }
 
-bool tryInteract(System &state, Dir d, const Point &target) {
+bool tryInteract(GameState &state, Dir d, const Point &target) {
     Actor *actor = state.getBoard()->actorAt(target);
     const Board::Event *event = state.getBoard()->eventAt(target);
     if (actor && actor != state.getPlayer()) {
@@ -274,7 +274,7 @@ bool tryInteract(System &state, Dir d, const Point &target) {
     return false;
 }
 
-void gameloop(System &state) {
+void gameloop(GameState &state) {
     state.returnToMenu = false;
     state.getBoard()->calcFOV(state.getPlayer()->position);
 
@@ -332,7 +332,7 @@ void gameloop(System &state) {
 }
 
 
-void gfx_handleInput(System &state) {
+void gfx_handleInput(GameState &state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         const CommandDef &cmd = getCommand(state, event, gameCommands);
@@ -649,7 +649,7 @@ void gfx_handleInput(System &state) {
     }
 }
 
-int dbg_tilePicker(System &state) {
+int dbg_tilePicker(GameState &state) {
     int screenWidth = 0;
     int screenHeight = 0;
     SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);

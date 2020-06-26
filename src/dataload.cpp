@@ -51,7 +51,7 @@ char* slurpFile(const std::string &filename) {
     return buffer;
 }
 
-bool System::load() {
+bool GameState::load() {
     Logger &log = Logger::getInstance();
 
     try {
@@ -84,7 +84,7 @@ bool System::load() {
     return true;
 }
 
-bool System::loadMusicTracks() {
+bool GameState::loadMusicTracks() {
     Logger &log = Logger::getInstance();
     char **musicTracks = PHYSFS_enumerateFiles("/music");
     char **trackIter = musicTracks;
@@ -122,7 +122,7 @@ bool System::loadMusicTracks() {
     return true;
 }
 
-bool System::loadAudioTracks() {
+bool GameState::loadAudioTracks() {
     Logger &log = Logger::getInstance();
     char **audioEffects = PHYSFS_enumerateFiles("/audio");
     char **audioIter = audioEffects;
@@ -153,7 +153,7 @@ bool System::loadAudioTracks() {
     return true;
 }
 
-bool System::loadMapInfoData() {
+bool GameState::loadMapInfoData() {
     Logger &log = Logger::getInstance();
     unsigned mapBase = vm->getExport("__mapdata");
     if (mapBase < 0) {
@@ -185,7 +185,7 @@ bool System::loadMapInfoData() {
     return true;
 }
 
-bool System::loadActorData() {
+bool GameState::loadActorData() {
     Logger &log = Logger::getInstance();
     const unsigned npcTypeSize = 44;
     unsigned npcTypesAddr = vm->getExport("__npctypes");
@@ -218,7 +218,7 @@ bool System::loadActorData() {
     return true;
 }
 
-bool System::loadItemDefs() {
+bool GameState::loadItemDefs() {
     Logger &log = Logger::getInstance();
     const unsigned itemdefSize = 12;
     unsigned itemdefsAddr = vm->getExport("__itemdefs");
@@ -243,7 +243,7 @@ bool System::loadItemDefs() {
     return true;
 }
 
-bool System::loadLocationsData() {
+bool GameState::loadLocationsData() {
     Logger &log = Logger::getInstance();
     const unsigned locationSize = 4;
     unsigned locationsAddr = vm->getExport("__locations");
@@ -261,7 +261,7 @@ bool System::loadLocationsData() {
     return true;
 }
 
-bool System::loadLootTables() {
+bool GameState::loadLootTables() {
     Logger &log = Logger::getInstance();
     unsigned lootTablesAddr = vm->getExport("__loottables");
     if (lootTablesAddr == static_cast<unsigned>(-1)) {
@@ -286,7 +286,7 @@ bool System::loadLootTables() {
     return true;
 }
 
-bool System::loadTileData() {
+bool GameState::loadTileData() {
     Logger &log = Logger::getInstance();
     const unsigned tileDefSize = 36;
     unsigned tileDefsAddr = vm->getExport("__tiledefs");
@@ -325,7 +325,7 @@ bool System::loadTileData() {
     return true;
 }
 
-bool System::loadWorldData() {
+bool GameState::loadWorldData() {
     Logger &log = Logger::getInstance();
     const unsigned worldSize = 16;
     unsigned worldAddr = vm->getExport("__worlds");
@@ -350,7 +350,7 @@ bool System::loadWorldData() {
     return true;
 }
 
-void System::unloadAll() {
+void GameState::unloadAll() {
     for (auto iter : mTiles)          SDL_DestroyTexture(iter.second);
     for (auto iter : mImages)         SDL_DestroyTexture(iter.second);
     for (auto iter : mAudio)          Mix_FreeChunk(iter.second);

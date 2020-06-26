@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-class System;
+class GameState;
 
 class VMError : public std::runtime_error {
 public:
@@ -27,7 +27,7 @@ public:
     VM();
     ~VM();
 
-    void setSystem(System *newState);
+    void setGameState(GameState *newState);
     bool loadFromFile(const std::string &filename, bool requireValid);
 
     int getExport(const std::string &name) const;
@@ -75,7 +75,7 @@ private:
 
     void addActor(int npcAddr);
 
-    System *state;
+    GameState *state;
     char *mMemory;
     unsigned long long mMemorySize;
     std::vector<Frame> mCallStack;

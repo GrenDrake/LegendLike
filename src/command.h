@@ -5,7 +5,7 @@
 #include "point.h"
 
 union SDL_Event;
-class System;
+class GameState;
 
 enum class Command {
     None,
@@ -50,8 +50,8 @@ struct CommandDef {
     int key, mod;
 };
 
-const CommandDef& getCommand(System &system, SDL_Event &event, const CommandDef *commandList);
-bool passCommand(System &state);
+const CommandDef& getCommand(GameState &system, SDL_Event &event, const CommandDef *commandList);
+bool passCommand(GameState &state);
 std::ostream& operator<<(std::ostream &out, const Command &cmd);
 
 extern CommandDef gameCommands[];

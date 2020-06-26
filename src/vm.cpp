@@ -66,7 +66,7 @@ VM::~VM() {
     if (mMemory) delete[] mMemory;
 }
 
-void VM::setSystem(System *newState) {
+void VM::setGameState(GameState *newState) {
     state = newState;
 }
 

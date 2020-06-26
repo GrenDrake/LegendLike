@@ -17,7 +17,7 @@
 #include "logger.h"
 
 bool printVersions();
-int innerMain(System &renderState);
+int innerMain(GameState &gameState);
 
 unsigned perSecondTimer(unsigned interval, void *param) {
     SDL_Event event;
@@ -131,10 +131,10 @@ int main(int argc, char *argv[]) {
 
     Random coreRandom;
     coreRandom.seed(time(0));
-    System renderState(renderer, coreRandom);
-    renderState.window = win;
-    renderState.config = &config;
-    int returnCode = innerMain(renderState);
+    GameState gameState(renderer, coreRandom);
+    gameState.window = win;
+    gameState.config = &config;
+    int returnCode = innerMain(gameState);
     config.writeToFile();
     log.endLog();
 
@@ -194,36 +194,36 @@ bool printVersions() {
     return true;
 }
 
-int innerMain(System &renderState) {
+int innerMain(GameState &gameState) {
 
     VM vm;
-    renderState.vm = &vm;
-    vm.setSystem(&renderState);
+    gameState.vm = &vm;
+    vm.setGameState(&gameState);
 
-    renderState.smallFont = renderState.getFont("medfont.png");
-    if (!renderState.smallFont) return 1;
-    renderState.smallFont->setMetrics(12, 24, 1);
+    gameState.smallFont = gameState.getFont("medfont.png");
+    if (!gameState.smallFont) return 1;
+    gameState.smallFont->setMetrics(12, 24, 1);
 
-    renderState.tinyFont = renderState.getFont("smallfont.png");
-    if (!renderState.tinyFont) return 1;
-    renderState.tinyFont->setMetrics(9, 18, 1);
+    gameState.tinyFont = gameState.getFont("smallfont.png");
+    if (!gameState.tinyFont) return 1;
+    gameState.tinyFont->setMetrics(9, 18, 1);
 
-    if (!renderState.load()) {
+    if (!gameState.load()) {
         Logger &log = Logger::getInstance();
         log.error("Fatal error: failed to load game data.");
         return 1;
     }
 
-    renderState.setFontScale(renderState.config->getInt("font_scale", 1));
+    gameState.setFontScale(gameState.config->getInt("font_scale", 1));
 
     try {
-        doGameMenu(renderState);
+        doGameMenu(gameState);
     } catch (GameError &e) {
         Logger &log = Logger::getInstance();
         log.error(std::string("Fatal Error: ") + e.what());
         return 1;
     }
 
-    renderState.unloadAll();
+    gameState.unloadAll();
     return 0;
 }

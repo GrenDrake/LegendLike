@@ -9,7 +9,7 @@
 
 
 class Board;
-class System;
+class GameState;
 class Random;
 struct SDL_Texture;
 
@@ -79,7 +79,7 @@ public:
     bool hasProperName;
 
 
-    void ai(System &system);
+    void ai(GameState &system);
     bool tryMove(Board *board, Dir direction);
     std::string getName() const;
     void reset();
@@ -88,6 +88,6 @@ public:
 };
 
 
-bool doAccuracyCheck(System &state, Actor *attacker, Actor *target, int modifier);
+bool doAccuracyCheck(GameState &state, Actor *attacker, Actor *target, int modifier);
 
 #endif
