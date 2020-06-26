@@ -118,11 +118,11 @@ bool basicProjectileAttack(GameState &state, const ProjectileInfo &projectile, D
     return false;
 }
 
-#include <iostream>
 void doPlayerMove(GameState &state, Dir dir, bool forRun) {
     Point dest = state.getPlayer()->position.shift(dir);
     if (!state.getBoard()->valid(dest)) {
-        state.screenTransition(dir);
+        if (!forRun) state.screenTransition(dir);
+        else            state.runDirection = Dir::None;
     } else if (state.getPlayer()->tryMove(state.getBoard(), dir)) {
         Item *item = state.getBoard()->itemAt(dest);
         if (item) {
@@ -135,6 +135,8 @@ void doPlayerMove(GameState &state, Dir dir, bool forRun) {
             state.vm->run(e->funcAddr);
         }
         state.requestTick();
+    } else if (forRun) {
+        state.runDirection = Dir::None;
     } else {
         tryInteract(state, dir, dest);
     }
@@ -283,30 +285,22 @@ void gameloop(GameState &state) {
 
     while (!state.wantsToQuit && !state.returnToMenu) {
         if (state.runDirection != Dir::None) {
-            bool hitWall = false;
             const Point initalTilePos = state.getPlayer()->position.shift(state.runDirection, 1);
             const TileInfo &initialTile = TileInfo::get(state.getBoard()->getTile(initalTilePos));
             do {
-                Point t = state.getPlayer()->position.shift(state.runDirection, 1);
-                if (state.getPlayer()->tryMove(state.getBoard(), state.runDirection)) {
+                doPlayerMove(state, state.runDirection, true);
+                if (state.runDirection != Dir::None) {
                     const TileInfo &thisTile = TileInfo::get(state.getBoard()->getTile(state.getPlayer()->position));
                     if (initialTile.group != thisTile.group) {
-                        hitWall = true;
+                        state.runDirection = Dir::None;
                     }
-
-                    const Board::Event *e = state.getBoard()->eventAt(t);
-                    if (e && e->type == eventTypeAuto) state.vm->run(e->funcAddr);
-                    state.requestTick();
-                } else {
-                    hitWall = true;
                 }
                 if (state.hasTick()) {
                     state.tick();
                     repaint(state);
-                    if (passCommand(state)) hitWall = true;
+                    if (passCommand(state)) state.runDirection = Dir::None;
                 }
-            } while (!hitWall && !state.wantsToQuit);
-            state.runDirection = Dir::None;
+            } while (state.runDirection != Dir::None && !state.wantsToQuit);
             continue;
         }
 
