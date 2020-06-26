@@ -122,6 +122,10 @@ map0_npclist:
 .npc townPot1                              x=20 y=23 typeId=npcTypePot
 .npc townPot2                              x=40 y=16 typeId=npcTypePot
 .npc townPot3                              x=48 y=16 typeId=npcTypePot
+.npc townPot4                              x=26 y=27 typeId=npcTypePot
+.npc townPot5                              x=30 y=27 typeId=npcTypePot
+.npc townPot6                              x=30 y=31 typeId=npcTypePot
+.npc townPot7                              x=26 y=31 typeId=npcTypePot
 .npc townDummy1                            x=24 y=28 typeId=npcTypeTargetDummy
 .npc townDummy2                            x=24 y=30 typeId=npcTypeTargetDummy
 .word -1

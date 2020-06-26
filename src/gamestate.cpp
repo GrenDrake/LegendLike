@@ -324,6 +324,20 @@ bool GameState::grantItem(int itemId) {
         case ITM_CAP_BOMB:
             bombCapacity += 1;
             break;
+        case ITM_RESTORE_EN: {
+            Actor *player = getPlayer();
+            player->curEnergy += 3;
+            if (player->curEnergy > player->typeInfo->maxEnergy) {
+                player->curEnergy = player->typeInfo->maxEnergy;
+            }
+            break; }
+        case ITM_RESTORE_HP: {
+            Actor *player = getPlayer();
+            player->curHealth += 3;
+            if (player->curHealth > player->typeInfo->maxHealth) {
+                player->curHealth = player->typeInfo->maxHealth;
+            }
+            break; }
         default:
             addError("Tried to give unknown item #" + std::to_string(itemId));
             return false;

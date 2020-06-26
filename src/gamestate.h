@@ -42,6 +42,8 @@ const int ITM_AMMO_BOMB      = 11;
 const int ITM_COIN           = 12;
 const int ITM_CAP_ARROW      = 13;
 const int ITM_CAP_BOMB       = 14;
+const int ITM_RESTORE_HP     = 15;
+const int ITM_RESTORE_EN     = 16;
 
 struct Color {
     int r, g, b;
