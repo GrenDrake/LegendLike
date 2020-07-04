@@ -34,7 +34,7 @@ void mapedloop(GameState &state) {
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            const CommandDef &cmd = getCommand(state, event, gameCommands);
+            const CommandDef &cmd = getCommand(state, event, mapedCommands);
             switch(cmd.command) {
                 case Command::None:
                 case Command::Cancel:
@@ -42,7 +42,6 @@ void mapedloop(GameState &state) {
                     break;
                 case Command::SystemMenu:
                 case Command::Debug_MapEditMode:
-                    state.returnToMenu = true;
                     return;
                 case Command::Quit:
                     state.wantsToQuit = true;
@@ -68,17 +67,18 @@ void mapedloop(GameState &state) {
                     state.showTooltip = !state.showTooltip;
                     break;
 
-                case Command::NextSubweapon: {
+                case Command::Maped_NextTile: {
                     ++state.mapEditTile;
                     break; }
-                case Command::PrevSubweapon: {
+                case Command::Maped_PrevTile: {
                     --state.mapEditTile;
                     break; }
-                case Command::Subweapon: {
+                case Command::Maped_ShiftMap: {
                     Dir d = gfx_GetDirection(state, "Shift map");
                     if (d == Dir::None) break;
                     state.getBoard()->dbgShiftMap(d);
                     break; }
+
                 case Command::Debug_WarpMap: {
                     std::string mapIdStr;
                     if (gfx_EditText(state, "Map Number", mapIdStr, 10)) {
@@ -102,19 +102,13 @@ void mapedloop(GameState &state) {
                     if (y > state.getBoard()->height()) y = state.getBoard()->height() - 1;
                     state.warpTo(-1, x, y);
                     break; }
-                case Command::Debug_Reveal:
-                    state.getBoard()->dbgRevealAll();
-                    break;
-                case Command::Debug_NoFOV:
-                    state.getBoard()->dbgToggleFOV();
-                    break;
                 case Command::Debug_ShowInfo:
                     state.showInfo = !state.showInfo;
                     break;
                 case Command::Debug_ShowFPS:
                     state.showFPS = !state.showFPS;
                     break;
-                case Command::Debug_SelectTile: {
+                case Command::Maped_SelectTile: {
                     int tile = dbg_tilePicker(state);
                     if (tile >= 0) state.mapEditTile = tile;
                     break; }
@@ -125,10 +119,10 @@ void mapedloop(GameState &state) {
                         state.addError("Failed to write map to disk.");
                     }
                     break; }
-                case Command::Debug_SetCursor: {
+                case Command::Maped_Mark: {
                     state.cursor = state.getPlayer()->position;
                     break; }
-                case Command::Debug_Fill: {
+                case Command::Maped_FillRect: {
                     Point topLeft = state.cursor;
                     Point playerPos = state.getPlayer()->position;
                     if (playerPos.y() < topLeft.y()) {

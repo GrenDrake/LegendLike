@@ -504,7 +504,7 @@ void gfx_handleInput(GameState &state) {
 
             case Command::Debug_MapEditMode:
                 state.getBoard()->dbgRevealAll();
-                state.getBoard()->dbgToggleFOV();
+                state.getBoard()->dbgSetFOV(true);
                 state.addError("Entering map editing mode");
                 state.mapEditTile = 0;
                 mapedloop(state);

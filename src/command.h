@@ -37,11 +37,17 @@ enum class Command {
     Debug_WriteMapBinary,
     Debug_Restore,
     Debug_MapEditMode,
-    Debug_SelectTile,
     Debug_WarpMap,
     Debug_Teleport,
-    Debug_SetCursor,
-    Debug_Fill,
+
+    Maped_SetTile,
+    Maped_PickTile,
+    Maped_Mark,
+    Maped_FillRect,
+    Maped_SelectTile,
+    Maped_PrevTile,
+    Maped_NextTile,
+    Maped_ShiftMap,
 };
 
 struct CommandDef {
@@ -55,6 +61,7 @@ bool passCommand(GameState &state);
 std::ostream& operator<<(std::ostream &out, const Command &cmd);
 
 extern CommandDef gameCommands[];
+extern CommandDef mapedCommands[];
 extern CommandDef mapCommands[];
 extern CommandDef characterCommands[];
 extern CommandDef menuCommands[];

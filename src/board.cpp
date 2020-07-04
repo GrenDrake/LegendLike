@@ -532,6 +532,10 @@ void Board::dbgToggleFOV() {
     dbgDisableFOV = !dbgDisableFOV;
 }
 
+void Board::dbgSetFOV(bool fovState) {
+    dbgDisableFOV = fovState;
+}
+
 void Board::resetMark() {
     for (int y = 0; y < height(); ++y) {
         for (int x = 0; x < width(); ++x) {

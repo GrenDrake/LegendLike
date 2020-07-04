@@ -54,10 +54,59 @@ CommandDef gameCommands[] = {
     { Command::Debug_WriteMapBinary, Dir::None, SDLK_F10 },
     { Command::Debug_MapEditMode, Dir::None, SDLK_F12 },
     { Command::Debug_WarpMap,       Dir::None, SDLK_F12, KMOD_LSHIFT },
-    { Command::Debug_SelectTile, Dir::None, SDLK_F11 },
-    { Command::Debug_SetCursor,     Dir::None, SDLK_0 },
-    { Command::Debug_Fill,     Dir::None, SDLK_9 },
     { Command::Debug_Teleport, Dir::None, SDLK_6 },
+
+    { Command::None }
+};
+
+CommandDef mapedCommands[] = {
+    { Command::Quit,              Dir::None,  SDLK_q,         KMOD_LSHIFT },
+    { Command::SystemMenu,        Dir::None,  SDLK_ESCAPE },
+    { Command::Cancel,            Dir::None,  SDLK_z },
+    { Command::Debug_MapEditMode, Dir::None, SDLK_F12 },
+
+    { Command::Move,              Dir::North, SDLK_UP },
+    { Command::Move,              Dir::North, SDLK_KP_8 },
+    { Command::Move,              Dir::North, SDLK_k },
+    { Command::Move,              Dir::Northeast, SDLK_KP_9 },
+    { Command::Move,              Dir::Northeast, SDLK_u },
+    { Command::Move,              Dir::East,  SDLK_RIGHT },
+    { Command::Move,              Dir::East,  SDLK_KP_6 },
+    { Command::Move,              Dir::East,  SDLK_l },
+    { Command::Move,              Dir::Southeast, SDLK_KP_3 },
+    { Command::Move,              Dir::Southeast, SDLK_n },
+    { Command::Move,              Dir::South, SDLK_DOWN },
+    { Command::Move,              Dir::South, SDLK_KP_2 },
+    { Command::Move,              Dir::South, SDLK_j },
+    { Command::Move,              Dir::Southwest, SDLK_KP_1 },
+    { Command::Move,              Dir::Southwest, SDLK_b },
+    { Command::Move,              Dir::West,  SDLK_LEFT },
+    { Command::Move,              Dir::West,  SDLK_KP_4 },
+    { Command::Move,              Dir::West,  SDLK_h },
+    { Command::Move,              Dir::Northwest, SDLK_KP_7 },
+    { Command::Move,              Dir::Northwest, SDLK_y },
+
+    { Command::Interact,          Dir::Here,  SDLK_COMMA,     KMOD_LSHIFT },
+    { Command::Interact,          Dir::Here,  SDLK_PERIOD,    KMOD_LSHIFT },
+    { Command::Interact,          Dir::Here,  SDLK_KP_PERIOD, KMOD_LSHIFT },
+    { Command::Wait,              Dir::None,  SDLK_PERIOD },
+    { Command::Wait,              Dir::None,  SDLK_SPACE },
+    { Command::Wait,              Dir::None,  SDLK_KP_PERIOD },
+
+    { Command::ShowMap,           Dir::None,  SDLK_m },
+    { Command::ShowTooltip,       Dir::None,  SDLK_t },
+    { Command::Maped_NextTile,    Dir::None, SDLK_RIGHTBRACKET },
+    { Command::Maped_PrevTile,    Dir::None, SDLK_LEFTBRACKET },
+    { Command::Maped_ShiftMap,    Dir::None, SDLK_s },
+
+    { Command::Debug_ShowInfo,       Dir::None, SDLK_F5 },
+    { Command::Debug_ShowFPS,        Dir::None, SDLK_F7 },
+    { Command::Debug_WriteMapBinary, Dir::None, SDLK_F10 },
+    { Command::Debug_WarpMap,        Dir::None, SDLK_F12, KMOD_LSHIFT },
+    { Command::Maped_SelectTile,     Dir::None, SDLK_F11 },
+    { Command::Maped_Mark,           Dir::None, SDLK_0 },
+    { Command::Maped_FillRect,       Dir::None, SDLK_9 },
+    { Command::Debug_Teleport,       Dir::None, SDLK_6 },
 
     { Command::None }
 };

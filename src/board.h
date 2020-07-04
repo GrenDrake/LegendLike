@@ -161,6 +161,7 @@ public:
     void dbgShiftMap(Dir d);
     void dbgRevealAll();
     void dbgToggleFOV();
+    void dbgSetFOV(bool fovState);
     void resetMark();
 
     bool readFromFile(const std::string &filename);
