@@ -247,7 +247,6 @@ public:
     bool showInfo;
     bool showFPS;
     bool wantsTick;
-    bool mapEditMode;
     int  mapEditTile;
 
     bool loadAudioTracks();

@@ -28,7 +28,7 @@ std::string dirToAbbrev(Dir d);
 Dir gfx_GetDirection(GameState &system, const std::string &prompt, bool allowHere = false);
 Point gfx_SelectTile(GameState &system, const std::string &prompt);
 void gfx_handleInput(GameState &state);
-int dbg_tilePicker(GameState &state);
+void mapedloop(GameState &state);
 
 bool basicProjectileAttack(GameState &state, const ProjectileInfo &projectile, Dir d);
 void doPlayerMove(GameState &state, Dir dir, bool forRun);
@@ -343,19 +343,9 @@ void gfx_handleInput(GameState &state) {
                 break;
 
             case Command::Move: {
-                if (state.mapEditMode) {
-                    Actor *player = state.getPlayer();
-                    player->position = player->position.shift(cmd.direction);
-                    break;
-                }
                 doPlayerMove(state, cmd.direction, false);
                 break; }
             case Command::Run: {
-                if (state.mapEditMode) {
-                    Point dest = state.getPlayer()->position.shift(cmd.direction);
-                    state.getBoard()->setTile(dest, state.mapEditTile);
-                    break;
-                }
                 Dir d = cmd.direction;
                 if (d == Dir::None) {
                     d = gfx_GetDirection(state, "Run");
@@ -365,11 +355,6 @@ void gfx_handleInput(GameState &state) {
                 break; }
 
             case Command::Interact: {
-                if (state.mapEditMode) {
-                    Point dest = state.getPlayer()->position.shift(cmd.direction);
-                    state.mapEditTile = state.getBoard()->getTile(dest);
-                    break;
-                }
                 Dir d = cmd.direction;
                 if (d == Dir::None) {
                     d = gfx_GetDirection(state, "Activate", true);
@@ -402,10 +387,6 @@ void gfx_handleInput(GameState &state) {
 
 
             case Command::NextSubweapon: {
-                if (state.mapEditMode) {
-                    ++state.mapEditTile;
-                }
-
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -423,10 +404,6 @@ void gfx_handleInput(GameState &state) {
                 }
                 break; }
             case Command::PrevSubweapon: {
-                if (state.mapEditMode) {
-                    --state.mapEditTile;
-                }
-
                 bool hasSubweapon = false;
                 for (int i = 0; i < SW_COUNT; ++i) {
                     if (state.subweaponLevel[i] > 0) {
@@ -444,12 +421,6 @@ void gfx_handleInput(GameState &state) {
                 }
                 break; }
             case Command::Subweapon: {
-                if (state.mapEditMode) {
-                    Dir d = gfx_GetDirection(state, "Shift map");
-                    if (d == Dir::None) break;
-                    state.getBoard()->dbgShiftMap(d);
-                    break;
-                }
                 if (state.currentSubweapon == -1) {
                     state.addMessage("You don't have any subweapons.");
                     break;
@@ -532,9 +503,13 @@ void gfx_handleInput(GameState &state) {
                 break; }
 
             case Command::Debug_MapEditMode:
-                state.mapEditMode = !state.mapEditMode;
-                if (state.mapEditMode)  state.addError("Entering map editing mode");
-                else                    state.addError("Exiting map editing mode");
+                state.getBoard()->dbgRevealAll();
+                state.getBoard()->dbgToggleFOV();
+                state.addError("Entering map editing mode");
+                state.mapEditTile = 0;
+                mapedloop(state);
+                state.mapEditTile = -1;
+                state.addError("Exiting map editing mode");
                 break;
             case Command::Debug_WarpMap: {
                 std::string mapIdStr;
@@ -577,17 +552,6 @@ void gfx_handleInput(GameState &state) {
             case Command::Debug_ShowFPS:
                 state.showFPS = !state.showFPS;
                 break;
-            case Command::Debug_SelectTile: {
-                int tile = dbg_tilePicker(state);
-                if (tile >= 0) state.mapEditTile = tile;
-                break; }
-            case Command::Debug_WriteMapBinary: {
-                if (state.getBoard()->writeToFile("binary.map")) {
-                    state.addError("Wrote map to disk as binary.map.");
-                } else {
-                    state.addError("Failed to write map to disk.");
-                }
-                break; }
             case Command::Debug_TestPathfinder: {
                 Board *board = state.getBoard();
                 board->resetMark();
@@ -606,117 +570,10 @@ void gfx_handleInput(GameState &state) {
                     }
                 }
                 break; }
-            case Command::Debug_SetCursor: {
-                if (!state.mapEditMode) break;
-                state.cursor = state.getPlayer()->position;
-                break; }
-            case Command::Debug_Fill: {
-                if (!state.mapEditMode) break;
-                Point topLeft = state.cursor;
-                Point playerPos = state.getPlayer()->position;
-                if (playerPos.y() < topLeft.y()) {
-                    int tmp = playerPos.y();
-                    playerPos = Point(playerPos.x(), topLeft.y());
-                    topLeft = Point(topLeft.x(), tmp);
-                }
-                if (playerPos.x() < topLeft.x()) {
-                    int tmp = playerPos.x();
-                    playerPos = Point(topLeft.x(), playerPos.y());
-                    topLeft = Point(tmp, topLeft.y());
-                }
-                std::vector<int> grassList{ 8, 55, 56 };
-                std::vector<int> treeList{ 59, 58, 60, 57, 8, 55, 56, 8, 55, 56 };
-                for (int y = topLeft.y(); y <= playerPos.y(); ++y) {
-                    for (int x = topLeft.x(); x <= playerPos.x(); ++x) {
-                        int tile = state.mapEditTile;
-                        if (tile == -1) tile = grassList[state.coreRNG.next32() % grassList.size()];
-                        else if (tile == -2) tile = treeList[state.coreRNG.next32() % treeList.size()];
-                        state.getBoard()->setTile(Point(x, y), tile);
-                    }
-                }
-                break; }
 
             default:
                 /* we don't need to worry about the other kinds of command */
                 break;
         }
     }
-}
-
-int dbg_tilePicker(GameState &state) {
-    int screenWidth = 0;
-    int screenHeight = 0;
-    SDL_GetRendererOutputSize(state.renderer, &screenWidth, &screenHeight);
-    int tilesHigh = screenHeight / (tileWidth * 2);
-    int tilesWide = screenHeight / (tileHeight * 2);
-    Point cursor;
-
-    while (1) {
-        SDL_SetRenderDrawColor(state.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(state.renderer);
-        for (int y = 0; y < tilesHigh; ++y) {
-            for (int x = 0; x < tilesWide; ++x) {
-                unsigned tileHere = x + y * tilesWide;
-                if (tileHere >= TileInfo::types.size()) continue;
-                const TileInfo &info = TileInfo::get(tileHere);
-
-                SDL_Rect texturePosition = {
-                    x * tileWidth * 2,
-                    y * tileHeight * 2,
-                    tileWidth * 2, tileHeight * 2
-                };
-
-                SDL_Texture *tile = info.art;
-                if (info.animLength > 1) {
-                    tile = info.frames[0];
-                }
-                if (tile) {
-                    SDL_RenderCopy(state.renderer, tile, nullptr, &texturePosition);
-                }
-
-                if (cursor.x() == x && cursor.y() == y) {
-                    SDL_SetRenderDrawColor(state.renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-                    SDL_RenderDrawRect(state.renderer, &texturePosition);
-                }
-
-            }
-        }
-        std::stringstream msg;
-        msg << "Cursor:" << cursor.x() << ',' << cursor.y() << "   tile:";
-        unsigned tileId = cursor.x() + cursor.y() * tilesWide;
-        msg << tileId << ": ";
-        if (tileId < TileInfo::types.size()) {
-            const TileInfo &info = TileInfo::get(tileId);
-            msg << info.name;
-        }
-        state.smallFont->out(0, screenHeight - state.smallFont->getCharHeight(), msg.str());
-
-        SDL_RenderPresent(state.renderer);
-
-        SDL_Event event;
-        if (SDL_PollEvent(&event)) {
-            const CommandDef &command = getCommand(state, event, gameCommands);
-            switch(command.command) {
-                case Command::Move: {
-                    cursor = cursor.shift(command.direction);
-                    if (cursor.x() < 0) cursor = Point(0, cursor.y());
-                    if (cursor.y() < 0) cursor = Point(cursor.x(), 0);
-                    break; }
-                case Command::Interact: {
-                    unsigned tileId = cursor.x() + cursor.y() * tilesWide;
-                    if (tileId < TileInfo::types.size()) {
-                        return tileId;
-                    }
-                    return -1; }
-                case Command::Cancel:
-                    return -1;
-                default:
-                    // we don't need to handle most of the commands
-                    break;
-            }
-        }
-
-    }
-
-
 }

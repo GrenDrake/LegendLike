@@ -169,7 +169,7 @@ void gfx_drawSidebar(GameState &state) {
     yPos += tinyLineHeight;
     const int statTop = yPos;
 
-    if (state.mapEditMode) {
+    if (state.mapEditTile >= 0) {
         SDL_Rect artPos{ xPos, yPos, 32, 32 };
         const TileInfo &info = TileInfo::get(state.mapEditTile);
         SDL_RenderCopy(state.renderer, info.art, nullptr, &artPos);

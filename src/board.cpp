@@ -476,9 +476,6 @@ const Board::Event* Board::eventAt(const Point &where) const {
 }
 
 void Board::tick(GameState &system) {
-    // don't do any AI stuff in map edit mode
-    if (system.mapEditMode) return;
-
     for (Actor *who : actors) {
         who->ai(system);
     }
