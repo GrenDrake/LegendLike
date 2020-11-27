@@ -36,7 +36,7 @@ GameState::GameState(SDL_Renderer *renderer, Random &rng)
   mCurrentMusic(nullptr),renderer(renderer), coreRNG(rng), vm(nullptr),
   config(nullptr), wantsToQuit(false), gameInProgress(false), returnToMenu(false), showTooltip(false),
   showInfo(false), showFPS(false), wantsTick(false),
-  mapEditTile(0), framecount(0), framerate(0), baseticks(0), lastticks(0), fps(0)
+  mapEditTile(-1), framecount(0), framerate(0), baseticks(0), lastticks(0), fps(0)
 {
 }
 
