@@ -134,7 +134,7 @@
 .npctype npcTypeChicken      name="chicken" art="chicken" moveRate=2 aiType=aiRandom
 .npctype npcTypeRooster      name="rooster" art="rooster" moveRate=2 aiType=aiRandom
 
-.npctype npcTypeTargetDummy  name="targey dummy" art="target_dummy" aiType=aiBreakable health=9999
+.npctype npcTypeTargetDummy  name="target dummy" art="target_dummy" aiType=aiBreakable health=9999
 .npctype npcTypePot          name="pot"          art="pot" aiType=aiBreakable health=1 lootType=lootTable loot=lootTablePot
 
 .npctype npcTypeBrigand   name="brigand"   art="brigand" damage=2 health=5 aiType=aiEnemy lootType=lootTable loot=lootTableA
